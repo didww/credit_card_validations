@@ -9,8 +9,8 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Igor"]
   gem.email         = ["fedoronchuk@gmail.com"]
   gem.description   = %q{A ruby gem for validating credit card numbers (a port of ZF2 Zend\Validator\CreditCard) —}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.summary       = "gem for credit card numbers validation, card brands detections"
+  gem.homepage      = "https://github.com/Fivell/credit_card_validations"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
