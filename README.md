@@ -3,6 +3,9 @@
 Gem adds validator  to check whether or not a given number actually falls within the ranges of possible numbers prior to performing such verification, and, as such, CreditCardValidations simply verifies that the credit card number provided is well-formed.
 This is a port of Zend Framework `Zend\Validator\CreditCard` .
 
+## Build status
+== Build status {<img src="https://secure.travis-ci.org/Fivell/credit_card_validations.png" />}[http://travis-ci.org/Fivell/credit_card_validations]  
+
 ## Installation
 
 Add this line to your application's Gemfile:
