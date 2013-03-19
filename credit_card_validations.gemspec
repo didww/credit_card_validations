@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.version       = CreditCardValidations::VERSION
   gem.authors       = ["Igor"]
   gem.email         = ["fedoronchuk@gmail.com"]
-  gem.description   = %q{A ruby gem for validating credit card numbers (a port of ZF2 Zend\Validator\CreditCard) —}
+  gem.description   = %q{A ruby gem for validating credit card numbers (a port of ZF2 Zend\Validator\CreditCard)}
   gem.summary       = "gem for credit card numbers validation, card brands detections"
   gem.homepage      = "https://github.com/Fivell/credit_card_validations"
 
@@ -19,6 +19,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency('activemodel', '~> 3.0')
   gem.add_dependency('activesupport', '~> 3.0')
+
   gem.add_development_dependency "test-unit"
   gem.add_development_dependency 'rake'
+
 end
