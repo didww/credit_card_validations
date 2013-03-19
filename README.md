@@ -4,7 +4,8 @@ Gem adds validator  to check whether or not a given number actually falls within
 This is a port of Zend Framework `Zend\Validator\CreditCard` .
 
 ## Build status
-== Build status {<img src="https://secure.travis-ci.org/Fivell/credit_card_validations.png" />}[http://travis-ci.org/Fivell/credit_card_validations]  
+[![Build Status](https://travis-ci.org/Fivell/credit_card_validations.png)](https://travis-ci.org/Fivell/credit_card_validations)
+
 
 ## Installation
 
