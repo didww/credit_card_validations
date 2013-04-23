@@ -39,8 +39,15 @@ The following issuing institutes are accepted:
     Solo             | :solo
     Visa             | :visa
 
+Examples using string monkey patch
 
-Examples 
+    require 'credit_card_validations/string'
+    '5274 5763 9425 9961'.credit_card_brand
+    '5274 5763 9425 9961'.valid_credit_card_brand?(:mastercard, :visa)  
+    '5274 5763 9425 9961'.valid_credit_card_brand?(:amex)  
+
+
+Examples using CreditCardValidations::Detector class
 
     number = "41111111111111111"
     CreditCardValidations::Detector.new(number).brand #:visa
