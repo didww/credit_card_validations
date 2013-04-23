@@ -38,6 +38,7 @@ The following issuing institutes are accepted:
     MasterCard       | :mastercard
     Solo             | :solo
     Visa             | :visa
+    Laser            | :laser
 
 Examples using string monkey patch
 
