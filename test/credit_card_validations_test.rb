@@ -82,6 +82,13 @@ class CreditCardValidationsTest < Test::Unit::TestCase
      assert cc.valid?
   end
   
+  def test_string_extension
+    require 'credit_card_validations/string'
+    assert_equal  @test_numbers[:mastercard].credit_card_brand, :mastercard  
+    assert  @test_numbers[:mastercard].valid_credit_card_brand?(:mastercard)  
+    assert !@test_numbers[:mastercard].valid_credit_card_brand?(:visa, :amex)  
+  end  
+  
   protected
 
   def detector(number)
