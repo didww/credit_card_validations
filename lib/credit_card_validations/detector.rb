@@ -22,7 +22,7 @@ module CreditCardValidations
     def valid_number?(*brands)
       return nil unless valid_luhn?
       number_length = number.length
-      brand_rules = brands.blank? ? self.rules : self.rules.slice(*brands.map{|el| el.downcase  })
+      brand_rules = brands.blank? ? self.rules : self.rules.slice(*brands.map{ |el| el.downcase })
       unless brand_rules.blank?
         brand_rules.each do |brand_name, rules|
           rules.each do |rule|

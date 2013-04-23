@@ -1,8 +1,8 @@
 require 'credit_card_validations/version'
 require 'active_model'
-require 'active_support/all'
+require 'active_support/core_ext'
 require 'active_model/validations'
-require 'credit_card_number_validator'
+require 'active_model/credit_card_number_validator'
 
 module CreditCardValidations
    extend ActiveSupport::Autoload

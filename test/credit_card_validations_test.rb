@@ -14,7 +14,6 @@ class CreditCardValidationsTest < Test::Unit::TestCase
     validates :number, presence: true, credit_card_number: {brands: [:amex, :maestro]}
   end
 
-
   def initialize name
     super name
     @test_numbers = {
@@ -79,7 +78,7 @@ class CreditCardValidationsTest < Test::Unit::TestCase
      cc.number = @test_numbers[:mastercard]
      assert !cc.valid?
      cc.number = @test_numbers[:amex]
-     assert cc.valid?
+     assert cc.valid?     
   end
   
   def test_string_extension
