@@ -34,11 +34,12 @@ The following issuing institutes are accepted:
     Dinner Club US   | :diners_us
     Discover         | :discover
     JCB              | :jcb
+    Laser            | :laser
     Maestro          | :maestro
     MasterCard       | :mastercard
     Solo             | :solo
     Visa             | :visa
-    Laser            | :laser
+
 
 Examples using string monkey patch
 
