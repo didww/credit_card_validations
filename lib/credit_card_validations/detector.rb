@@ -15,8 +15,8 @@ module CreditCardValidations
     end
 
     #brand name
-    def brand
-       valid_number?
+    def brand(*brands)
+       valid_number?(*brands)
     end
 
     def valid_number?(*brands)
