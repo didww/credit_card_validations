@@ -6,7 +6,7 @@ module CreditCardValidations
     attr_reader :number
 
     def initialize(number)
-      @number = number.to_s.delete(' ')
+      @number = number.to_s.tr('- ','')
     end
 
     # credit card number
