@@ -74,7 +74,7 @@ only for certain brads
 	class CreditCardModel
   		attr_accessor :number
   		include ActiveModel::Validations
-  		validates :number, presence: true, credit_card_number: {brands: [:amex, :maestro]}
+  		validates :number, credit_card_number: {brands: [:amex, :maestro]}
 	end
 	
 for all known brands
