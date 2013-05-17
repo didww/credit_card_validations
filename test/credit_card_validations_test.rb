@@ -119,7 +119,6 @@ class CreditCardValidationsTest < Test::Unit::TestCase
     d = detector(@test_numbers[:unionpay])
     d.expects(:valid_luhn?).once
     assert d.valid?(:visa, :unionpay)
-
   end
 
 
