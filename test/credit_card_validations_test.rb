@@ -121,6 +121,10 @@ class CreditCardValidationsTest < Test::Unit::TestCase
     assert d.valid?(:visa, :unionpay)
   end
 
+  def test_mmi
+     d = detector(@test_numbers[:visa])
+     assert_equal d.issuer_category, CreditCardValidations::Mmi::ISSUER_CATEGORIES[@test_numbers[:visa][0]]
+  end
 
   protected
 

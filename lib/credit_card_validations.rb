@@ -10,4 +10,5 @@ module CreditCardValidations
    autoload :Luhn, 'credit_card_validations/luhn'
    autoload :CardRules , 'credit_card_validations/card_rules'
    autoload :Detector , 'credit_card_validations/detector'
+   autoload :Mmi, 'credit_card_validations/mmi'
 end  

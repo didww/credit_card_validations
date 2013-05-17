@@ -1,5 +1,8 @@
 module CreditCardValidations
   class Detector
+
+    include Mmi
+
     class_attribute :rules
     self.rules = {}
 
