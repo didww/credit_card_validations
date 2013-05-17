@@ -1,4 +1,5 @@
 require 'test/unit'
+require 'mocha/setup'
 lib = File.expand_path("#{File.dirname(__FILE__)}/../lib")
 unit_tests = File.expand_path("#{File.dirname(__FILE__)}/../test")
 $:.unshift(lib)
@@ -100,6 +101,27 @@ class CreditCardValidationsTest < Test::Unit::TestCase
     assert  @test_numbers[:mastercard].valid_credit_card_brand?(:mastercard)
     assert !@test_numbers[:mastercard].valid_credit_card_brand?(:visa, :amex)
   end
+
+
+  def test_skip_validation
+    d = detector(@test_numbers[:unionpay])
+    d.expects(:valid_luhn?).never
+    assert d.valid?(:unionpay)
+
+    d = detector(@test_numbers[:unionpay])
+    d.expects(:valid_luhn?).once
+    assert !d.valid?(:visa)
+
+    d = detector(@test_numbers[:unionpay])
+    d.expects(:valid_luhn?).never
+    assert d.valid?(:unionpay, :visa)
+
+    d = detector(@test_numbers[:unionpay])
+    d.expects(:valid_luhn?).once
+    assert d.valid?(:visa, :unionpay)
+
+  end
+
 
   protected
 

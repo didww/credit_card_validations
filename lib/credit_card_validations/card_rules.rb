@@ -50,7 +50,7 @@ module CreditCardValidations
     ]
 
     UNIONPAY = [
-        {length: [16, 17, 18, 19], prefixes: ['620', '621', '623', '625', '626']}
+        {length: [16, 17, 18, 19], prefixes: ['620', '621', '623', '625', '626'], :skip_validation => true}
     ]
 
 
