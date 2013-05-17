@@ -56,6 +56,7 @@ Examples using CreditCardValidations::Detector class
     CreditCardValidations::Detector.new(number).visa? #true
     CreditCardValidations::Detector.new(number).valid?(:mastercard,:maestro) #false
     CreditCardValidations::Detector.new(number).valid?(:visa, :mastercard) #true
+    CreditCardValidations::Detector.new(number).issuer_category  #"Banking and financial"
 
 Also You can add your own rules to detect other credit card brands/types
 passing name,length(integer/array of integers) and prefix(string/array of strings)
