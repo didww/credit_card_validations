@@ -51,12 +51,13 @@ Examples using string monkey patch
 
 Examples using CreditCardValidations::Detector class
 
-    number = "41111111111111111"
-    CreditCardValidations::Detector.new(number).brand #:visa
-    CreditCardValidations::Detector.new(number).visa? #true
-    CreditCardValidations::Detector.new(number).valid?(:mastercard,:maestro) #false
-    CreditCardValidations::Detector.new(number).valid?(:visa, :mastercard) #true
-    CreditCardValidations::Detector.new(number).issuer_category  #"Banking and financial"
+    number = "4111111111111111"
+    detector = CreditCardValidations::Detector.new(number)
+    detector.brand #:visa
+    detector.visa? #true
+    detector.valid?(:mastercard,:maestro) #false
+    detector.valid?(:visa, :mastercard) #true
+    detector.issuer_category  #"Banking and financial"
 
 Also You can add your own rules to detect other credit card brands/types
 passing name,length(integer/array of integers) and prefix(string/array of strings)
