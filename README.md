@@ -30,7 +30,7 @@ The following issuing institutes are accepted:
     -----------------------
     American Express | :amex
     China UnionPay   | :unionpay
-    Dankrot            :dankrot
+    Dankrot          | :dankrot
     Diners Club      | :diners
     Dinner Club US   | :diners_us
     Discover         | :discover
