@@ -27,6 +27,7 @@ class CreditCardValidationsTest < Test::Unit::TestCase
         jcb: '3575 7591 5225 4876',
         solo: '6767 6222 2222 2222 222',
         unionpay: '6264-1852-1292-2132-067',
+        dankrot: '5019717010103742'
 
     }
   end
