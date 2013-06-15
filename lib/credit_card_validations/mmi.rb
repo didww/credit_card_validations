@@ -24,7 +24,7 @@ module CreditCardValidations::Mmi
       '4' => 'Banking and financial',
       '5' => 'Banking and financial',
       '6' => 'Merchandising and banking/financial',
-      '7' => 'Petroleum and other  industry assignments',
+      '7' => 'Petroleum and other industry assignments',
       '8' => 'Healthcare, telecommunications and other industry assignments',
       '9' => 'National assignment'
 
