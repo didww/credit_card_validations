@@ -72,7 +72,7 @@ Example
  
 
 
-AvtiveModel support
+ActiveModel support
 	
 only for certain brads	
 	
