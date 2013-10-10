@@ -15,6 +15,15 @@ class CreditCardValidationsTest < Test::Unit::TestCase
     validates :number, credit_card_number: {brands: [:amex, :maestro]}
   end
 
+
+
+class CreditCardModelAny
+    attr_accessor :number
+    include ActiveModel::Validations
+    validates :number, presence: true, credit_card_number: true
+end
+
+
   def initialize name
     super name
     @test_numbers = {
@@ -94,6 +103,14 @@ class CreditCardValidationsTest < Test::Unit::TestCase
      cc.number = @test_numbers[:mastercard]
      assert !cc.valid?
      assert cc.errors[:number].include?(cc.errors.generate_message(:number, :invalid))
+
+
+    cc = CreditCardModelAny.new
+    cc.number='1'
+    assert !cc.valid?
+    cc.number = @test_numbers[:mastercard]
+    assert cc.valid?
+
   end
 
   def test_string_extension
