@@ -19,11 +19,11 @@ module CreditCardValidations
     ]
 
     #There are Diners Club (North America) cards that begin with 5. These are a joint venture between Diners Club and MasterCard, and are processed like a MasterCard
-    # So I recomend to use it as MasterCard
+    # will be removed in next major version
 
-    # DINERS_US = [
-    #     {length: [16], prefixes: ['54', '55']}
-    # ]
+    DINERS_US = [
+        {length: [16], prefixes: ['54', '55']}
+    ]
 
     DISCOVER = [
         {length: [16], prefixes: ['6011', '644', '645', '646', '647', '648',
