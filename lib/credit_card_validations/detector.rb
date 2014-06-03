@@ -62,9 +62,9 @@ module CreditCardValidations
       end
     end
 
-    CardRules.constants.each do |const_name|
-      CardRules.const_get(const_name).each do |const_value|
-        self.add_rule(const_name.to_s.downcase.to_sym , const_value[:length], const_value[:prefixes], const_value[:skip_validation])
+    CardRules.rules.each do |name, rules|
+       rules.each do |rule_value|
+        self.add_rule(name, rule_value[:length], rule_value[:prefixes], rule_value[:skip_validation])
       end
 
     end
