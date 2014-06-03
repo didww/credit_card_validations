@@ -15,71 +15,71 @@ class CreditCardValidationsTest < Test::Unit::TestCase
     validates :number, credit_card_number: {brands: [:amex, :maestro]}
   end
 
-
-
-class CreditCardModelAny
+  class CreditCardModelAny
     attr_accessor :number
     include ActiveModel::Validations
     validates :number, presence: true, credit_card_number: true
-end
-
+  end
 
   def initialize name
     super name
     @test_numbers = {
-        visa: '4012 8888 8888 1881',
-        mastercard: '5274 5763 9425 9961',
-        diners: '3020 4169 3226 43',
-        amex: '3782 8224 6310 005',
-        discover: '6011 1111 1111 1117',
-        maestro: '6759 6498 2643 8453',
-        jcb: '3575 7591 5225 4876',
-        solo: '6767 6222 2222 2222 222',
-        unionpay: '6264-1852-1292-2132-067',
-        dankrot: '5019717010103742'
-
+      visa:       ['4012 8888 8888 1881','4111111111111111'],
+      mastercard: ['5274 5763 9425 9961', '5555-5555-5555-4444'],
+      diners:     ['3020 4169 3226 43', '30569309025904'],
+      amex:       ['3782 8224 6310 005', '371449635398431'],
+      discover:   ['6011 1111 1111 1117','6011000990139424'],
+      maestro:    ['6759 6498 2643 8453'],
+      jcb:        ['3575 7591 5225 4876', '3566002020360505' ],
+      solo:       ['6767 6222 2222 2222 222'],
+      unionpay:   ['6264-1852-1292-2132-067', '6288997715452584', '6269 9920 5813 4322'],
+      dankrot:    ['5019717010103742']
     }
   end
-
+  
   def test_card_brand_detection
     @test_numbers.each do |key, value|
-      assert_equal key, detector(value).brand
-      assert detector(value).send("#{key}?")
+      value.each do |card_number|
+        assert detector(card_number).send("#{key}?")
+        assert_equal key, detector(card_number).brand
+      end
     end
   end
-
+  
   def test_card_brand_is_nil_if_credit_card_invalid
     assert_nil detector('1111111111111111').brand
   end
-
+  
   def test_card_brand_detection_with_restriction
     @test_numbers.slice(:visa, :mastercard).each do |key, value|
-      assert_equal key, detector(value).brand(:visa, :mastercard)
+      assert_equal key, detector(value.first).brand(:visa, :mastercard)
     end
-
+    
     @test_numbers.except(:visa, :mastercard).each do |key, value|
-      assert_nil detector(value).brand(:visa, :mastercard)
+      assert_nil detector(value.first).brand(:visa, :mastercard)
     end
   end
-
+  
   def test_card_valid_method
     @test_numbers.each do |key, value|
-      assert detector(value).valid?(key)
-      assert detector(value).valid?
+      value.each do |card_number|
+        assert detector(card_number).valid?(key)
+        assert detector(card_number).valid?
+      end
     end
     assert !detector('1111111111111111').valid?
   end
 
 
   def test_card_particular_brand_valid
-    assert !detector(@test_numbers[:visa]).valid?(:mastercard)
-    assert !detector(@test_numbers[:mastercard]).valid?(:visa)
+    assert !detector(@test_numbers[:visa].first).valid?(:mastercard)
+    assert !detector(@test_numbers[:mastercard].first).valid?(:visa)
   end
 
 
   def test_card_particular_brands_valid
-    assert detector(@test_numbers[:visa]).valid?(:mastercard, :visa)
-    assert !detector(@test_numbers[:visa]).valid?(:mastercard, :amex)
+    assert detector(@test_numbers[:visa].first).valid?(:mastercard, :visa)
+    assert !detector(@test_numbers[:visa].first).valid?(:mastercard, :amex)
   end
 
   #add rules which were not present before
@@ -96,11 +96,11 @@ end
 
   def test_active_model_validator
      cc = CreditCardModel.new
-     cc.number = @test_numbers[:maestro]
+     cc.number = @test_numbers[:maestro].first
      assert cc.valid?
 
      cc = CreditCardModel.new
-     cc.number = @test_numbers[:mastercard]
+     cc.number = @test_numbers[:mastercard].first
      assert !cc.valid?
      assert cc.errors[:number].include?(cc.errors.generate_message(:number, :invalid))
 
@@ -108,33 +108,31 @@ end
     cc = CreditCardModelAny.new
     cc.number='1'
     assert !cc.valid?
-    cc.number = @test_numbers[:mastercard]
+    cc.number = @test_numbers[:mastercard].first
     assert cc.valid?
 
   end
 
   def test_string_extension
     require 'credit_card_validations/string'
-    assert_equal  @test_numbers[:mastercard].credit_card_brand, :mastercard
-    assert  @test_numbers[:mastercard].valid_credit_card_brand?(:mastercard)
-    assert !@test_numbers[:mastercard].valid_credit_card_brand?(:visa, :amex)
+    assert_equal  @test_numbers[:mastercard].first.credit_card_brand, :mastercard
+    assert  @test_numbers[:mastercard].first.valid_credit_card_brand?(:mastercard)
+    assert !@test_numbers[:mastercard].first.valid_credit_card_brand?(:visa, :amex)
   end
 
 
   def test_skip_validation
-    d = detector(@test_numbers[:unionpay])
+    d = detector(@test_numbers[:unionpay].first)
+
     d.expects(:valid_luhn?).never
     assert d.valid?(:unionpay)
 
-    d = detector(@test_numbers[:unionpay])
     d.expects(:valid_luhn?).once
     assert !d.valid?(:visa)
 
-    d = detector(@test_numbers[:unionpay])
     d.expects(:valid_luhn?).never
     assert d.valid?(:unionpay, :visa)
 
-    d = detector(@test_numbers[:unionpay])
     d.expects(:valid_luhn?).once
     assert d.valid?(:visa, :unionpay)
   end
