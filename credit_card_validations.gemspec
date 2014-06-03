@@ -20,8 +20,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency "activemodel", ">= 3.0", "<= 4.1"
   gem.add_dependency "activesupport", ">= 3.0", "<= 4.1"
 
-  gem.add_development_dependency "test-unit"
-  gem.add_development_dependency "mocha"
-  gem.add_development_dependency 'rake'
+  gem.add_development_dependency "test-unit",'~> 2.5'
+  gem.add_development_dependency "mocha", '~> 0.12'
+  gem.add_development_dependency 'rake', '~> 10'
 
 end
