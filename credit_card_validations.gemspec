@@ -11,7 +11,8 @@ Gem::Specification.new do |gem|
   gem.description   = %q{A ruby gem for validating credit card numbers (a port of ZF2 Zend\Validator\CreditCard)}
   gem.summary       = "gem for credit card numbers validation, card brands detections"
   gem.homepage      = "https://github.com/Fivell/credit_card_validations"
-
+  gem.license     = 'MIT'
+  
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
