@@ -72,6 +72,11 @@ Example
  
 
 
+Check luhn
+
+    CreditCardValidations::Detector.new(@credit_card_number).valid_luhn?
+
+
 ActiveModel support
 	
 only for certain brads	
