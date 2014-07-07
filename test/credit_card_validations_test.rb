@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'mocha/setup'
+require 'mocha'
 lib = File.expand_path("#{File.dirname(__FILE__)}/../lib")
 unit_tests = File.expand_path("#{File.dirname(__FILE__)}/../test")
 $:.unshift(lib)
