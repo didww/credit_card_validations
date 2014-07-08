@@ -12,3 +12,15 @@ module CreditCardValidations
    autoload :Detector , 'credit_card_validations/detector'
    autoload :Mmi, 'credit_card_validations/mmi'
 end  
+
+
+CreditCardValidations::CardRules.rules.each do |name, rules|
+   rules.each do |rule_value|
+     CreditCardValidations::Detector.add_rule(name,
+                                              rule_value[:length],
+                                              rule_value[:prefixes],
+                                              rule_value[:skip_validation])
+  end
+
+end
+

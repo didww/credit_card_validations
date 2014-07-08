@@ -62,12 +62,7 @@ module CreditCardValidations
       end
     end
 
-    CardRules.rules.each do |name, rules|
-       rules.each do |rule_value|
-        self.add_rule(name, rule_value[:length], rule_value[:prefixes], rule_value[:skip_validation])
-      end
 
-    end
   end
 
 
