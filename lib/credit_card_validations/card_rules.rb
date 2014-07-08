@@ -5,7 +5,7 @@ module CreditCardValidations
 
     self.rules = {
         visa: [
-            {length: [16], prefixes: ['4']}
+            {length: [13, 16], prefixes: ['4']}
         ],
         mastercard: [
             {length: [16], prefixes: ['51', '52', '53', '54', '55']}
