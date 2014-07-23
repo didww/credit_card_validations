@@ -1,5 +1,5 @@
-require 'credit_card_validations'
 require_relative 'test_helper'
+
 
 class CreditCardValidationsTest < MiniTest::Test
 

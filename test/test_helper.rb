@@ -10,3 +10,5 @@ $:.unshift(unit_tests)
 
 I18n.config.enforce_available_locales = true
 Coveralls.wear!
+
+require 'credit_card_validations'
