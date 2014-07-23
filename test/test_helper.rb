@@ -1,5 +1,6 @@
-require 'minitest/autorun'
 require 'coveralls'
+Coveralls.wear!
+require 'minitest/autorun'
 require 'i18n'
 require 'mocha/mini_test'
 
@@ -9,6 +10,6 @@ $:.unshift(lib)
 $:.unshift(unit_tests)
 
 I18n.config.enforce_available_locales = true
-Coveralls.wear!
+
 
 require 'credit_card_validations'
