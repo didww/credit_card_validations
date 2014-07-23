@@ -1,13 +1,7 @@
-require 'test/unit'
-require 'mocha'
-lib = File.expand_path("#{File.dirname(__FILE__)}/../lib")
-unit_tests = File.expand_path("#{File.dirname(__FILE__)}/../test")
-$:.unshift(lib)
-$:.unshift(unit_tests)
-
 require 'credit_card_validations'
+require_relative 'test_helper'
 
-class CreditCardValidationsTest < Test::Unit::TestCase
+class CreditCardValidationsTest < MiniTest::Test
 
   class CreditCardModel
     attr_accessor :number

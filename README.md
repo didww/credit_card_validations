@@ -2,10 +2,8 @@
 
 Gem adds validator  to check whether or not a given number actually falls within the ranges of possible numbers prior to performing such verification, and, as such, CreditCardValidations simply verifies that the credit card number provided is well-formed.
 
-
-## Build status
 [![Build Status](https://travis-ci.org/Fivell/credit_card_validations.png)](https://travis-ci.org/Fivell/credit_card_validations)
-
+[![Coverage Status](https://coveralls.io/repos/Fivell/credit_card_validations/badge.png)](https://coveralls.io/r/Fivell/credit_card_validations)
 
 ## Installation
 
