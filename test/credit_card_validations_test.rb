@@ -26,11 +26,11 @@ class CreditCardValidationsTest < MiniTest::Test
       maestro:    ['6759 6498 2643 8453'],
       jcb:        ['3575 7591 5225 4876', '3566002020360505' ],
       solo:       ['6767 6222 2222 2222 222'],
-      unionpay:   ['6264-1852-1292-2132-067', '6288997715452584', '6269 9920 5813 4322'],
+      unionpay:   ['6264-1852-1292-2132-067', '6288997715452584', '6269 9920 5813 4322', '6214873948568723098'],
       dankrot:    ['5019717010103742']
     }
   end
-  
+
   def test_card_brand_detection
     @test_numbers.each do |key, value|
       value.each do |card_number|
@@ -39,21 +39,21 @@ class CreditCardValidationsTest < MiniTest::Test
       end
     end
   end
-  
+
   def test_card_brand_is_nil_if_credit_card_invalid
     assert_nil detector('1111111111111111').brand
   end
-  
+
   def test_card_brand_detection_with_restriction
     @test_numbers.slice(:visa, :mastercard).each do |key, value|
       assert_equal key, detector(value.first).brand(:visa, :mastercard)
     end
-    
+
     @test_numbers.except(:visa, :mastercard).each do |key, value|
       assert_nil detector(value.first).brand(:visa, :mastercard)
     end
   end
-  
+
   def test_card_valid_method
     @test_numbers.each do |key, value|
       value.each do |card_number|
