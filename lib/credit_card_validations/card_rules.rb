@@ -16,7 +16,7 @@ module CreditCardValidations
         ],
 
         diners: [
-            {length: [14], prefixes: ['300', '301', '302', '303', '304', '305', '36']},
+            {length: [14], prefixes: ['300', '301', '302', '303', '304', '305', '36', '38']},
         ],
 
         #There are Diners Club (North America) cards that begin with 5. These are a joint venture between Diners Club and MasterCard, and are processed like a MasterCard
