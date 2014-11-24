@@ -43,7 +43,12 @@ module CreditCardValidations
         solo: [
             {length: [16, 18, 19], prefixes: ['6334', '6767']}
         ],
-
+        
+        switch: [
+           {length: [16, 18, 19], prefixes: ['633110', '633312', '633304', '633303', '633301', '633300']}
+         
+        ],
+        
         maestro: [
             {length: [12, 13, 14, 15, 16, 17, 18, 19], prefixes: ['5010', '5011', '5012', '5013', '5014', '5015', '5016', '5017', '5018',
                                                                   '502', '503', '504', '505', '506', '507', '508',
@@ -54,7 +59,7 @@ module CreditCardValidations
                                                                   '6760', '6761', '6762', '6763', '6764', '6765', '6766', '6768', '6769'
             ]}
         ],
-
+        
         # Luhn validation are skipped for union pay cards because they have unknown generation algoritm
         unionpay: [
             {length: [16, 17, 18, 19], prefixes: ['622', '624', '625', '626', '628'], skip_validation: true}
@@ -63,6 +68,9 @@ module CreditCardValidations
         dankrot: [
             {length: [16], prefixes: ['5019']}
         ]
+        
+        
+
     }
   end
 end
