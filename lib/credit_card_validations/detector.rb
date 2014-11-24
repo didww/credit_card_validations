@@ -9,26 +9,26 @@ module CreditCardValidations
     attr_reader :number
 
     def initialize(number)
-      @number = number.to_s.tr('- ','')
+      @number = number.to_s.tr('- ', '')
     end
 
     # credit card number
     def valid?(*brands)
-       !!valid_number?(*brands)
+      !!valid_number?(*brands)
     end
 
     #brand name
     def brand(*brands)
-       valid_number?(*brands)
+      valid_number?(*brands)
     end
 
     def valid_number?(*brands)
       number_length = number.length
-      brand_rules = brands.blank? ? self.rules : self.rules.slice(*brands.map{ |el| el.downcase })
+      brand_rules = brands.blank? ? self.rules : self.rules.slice(*brands.map { |el| el.downcase })
       unless brand_rules.blank?
         brand_rules.each do |brand_name, rules|
           rules.each do |rule|
-            return brand_name if ( (rule[:skip_luhn] || valid_luhn?) and rule[:length].include?(number_length) and number.match(rule[:regexp]))
+            return brand_name if ((rule[:skip_luhn] || valid_luhn?) and rule[:length].include?(number_length) and number.match(rule[:regexp]))
           end
         end
       end
@@ -44,7 +44,7 @@ module CreditCardValidations
 
       #create regexp by array of prefixes
       def compile_regexp(prefixes)
-          Regexp.new("^((#{prefixes.join(")|(")}))")
+        Regexp.new("^((#{prefixes.join(")|(")}))")
       end
 
       #create rule for detecting brand
@@ -52,7 +52,7 @@ module CreditCardValidations
         prefixes = Array.wrap(prefixes)
         length = Array.wrap(length)
         rules[brand] = [] if rules[brand].blank?
-        rules[brand] << {length: length,  regexp: compile_regexp(prefixes), prefixes: prefixes, skip_luhn: skip_luhn}
+        rules[brand] << {length: length, regexp: compile_regexp(prefixes), prefixes: prefixes, skip_luhn: skip_luhn}
         #create methods like  visa? mastercard? etc
         class_eval <<-BOOLEAN_RULE, __FILE__, __LINE__
           def #{brand}?

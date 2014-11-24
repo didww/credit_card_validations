@@ -13,7 +13,7 @@ module CreditCardValidations
    autoload :Mmi, 'credit_card_validations/mmi'
    
    def self.add_rule(name, options)
-      CreditCardValidations::Detector.add_rule(name, options.fetch(:length), options.fetch(:prefixes), options.fetch(:skip_luhn, false))   
+     CreditCardValidations::Detector.add_rule(name, options.fetch(:length), options.fetch(:prefixes), options.fetch(:skip_luhn, false))   
    end
    
    CardRules.rules.each do |name, rules|
