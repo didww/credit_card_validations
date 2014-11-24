@@ -64,10 +64,18 @@ passing name,length(integer/array of integers) and prefix(string/array of string
 Example
 
     CreditCardValidations::Detector.add_rule(:voyager, 15, '86')
+    CreditCardValidations::Detector.add_rule(:en_route, 15, ['2014', '2149'], true) #skip luhn = true
+          
     voyager_test_card_number = '869926275400212'
     CreditCardValidations::Detector.new(voyager_test_card_number).brand #:voyager
     CreditCardValidations::Detector.new(voyager_test_card_number).voyager? #true
+    
+    en_route_test_card_number = '2014-0000-0000-001'
+    CreditCardValidations::Detector.new(en_route_test_card_number).brand #:en_route
+    CreditCardValidations::Detector.new(en_route_test_card_number).en_route? #true
+    
  
+   
 
 
 Check luhn
