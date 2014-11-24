@@ -49,6 +49,21 @@ Examples using string monkey patch
     '5274 5763 9425 9961'.valid_credit_card_brand?(:amex)  
 
 
+ActiveModel support
+
+only for certain brads	
+
+	class CreditCardModel
+	  	attr_accessor :number
+	  	include ActiveModel::Validations
+	  	validates :number, credit_card_number: {brands: [:amex, :maestro]}
+	end
+
+for all known brands
+	
+	validates :number, presence: true, credit_card_number: true
+
+
 Examples using CreditCardValidations::Detector class
 
     number = "4111111111111111"
@@ -63,8 +78,8 @@ Also You can add your own rules to detect other credit card brands/types
 passing name,length(integer/array of integers) and prefix(string/array of strings)
 Example
 
-    CreditCardValidations::Detector.add_rule(:voyager, 15, '86')
-    CreditCardValidations::Detector.add_rule(:en_route, 15, ['2014', '2149'], true) #skip luhn = true
+    CreditCardValidations.add_rule(:voyager, 15, '86')
+    CreditCardValidations.add_rule(:en_route, 15, ['2014', '2149'], true) #skip luhn = true
           
     voyager_test_card_number = '869926275400212'
     CreditCardValidations::Detector.new(voyager_test_card_number).brand #:voyager
@@ -73,30 +88,12 @@ Example
     en_route_test_card_number = '2014-0000-0000-001'
     CreditCardValidations::Detector.new(en_route_test_card_number).brand #:en_route
     CreditCardValidations::Detector.new(en_route_test_card_number).en_route? #true
-    
- 
-   
-
 
 Check luhn
 
     CreditCardValidations::Detector.new(@credit_card_number).valid_luhn?
-
-
-ActiveModel support
-	
-only for certain brads	
-	
-	class CreditCardModel
-  		attr_accessor :number
-  		include ActiveModel::Validations
-  		validates :number, credit_card_number: {brands: [:amex, :maestro]}
-	end
-	
-for all known brands
-	
-	validates :number, presence: true, credit_card_number: true
-
+    #or
+    CreditCardValidations::Luhn.valid?(@credit_card_number)
   
 
 
