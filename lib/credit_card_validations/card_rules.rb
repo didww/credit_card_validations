@@ -67,8 +67,6 @@ module CreditCardValidations
             {length: [16], prefixes: ['5019']}
         ]
         
-        
-
     }
   end
 end
