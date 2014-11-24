@@ -78,8 +78,8 @@ Also You can add your own rules to detect other credit card brands/types
 passing name,length(integer/array of integers) and prefix(string/array of strings)
 Example
 
-    CreditCardValidations.add_rule(:voyager, 15, '86')
-    CreditCardValidations.add_rule(:en_route, 15, ['2014', '2149'], true) #skip luhn = true
+    CreditCardValidations.add_rule(:voyager, {length: 15, prefixes: '86'})
+    CreditCardValidations.add_rule(:en_route, {length: 15, prefixes: ['2014', '2149'], luhn: false}) #skip luhn
           
     voyager_test_card_number = '869926275400212'
     CreditCardValidations::Detector.new(voyager_test_card_number).brand #:voyager

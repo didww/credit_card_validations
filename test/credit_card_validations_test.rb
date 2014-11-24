@@ -116,7 +116,7 @@ class CreditCardValidationsTest < MiniTest::Test
   end
 
 
-  def test_skip_validation
+  def test_skip_luhn
     d = detector(@test_numbers[:unionpay].first)
 
     d.expects(:valid_luhn?).never
