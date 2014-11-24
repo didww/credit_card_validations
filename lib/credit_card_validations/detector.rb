@@ -59,6 +59,7 @@ module CreditCardValidations
              valid?(:#{brand})
           end
         BOOLEAN_RULE
+        rules[brand]
       end
     end
 
