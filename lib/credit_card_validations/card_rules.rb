@@ -60,7 +60,7 @@ module CreditCardValidations
 
         # Luhn validation are skipped for union pay cards because they have unknown generation algoritm
         unionpay: [
-            {length: [16, 17, 18, 19], prefixes: ['622', '624', '625', '626', '628'], skip_validation: true}
+            {length: [16, 17, 18, 19], prefixes: ['622', '624', '625', '626', '628'], skip_luhn: true}
         ],
 
         dankrot: [
