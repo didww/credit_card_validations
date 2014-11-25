@@ -47,29 +47,34 @@ The following issuing institutes are accepted:
 
 Examples using string monkey patch
 
+```ruby
     require 'credit_card_validations/string'
     '5274 5763 9425 9961'.credit_card_brand
     '5274 5763 9425 9961'.valid_credit_card_brand?(:mastercard, :visa)  
     '5274 5763 9425 9961'.valid_credit_card_brand?(:amex)  
-
+```
 
 ActiveModel support
 
-only for certain brads	
+only for certain brads
 
-	class CreditCardModel
-	  	attr_accessor :number
-	  	include ActiveModel::Validations
-	  	validates :number, credit_card_number: {brands: [:amex, :maestro]}
-	end
+```ruby
+    class CreditCardModel 
+        attr_accessor :number
+	include ActiveModel::Validations
+	validates :number, credit_card_number: {brands: [:amex, :maestro]} 
+    end
+```
 
 for all known brands
-	
-	validates :number, presence: true, credit_card_number: true
 
+```ruby	
+    validates :number, presence: true, credit_card_number: true
+```
 
 Examples using CreditCardValidations::Detector class
 
+```ruby	
     number = "4111111111111111"
     detector = CreditCardValidations::Detector.new(number)
     detector.brand #:visa
@@ -77,11 +82,13 @@ Examples using CreditCardValidations::Detector class
     detector.valid?(:mastercard,:maestro) #false
     detector.valid?(:visa, :mastercard) #true
     detector.issuer_category  #"Banking and financial"
+```
 
 Also You can add your own rules to detect other credit card brands/types
 passing name,length(integer/array of integers) and prefix(string/array of strings)
 Example
 
+```ruby	
     CreditCardValidations.add_rule(:voyager, {length: 15, prefixes: '86'})
     CreditCardValidations.add_rule(:en_route, {length: 15, prefixes: ['2014', '2149'], skip_luhn: true}) #skip luhn
           
@@ -92,13 +99,15 @@ Example
     en_route_test_card_number = '2014-0000-0000-001'
     CreditCardValidations::Detector.new(en_route_test_card_number).brand #:en_route
     CreditCardValidations::Detector.new(en_route_test_card_number).en_route? #true
+```
 
 Check luhn
 
+```ruby	
     CreditCardValidations::Detector.new(@credit_card_number).valid_luhn?
     #or
     CreditCardValidations::Luhn.valid?(@credit_card_number)
-  
+```  
 
 
 ## Contributing
