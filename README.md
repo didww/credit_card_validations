@@ -37,6 +37,7 @@ The following issuing institutes are accepted:
     Maestro          | :maestro
     MasterCard       | :mastercard
     Solo             | :solo
+    Switch           | :switch
     Visa             | :visa
 
 
