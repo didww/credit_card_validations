@@ -2,6 +2,8 @@
 
 Gem adds validator  to check whether or not a given number actually falls within the ranges of possible numbers prior to performing such verification, and, as such, CreditCardValidations simply verifies that the credit card number provided is well-formed.
 
+More info about card BIN numbers http://en.wikipedia.org/wiki/Bank_card_number
+
 [![Build Status](https://travis-ci.org/Fivell/credit_card_validations.png)](https://travis-ci.org/Fivell/credit_card_validations)
 [![Coverage Status](https://coveralls.io/repos/Fivell/credit_card_validations/badge.png)](https://coveralls.io/r/Fivell/credit_card_validations)
 
@@ -24,21 +26,22 @@ Or install it yourself as:
 
 The following issuing institutes are accepted:
     
-    name             | key
-    -----------------------
-    American Express | :amex
-    China UnionPay   | :unionpay
-    Dankrot          | :dankrot
-    Diners Club      | :diners
-    Dinner Club US   | :diners_us
-    Discover         | :discover
-    JCB              | :jcb
-    Laser            | :laser
-    Maestro          | :maestro
-    MasterCard       | :mastercard
-    Solo             | :solo
-    Switch           | :switch
-    Visa             | :visa
+    name             | key          |
+    -------------------------------------------------------------------
+    American Express | :amex        | http://en.wikipedia.org/wiki/American_Express
+    China UnionPay   | :unionpay    | http://en.wikipedia.org/wiki/China_UnionPay
+    Dankrot          | :dankrot     | http://en.wikipedia.org/wiki/Dankort
+    Diners Club      | :diners      | http://en.wikipedia.org/wiki/Diners_Club_International
+    Dinner Club US   | :diners_us   | http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance
+    Discover         | :discover    | http://en.wikipedia.org/wiki/Discover_Card
+    JCB              | :jcb         | http://en.wikipedia.org/wiki/Japan_Credit_Bureau
+    Laser            | :laser       | http://en.wikipedia.org/wiki/Laser_%28debit_card%29
+    Maestro          | :maestro     | http://en.wikipedia.org/wiki/Maestro_%28debit_card%29
+    MasterCard       | :mastercard  | http://en.wikipedia.org/wiki/MasterCard
+    Rupay            | :rupay       | http://en.wikipedia.org/wiki/RuPay
+    Solo             | :solo        | http://en.wikipedia.org/wiki/Solo_(debit_card)
+    Switch           | :switch      | http://en.wikipedia.org/wiki/Switch_(debit_card)
+    Visa             | :visa        | http://en.wikipedia.org/wiki/Visa_Inc.
 
 
 
