@@ -34,6 +34,7 @@ The following issuing institutes are accepted:
     Diners Club      | :diners      | http://en.wikipedia.org/wiki/Diners_Club_International
     Dinner Club US   | :diners_us   | http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance
     Discover         | :discover    | http://en.wikipedia.org/wiki/Discover_Card
+    Hipercard        | :hipercard   | http://pt.wikipedia.org/wiki/Hipercard
     JCB              | :jcb         | http://en.wikipedia.org/wiki/Japan_Credit_Bureau
     Laser            | :laser       | http://en.wikipedia.org/wiki/Laser_%28debit_card%29
     Maestro          | :maestro     | http://en.wikipedia.org/wiki/Maestro_%28debit_card%29
