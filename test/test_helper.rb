@@ -13,3 +13,8 @@ I18n.config.enforce_available_locales = true
 
 
 require 'credit_card_validations'
+require 'models/credit_card'
+require 'models/any_credit_card'
+
+
+
