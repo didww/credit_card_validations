@@ -1,34 +1,32 @@
 require_relative 'test_helper'
+require 'yaml'
 
 class CreditCardValidationsTest < MiniTest::Test
 
 
   def initialize name
     super name
-    @test_valid_numbers = {
-      visa: ['4012 8888 8888 1881', 4111111111111111, '4222 2222 2222 2'],
-      mastercard: ['5274 5763 9425 9961', '5555-5555-5555-4444', '5105 1051 0510 5100'],
-      diners: ['3020 4169 3226 43', '30569309025904', '38520000023237'],
-      amex: ['3782 8224 6310 005', '371449635398431', '3787 3449 3671 000'],
-      discover: ['6011 1111 1111 1117', '6011000990139424'],
-      maestro: ['6759 6498 2643 8453'],
-      jcb: ['3575 7591 5225 4876', '3566002020360505'],
-      solo: ['6767 6222 2222 2222 222'],
-      unionpay: ['6264-1852-1292-2132-067', '6288997715452584', '6269 9920 5813 4322'],
-      dankrot: ['5019717010103742'],
-      switch: ['6331101999990016'],
-      rupay: ['6076-6000-0619-9992', '6070-5500-5000-0047'],
-      hipercard: ['3841005899088180330']
-    }
-    
-    @test_invalid_numbers = ['1111111111111111', '00000000000000', "fakenumber", "c4111111111111111", '4111111111111111i']
+    @test_valid_numbers = YAML.load_file File.join(File.dirname(__FILE__), 'fixtures/valid_cards.yml')
+    @test_invalid_numbers = YAML.load_file File.join(File.dirname(__FILE__), 'fixtures/invalid_cards.yml')
+  end
+
+
+  def test_card_luhn
+    @test_valid_numbers.each do |brand, card_numbers|
+      if has_luhn_check_rule?(brand)
+        card_numbers.each do |number|
+          assert luhn_valid?(detector(number).number), "#{number} failed luhn"
+        end
+      end
+    end
+
   end
 
   def test_card_if_credit_card_valid
     @test_valid_numbers.each do |brand, card_numbers|
       card_numbers.each do |card_number|
-        assert detector(card_number).send("#{brand}?")
-        assert_equal brand, detector(card_number).brand
+        assert detector(card_number).send("#{brand}?"), "#{card_number} is #{brand}"
+        assert_equal brand, detector(card_number).brand, "#{card_number} detects as #{brand}"
       end
     end
   end
@@ -37,11 +35,10 @@ class CreditCardValidationsTest < MiniTest::Test
     @test_invalid_numbers.each do |card_number|
       assert !detector(card_number).valid?
       assert_nil detector(card_number).brand
-      @test_valid_numbers.keys.each do |brand| 
+      @test_valid_numbers.keys.each do |brand|
         assert !detector(card_number).send("#{brand}?")
       end
     end
-    
   end
 
   def test_card_brand_detection_with_restriction
@@ -63,12 +60,10 @@ class CreditCardValidationsTest < MiniTest::Test
     end
   end
 
-
   def test_card_particular_brand_valid
     assert !detector(@test_valid_numbers[:visa].first).valid?(:mastercard)
     assert !detector(@test_valid_numbers[:mastercard].first).valid?(:visa)
   end
-
 
   def test_card_particular_brands_valid
     assert detector(@test_valid_numbers[:visa].first).valid?(:mastercard, :visa)
@@ -109,7 +104,7 @@ class CreditCardValidationsTest < MiniTest::Test
 
   def test_string_extension
     assert !@test_valid_numbers[:mastercard].first.respond_to?(:credit_card_brand)
-    assert !@test_valid_numbers[:mastercard].first.respond_to?(:valid_credit_card_brand?)  
+    assert !@test_valid_numbers[:mastercard].first.respond_to?(:valid_credit_card_brand?)
     require 'credit_card_validations/string'
     assert_equal @test_valid_numbers[:mastercard].first.credit_card_brand, :mastercard
     assert @test_valid_numbers[:mastercard].first.valid_credit_card_brand?(:mastercard)
@@ -122,7 +117,7 @@ class CreditCardValidationsTest < MiniTest::Test
     assert !d.valid?(:visa)
 
     d.expects(:valid_luhn?).once
-    assert d.valid?(:visa, :unionpay)     
+    assert d.valid?(:visa, :unionpay)
   end
 
   def test_skip_luhn
@@ -140,9 +135,17 @@ class CreditCardValidationsTest < MiniTest::Test
 
   protected
 
+  def luhn_valid?(number)
+    CreditCardValidations::Luhn.valid?(number)
+  end
+
   def detector(number)
     CreditCardValidations::Detector.new(number)
   end
 
+
+  def has_luhn_check_rule?(brand)
+    CreditCardValidations::Detector.rules[brand].any? { |rule| !rule[:skip_luhn] }
+  end
 
 end
