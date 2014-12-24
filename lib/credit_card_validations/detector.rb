@@ -53,12 +53,11 @@ module CreditCardValidations
         length = Array.wrap(length)
         rules[brand] = [] if rules[brand].blank?
         rules[brand] << {length: length, regexp: compile_regexp(prefixes), prefixes: prefixes, skip_luhn: skip_luhn}
-        #create methods like  visa? mastercard? etc
-        class_eval <<-BOOLEAN_RULE, __FILE__, __LINE__
-          def #{brand}?
-             valid?(:#{brand})
-          end
-        BOOLEAN_RULE
+
+        define_method "#{brand}?".to_sym do
+          valid?(brand)
+        end unless method_defined?  "#{brand}?".to_sym
+
         rules[brand]
       end
     end
