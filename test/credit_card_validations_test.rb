@@ -19,14 +19,13 @@ class CreditCardValidationsTest < MiniTest::Test
         end
       end
     end
-
   end
 
   def test_card_if_credit_card_valid
     @test_valid_numbers.each do |brand, card_numbers|
       card_numbers.each do |card_number|
-        assert detector(card_number).send("#{brand}?"), "#{card_number} is #{brand}"
-        assert_equal brand, detector(card_number).brand, "#{card_number} detects as #{brand}"
+        assert detector(card_number).send("#{brand}?"), "#{card_number}##{brand}? failed"
+        assert_equal brand, detector(card_number).brand, "#{card_number}#brand isn't #{brand}"
       end
     end
   end
@@ -46,7 +45,7 @@ class CreditCardValidationsTest < MiniTest::Test
       assert_equal key, detector(value.first).brand(:visa, :mastercard)
     end
 
-    @test_valid_numbers.except(:visa, :mastercard).each do |key, value|
+    @test_valid_numbers.except(:visa, :mastercard).each do |_, value|
       assert_nil detector(value.first).brand(:visa, :mastercard)
     end
   end
@@ -74,7 +73,7 @@ class CreditCardValidationsTest < MiniTest::Test
   def test_card_valid_after_rules_added
     voyager_test_card_number = '869926275400212'
     assert !detector(voyager_test_card_number).valid?
-    CreditCardValidations::Detector.add_rule(:voyager, 15, '86')
+    CreditCardValidations::Detector.add_brand(:voyager,  {length: 15, prefix: '86'})
     assert detector(voyager_test_card_number).valid?
     assert_equal :voyager, detector(voyager_test_card_number).brand
     assert detector(voyager_test_card_number).voyager?
@@ -143,9 +142,8 @@ class CreditCardValidationsTest < MiniTest::Test
     CreditCardValidations::Detector.new(number)
   end
 
-
-  def has_luhn_check_rule?(brand)
-    CreditCardValidations::Detector.rules[brand].any? { |rule| !rule[:skip_luhn] }
+  def has_luhn_check_rule?(key)
+    !CreditCardValidations::Detector.brands[key].fetch(:options, {}).fetch(:skip_luhn, false)
   end
 
 end
