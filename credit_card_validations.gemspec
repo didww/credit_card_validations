@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = CreditCardValidations::VERSION
   gem.authors       = ["Igor"]
   gem.email         = ["fedoronchuk@gmail.com"]
-  gem.description   = %q{A ruby gem for validating credit card numbers (a port of ZF2 Zend\Validator\CreditCard)}
-  gem.summary       = "gem for credit card numbers validation, card brands detections"
+  gem.description   = %q{A ruby gem for validating credit card numbers}
+  gem.summary       = "gem should be used for credit card numbers validation, card brands detections, luhn checks"
   gem.homepage      = "https://github.com/Fivell/credit_card_validations"
   gem.license     = 'MIT'
   
