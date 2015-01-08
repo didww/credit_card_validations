@@ -1,15 +1,16 @@
 # CreditCardValidations
 
-Gem adds validator  to check whether or not a given number actually falls within the ranges of possible numbers prior to performing such verification, and, as such, CreditCardValidations simply verifies that the credit card number provided is well-formed.
-
-More info about card BIN numbers http://en.wikipedia.org/wiki/Bank_card_number
-
 [![Build Status](http://img.shields.io/travis/Fivell/credit_card_validations.svg)](https://travis-ci.org/Fivell/credit_card_validations)
 [![Dependency Status](http://img.shields.io/gemnasium/Fivell/credit_card_validations.svg)](https://gemnasium.com/Fivell/credit_card_validations)
 [![Coverage Status](http://img.shields.io/coveralls/Fivell/credit_card_validations.svg)](https://coveralls.io/r/Fivell/credit_card_validations)
 [![Code Climate](http://img.shields.io/codeclimate/github/Fivell/credit_card_validations.svg)](https://codeclimate.com/github/Fivell/credit_card_validations)
 [![Gem Version](http://img.shields.io/gem/v/credit_card_validations.svg)](https://rubygems.org/gems/credit_card_validations)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://Fivell.mit-license.org)
+
+
+Gem adds validator  to check whether or not a given number actually falls within the ranges of possible numbers prior to performing such verification, and, as such, CreditCardValidations simply verifies that the credit card number provided is well-formed.
+
+More info about card BIN numbers http://en.wikipedia.org/wiki/Bank_card_number
 
 ## Installation
 
