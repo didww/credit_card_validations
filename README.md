@@ -90,8 +90,8 @@ passing name,length(integer/array of integers) and prefix(string/array of string
 Example
 
 ```ruby	
-    CreditCardValidations.add_rule(:voyager, {length: 15, prefixes: '86'})
-    CreditCardValidations.add_rule(:en_route, {length: 15, prefixes: ['2014', '2149'], skip_luhn: true}) #skip luhn
+    CreditCardValidations.add_brand(:voyager, {length: 15, prefixes: '86'})
+    CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
           
     voyager_test_card_number = '869926275400212'
     CreditCardValidations::Detector.new(voyager_test_card_number).brand #:voyager
