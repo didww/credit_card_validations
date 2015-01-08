@@ -3,11 +3,11 @@ require 'bundler/gem_tasks'
 require 'rake'
 require 'rake/testtask'
 
-task :default => [:test_units]
+task :default => [:specs]
 
-desc "Run basic tests"
-Rake::TestTask.new("test_units") { |t|
-  t.pattern = 'test/*_test.rb'
+desc "Run basic specs"
+Rake::TestTask.new("specs") { |t|
+  t.pattern = 'test/*_spec.rb'
   t.verbose = true
   t.warning = true
 }
