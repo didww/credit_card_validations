@@ -166,20 +166,23 @@ describe CreditCardValidations do
 
 
   describe "Dynamically adding brand" do
-    before do
-      CreditCardValidations::Detector.add_brand(:voyager, {length: 15, prefixes: '86'})
-    end
+
 
     let(:voyager_number) {
       '869926275400212'
     }
+
     it "should validate number as voyager" do
+      CreditCardValidations::Detector.add_brand(:voyager, {length: 15, prefixes: '86'})
       detector(voyager_number).valid?(:voyager).must_equal true
       detector(voyager_number).voyager?.must_equal true
-      detector(voyager_number).visa?.must_equal false
-      detector(voyager_number).mastercard?.must_equal false
       detector(voyager_number).brand.must_equal :voyager
     end
+
+    it "should raise RuntimeError" do
+      proc{CreditCardValidations::Detector::add_rule(:undefined_brand, 20, [20])}.must_raise RuntimeError
+    end
+
   end
 
   def luhn_valid?(number)
