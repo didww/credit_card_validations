@@ -69,17 +69,19 @@ class CreditCardValidationsTest < MiniTest::Test
     assert !detector(@test_valid_numbers[:visa].first).valid?(:mastercard, :amex)
   end
 
+
   #add rules which were not present before
   def test_card_valid_after_rules_added
     voyager_test_card_number = '869926275400212'
-    assert !detector(voyager_test_card_number).valid?
-    CreditCardValidations::Detector.add_brand(:voyager,  {length: 15, prefix: '86'})
-    assert detector(voyager_test_card_number).valid?
-    assert_equal :voyager, detector(voyager_test_card_number).brand
-    assert detector(voyager_test_card_number).voyager?
-    assert !detector(voyager_test_card_number).visa?
-    assert !detector(voyager_test_card_number).mastercard?
+    CreditCardValidations::Detector.add_brand(:voyager, {length: 15, prefixes: '86'})
+    d = detector(voyager_test_card_number)
+    assert d.valid?(:voyager)
+    assert_equal :voyager, d.brand
+    assert d.voyager?
+    assert !d.visa?
+    assert !d.mastercard?
   end
+
 
   def test_active_model_any_validator
     cc = AnyCreditCard.new

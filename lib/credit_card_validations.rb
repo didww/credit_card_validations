@@ -12,15 +12,23 @@ module CreditCardValidations
   autoload :Detector, 'credit_card_validations/detector'
   autoload :Mmi, 'credit_card_validations/mmi'
 
+
   def self.add_brand(key, rules, options = {})
-    CreditCardValidations::Detector.add_brand(key, rules, options)
+    Detector.add_brand(key, rules, options)
   end
 
   DATA = YAML.load_file(File.join(File.dirname(__FILE__),  'data', 'brands.yaml')) || {}
-  DATA.each do |key, data|
-    add_brand(key, data.fetch(:rules), data.fetch(:options, {}))
+
+  def self.reload!
+    Detector.brands = {}
+    DATA.each do |key, data|
+      add_brand(key, data.fetch(:rules), data.fetch(:options, {}))
+    end
   end
-end  
+
+end
+
+CreditCardValidations.reload!
 
 
 
