@@ -65,7 +65,7 @@
     - '649'
     - '65'
 :jcb:
-  :rules:
+  :rules:      
   - :length:
     - 15
     - 16
@@ -83,6 +83,10 @@
     :prefixes:
     - '1800'
     - '2131'
+  - :length:
+    - 19
+    :prefixes:
+    - '357266'               
   :options:
     :brand_name: JCB
 :laser:
