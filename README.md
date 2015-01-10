@@ -115,6 +115,14 @@ Check luhn
     CreditCardValidations::Luhn.valid?(@credit_card_number)
 ```  
 
+Generate credit card numbers that pass validation
+
+```ruby
+ CreditCardValidations::Factory.random(:amex)
+ # => "348051773827666"
+ CreditCardValidations::Factory.random(:maestro)
+ # => "6010430241237266856"
+```
 
 ## Contributing
 

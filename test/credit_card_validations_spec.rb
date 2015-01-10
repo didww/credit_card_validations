@@ -185,6 +185,9 @@ describe CreditCardValidations do
 
   end
 
+
+
+
   def luhn_valid?(number)
     CreditCardValidations::Luhn.valid?(number)
   end
