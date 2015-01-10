@@ -10,6 +10,7 @@ module CreditCardValidations
   autoload :VERSION, 'credit_card_validations/version'
   autoload :Luhn, 'credit_card_validations/luhn'
   autoload :Detector, 'credit_card_validations/detector'
+  autoload :Factory, 'credit_card_validations/factory'
   autoload :Mmi, 'credit_card_validations/mmi'
 
 
