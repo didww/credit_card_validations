@@ -7,10 +7,12 @@ module CreditCardValidations
         else
           raise RuntimeError.new("Unsupported brand") if Detector.brands[brand].nil?
         end
-        rule = Detector.brands[brand][:rules].sample
+        generate(Detector.brands[brand][:rules].sample)
 
+      end
+
+      def generate(rule)
         number(rule[:prefixes].sample, rule[:length].sample, rule.fetch(:options, {})[:skip_luhn])
-
       end
 
       def number(prefix, length, skip_luhn = false)
