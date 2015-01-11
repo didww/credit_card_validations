@@ -1,3 +1,13 @@
+# == CreditCardValidations Factory
+# Generates card number that passes validation
+#
+# #random
+#   CreditCardValidations::Factory.random
+# #or particular brand
+#   CreditCardValidations::Factory.random(:maestro) # "6010430241237266856"
+#
+#
+#
 module CreditCardValidations
   class Factory
     class << self

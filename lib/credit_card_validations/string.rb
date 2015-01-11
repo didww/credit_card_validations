@@ -1,5 +1,9 @@
+# String extension for brand detecting and number validation
 #
-#
+#    require 'credit_card_validations/string'
+#    '5274 5763 9425 9961'.credit_card_brand
+#    '5274 5763 9425 9961'.valid_credit_card_brand?(:mastercard, :visa)
+#    '5274 5763 9425 9961'.valid_credit_card_brand?(:amex)
 #
 class String
   def credit_card_brand

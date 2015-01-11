@@ -1,3 +1,6 @@
+# == CreditCardValidations Detector
+#
+# class provides credit card number validations
 module CreditCardValidations
   class Detector
 
@@ -12,7 +15,7 @@ module CreditCardValidations
       @number = number.to_s.tr('- ', '')
     end
 
-    # credit card number
+    # credit card number validation
     def valid?(*brands)
       !!valid_number?(*brands)
     end
@@ -21,7 +24,6 @@ module CreditCardValidations
     def brand(*keys)
       valid_number?(*keys)
     end
-
 
     def valid_number?(*keys)
       selected_brands = keys.blank? ? self.brands : self.brands.slice(*keys.map { |el| el.downcase })
@@ -39,6 +41,7 @@ module CreditCardValidations
     end
 
     protected
+
     def matches_brand?(brand)
       rules = brand.fetch(:rules)
       options = brand.fetch(:options, {})
@@ -49,13 +52,17 @@ module CreditCardValidations
             number.match(rule[:regexp])
           return true
         end
-
       end
       false
     end
 
     class << self
 
+      #
+      # add brand
+      #
+      #   CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
+      #
       def add_brand(key, rules, options = {})
 
         brands[key] = {rules: [], options: options || {}}
@@ -79,6 +86,7 @@ module CreditCardValidations
 
       protected
 
+      # create methods like visa?,  maestro? etc
       def add_brand_method(key)
         define_method "#{key}?".to_sym do
           valid?(key)

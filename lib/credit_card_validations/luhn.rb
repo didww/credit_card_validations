@@ -1,3 +1,8 @@
+# == CreditCardValidations Luhn
+# simple class to validate Luhn numbers.
+#
+#   Luhn.valid? 4111111111111111
+#
 module CreditCardValidations
   class Luhn
     def self.valid?(number)
