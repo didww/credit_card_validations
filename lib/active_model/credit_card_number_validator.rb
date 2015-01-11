@@ -1,3 +1,13 @@
+# == ActiveModel Validations CreditCardNumberValidator
+#  Can  be used in combination with the +validates+ method
+#
+#   class CreditCard
+#     attr_accessor :number
+#     include ActiveModel::Validations
+#     validates :number, credit_card_number: {brands: [:amex, :maestro]}
+#   end
+#
+
 module ActiveModel
   module Validations
     class CreditCardNumberValidator < EachValidator
