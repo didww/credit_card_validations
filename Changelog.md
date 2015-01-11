@@ -1,0 +1,81 @@
+# UNRELEASED
+
+  * credit card generator
+  * test unit -> specs migration
+  * card rules structure changed to allow custom options
+  * yaml storage implemented
+  * Maestro detection fix
+  * JCB detection fix
+
+
+# 1.5.1
+
+  * Maestro detection fix
+
+# 1.5.0
+
+  * Rupay detection support
+  * Hipercard detection support
+
+# 1.4.7
+
+  * Maestro and Switch detection fix
+
+# 1.4.6
+
+  * JCB detection fix
+
+# 1.4.5
+
+  * Diners detection fix
+
+# 1.4.4
+
+  * Visa detection fix
+
+# 1.4.3
+
+  * fix for Rails 4.+ dependency
+  * Maestro detection fixes
+
+# 1.4.2
+
+  * fix for Rails 4.1 dependency
+  * UnionPay and Discover detection fixes
+
+# 1.4.1
+
+  * fixed ActiveModel Validator syntax
+
+# 1.4.0
+
+  *  Dankrot brand support
+
+# 1.3.0
+
+  * MMI detection support
+
+# 1.2.0
+
+  * Allow brand restriction when detecting brand
+  * fix for Rails 4.0 dependency
+  * Allow to skip Luhn validation for certain brands
+
+# 1.1.2
+
+  * Credit card number sanitizing fix
+  * :any instead of brand name can be used with ActiveModel Validator
+
+# 1.1.1
+
+  * ActiveModel Validator was moved from root namespace
+
+# 1.1.0
+
+  * Added rules for Maestro brand
+  * String extension added
+
+# 1.0.1
+
+  * Dependency fixes
+  * Added usage instructions to README
