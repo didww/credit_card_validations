@@ -27,7 +27,7 @@ module CreditCardValidations
 
       def number(prefix, length, skip_luhn = false)
         number = prefix.dup
-        1...(length - (prefix.length + 1)).times do
+        1.upto(length - (prefix.length + 1)) do
           number << "#{rand(9)}"
         end
         #if skip luhn
