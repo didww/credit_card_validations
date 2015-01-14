@@ -1,5 +1,6 @@
 # UNRELEASED
 
+  * :only and :except options for CreditCardNumberValidator
   * credit card generator
   * test unit -> specs migration
   * card rules structure changed to allow custom options

@@ -1,10 +1,20 @@
 # == ActiveModel Validations CreditCardNumberValidator
 #  Can  be used in combination with the +validates+ method
 #
+#   Only Amex and Maestro
+#
 #   class CreditCard
 #     attr_accessor :number
 #     include ActiveModel::Validations
-#     validates :number, credit_card_number: {brands: [:amex, :maestro]}
+#     validates :number, credit_card_number: {only: [:amex, :maestro]}
+#   end
+#
+#   All numbers are valid except Maestro
+#
+#  class CreditCard
+#     attr_accessor :number
+#     include ActiveModel::Validations
+#     validates :number, credit_card_number: {except: [:maestro]}
 #   end
 #
 
