@@ -1,4 +1,4 @@
-# UNRELEASED
+# 2.0.0
 
   * added support for full brand names
   * added possibility to remove card brands globally
