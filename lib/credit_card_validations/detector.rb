@@ -71,8 +71,15 @@ module CreditCardValidations
           add_rule(key, rule[:length], rule[:prefixes])
         end
 
-        add_brand_method(key)
+        define_brand_method(key)
 
+      end
+
+      # CreditCardValidations.delete_brand(:en_route)
+      def delete_brand(key)
+        key = key.to_sym
+        undef_brand_method(key)
+        brands.reject!{| k, _ | k == key }
       end
 
       #create rule for detecting brand
@@ -87,11 +94,16 @@ module CreditCardValidations
       protected
 
       # create methods like visa?,  maestro? etc
-      def add_brand_method(key)
+      def define_brand_method(key)
         define_method "#{key}?".to_sym do
           valid?(key)
         end unless method_defined? "#{key}?".to_sym
       end
+
+      def undef_brand_method(key)
+         undef_method "#{key}?".to_sym if method_defined? "#{key}?".to_sym
+      end
+
 
       #create regexp by array of prefixes
       def compile_regexp(prefixes)
