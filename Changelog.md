@@ -1,5 +1,6 @@
 # UNRELEASED
 
+  * added support for full brand names
   * added possibility to remove card brands globally
   * support for procs using :brand option for CreditCardNumberValidator
   * :only and :except options for CreditCardNumberValidator

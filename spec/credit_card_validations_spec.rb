@@ -66,6 +66,13 @@ describe CreditCardValidations do
     end
   end
 
+  it "should detect by full brand name" do
+    amex =  CreditCardValidations::Factory.random(:amex)
+    detector(amex).valid?('American Express').must_equal true
+    visa =  CreditCardValidations::Factory.random(:visa)
+    detector(visa).valid?('American Express').must_equal false
+  end
+
   it "should support multiple brands for single check" do
     VALID_NUMBERS.slice(:visa, :mastercard).each do |key, value|
       detector(value.first).brand(:visa, :mastercard).must_equal key
@@ -155,7 +162,7 @@ describe CreditCardValidations do
 
 
   def has_luhn_check_rule?(key)
-    !CreditCardValidations::Detector.brands[key].fetch(:options, {}).fetch(:skip_luhn, false)
+    CreditCardValidations::Detector.has_luhn_check_rule?(key)
   end
 
 end

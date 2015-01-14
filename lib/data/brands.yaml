@@ -17,7 +17,7 @@
     - '54'
     - '55'
   :options:
-    :brand_name: Master Card
+    :brand_name: MasterCard
 :amex:
   :rules:
   - :length:
@@ -50,7 +50,7 @@
     - '54'
     - '55'
   :options:
-    :brand_name: Diners Club
+    :brand_name: Diners Club US
 :discover:
   :rules:
   - :length:

@@ -55,9 +55,11 @@ Examples using string monkey patch
 
 ```ruby
     require 'credit_card_validations/string'
-    '5274 5763 9425 9961'.credit_card_brand
-    '5274 5763 9425 9961'.valid_credit_card_brand?(:mastercard, :visa)  
-    '5274 5763 9425 9961'.valid_credit_card_brand?(:amex)  
+    '5274 5763 9425 9961'.credit_card_brand   #=> :mastercard
+    '5274 5763 9425 9961'.credit_card_brand_name   #=> "MasterCard"
+    '5274 5763 9425 9961'.valid_credit_card_brand?(:mastercard, :visa) #=> true
+    '5274 5763 9425 9961'.valid_credit_card_brand?(:amex) #=> false
+    '5274 5763 9425 9961'.valid_credit_card_brand?('MasterCard') #=> true
 ```
 
 ActiveModel support

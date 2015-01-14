@@ -25,9 +25,6 @@ describe "ActiveModel Validator" do
           card = model
           card.number4 = number
           card.number5 = number
-          unless card.valid?
-            p card.errors
-          end
           card.valid?.must_equal true
 
         end

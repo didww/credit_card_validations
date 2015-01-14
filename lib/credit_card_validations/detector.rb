@@ -26,7 +26,7 @@ module CreditCardValidations
     end
 
     def valid_number?(*keys)
-      selected_brands = keys.blank? ? self.brands : self.brands.slice(*keys.map { |el| el.downcase })
+      selected_brands = keys.blank? ? self.brands : resolve_keys(*keys)
       if selected_brands.any?
         selected_brands.each do |key, brand|
           return key if matches_brand?(brand)
@@ -40,7 +40,22 @@ module CreditCardValidations
       @valid_luhn ||= Luhn.valid?(number)
     end
 
+    def brand_name
+      self.class.brand_name(brand)
+    end
+
     protected
+
+    def resolve_keys(*keys)
+      brand_keys = keys.map do |el|
+        if el.is_a? String
+          #try to find key by name
+          el = (self.class.brand_key(el) || el).to_sym
+        end
+        el.downcase
+      end
+      self.brands.slice(*brand_keys)
+    end
 
     def matches_brand?(brand)
       rules = brand.fetch(:rules)
@@ -57,6 +72,10 @@ module CreditCardValidations
     end
 
     class << self
+
+      def has_luhn_check_rule?(key)
+        !brands[key].fetch(:options, {}).fetch(:skip_luhn, false)
+      end
 
       #
       # add brand
@@ -75,11 +94,27 @@ module CreditCardValidations
 
       end
 
+      def brand_name(brand_key)
+        brand = brands[brand_key]
+        if brand
+          brand.fetch(:options, {})[:brand_name] || brand_key.to_s.titleize
+        else
+          nil
+        end
+
+      end
+
+      def brand_key(brand_name)
+        brands.detect do |_, brand|
+          brand[:options][:brand_name] == brand_name
+        end.try(:first)
+      end
+
       # CreditCardValidations.delete_brand(:en_route)
       def delete_brand(key)
         key = key.to_sym
         undef_brand_method(key)
-        brands.reject!{| k, _ | k == key }
+        brands.reject! { |k, _| k == key }
       end
 
       #create rule for detecting brand
@@ -101,7 +136,7 @@ module CreditCardValidations
       end
 
       def undef_brand_method(key)
-         undef_method "#{key}?".to_sym if method_defined? "#{key}?".to_sym
+        undef_method "#{key}?".to_sym if method_defined? "#{key}?".to_sym
       end
 
 
