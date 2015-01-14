@@ -1,49 +1,45 @@
 require_relative 'test_helper'
 
-class ActiveModelValidationTest < CreditCardValidations::Specs
-  describe "ActiveModel Validator" do
+describe "ActiveModel Validator" do
 
-    describe "Any brand" do
-      let(:model) { AnyCreditCard.new }
-      it "should accept any brand if valid" do
-        valid_numbers.each do |_, numbers|
+  let(:model) { CreditCard.new }
+
+  describe "Any Brand" do
+    it "should be alid for all prepared valid numbers" do
+      VALID_NUMBERS.each do |_, numbers|
+
+        numbers.each do |number|
           card = model
-          card.number = numbers.first
+          card.number4 = number
+          card.number5 = number
           card.valid?.must_equal true
+
         end
       end
-
-      it "should reject invalid numbers" do
-        invalid_numbers.each do |number|
-          card = model
-          card.number = number
-          card.valid?.must_equal false
-        end
-      end
-
-    end
-
-    describe "Only Amex and Mestro brands" do
-      let(:model) { CreditCard.new }
-
-      it "should accept amex and maestro brand if valid" do
-        valid_numbers.slice(:amex, :maestro) do |_, numbers|
-          card = model
-          card.number = numbers.first
-          card.valid?.must_equal true
-        end
-      end
-
-      it "should reject all other valid numbers" do
-        valid_numbers.except(:amex, :maestro) do |_, numbers|
-          card = model
-          card.number = numbers.first
-          card.valid?.must_equal false
-        end
-
-      end
-
     end
   end
 
+
+
+  describe "Only Amex and Mestro brands" do
+
+
+    it "should accept amex and maestro brand if valid" do
+      VALID_NUMBERS.slice(:amex, :maestro) do |_, numbers|
+        card = model
+        card.number = numbers.first
+        card.valid?.must_equal true
+      end
+    end
+
+    it "should reject all other valid numbers" do
+      VALID_NUMBERS.except(:amex, :maestro) do |_, numbers|
+        card = model
+        card.number = numbers.first
+        card.valid?.must_equal false
+      end
+
+    end
+
+  end
 end

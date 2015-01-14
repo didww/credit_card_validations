@@ -1,7 +1,5 @@
 require_relative 'test_helper'
 
-
-class CreditCardValidationsTest < CreditCardValidations::Specs
   describe CreditCardValidations do
 
 
@@ -11,14 +9,14 @@ class CreditCardValidationsTest < CreditCardValidations::Specs
 
     describe "MMI" do
       it "should detect issuer category" do
-        d = detector(valid_numbers[:visa].first)
+        d = detector(VALID_NUMBERS[:visa].first)
         d.issuer_category.must_equal CreditCardValidations::Mmi::ISSUER_CATEGORIES[d.number[0]]
       end
     end
 
     describe "Luhn#valid?" do
       let(:card_detector) {
-        detector(valid_numbers[:unionpay].first)
+        detector(VALID_NUMBERS[:unionpay].first)
       }
       it "should call Luhn.valid? once" do
         CreditCardValidations::Luhn.expects(:valid?).with(card_detector.number).once
@@ -40,7 +38,7 @@ class CreditCardValidationsTest < CreditCardValidations::Specs
 
 
     it "should check luhn" do
-      valid_numbers.each do |brand, card_numbers|
+      VALID_NUMBERS.each do |brand, card_numbers|
         if has_luhn_check_rule?(brand)
           card_numbers.each do |number|
             luhn_valid?(detector(number).number).must_equal true
@@ -50,7 +48,7 @@ class CreditCardValidationsTest < CreditCardValidations::Specs
     end
 
     it "should check valid brand" do
-      valid_numbers.each do |brand, card_numbers|
+      VALID_NUMBERS.each do |brand, card_numbers|
         card_numbers.each do |card_number|
           detector(card_number).send("#{brand}?").must_equal true
           detector(card_number).brand.must_equal brand
@@ -59,27 +57,27 @@ class CreditCardValidationsTest < CreditCardValidations::Specs
     end
 
     it "should check if card invalid" do
-      invalid_numbers.each do |card_number|
+      INVALID_NUMBERS.each do |card_number|
         detector(card_number).valid?.must_equal false
         detector(card_number).brand.must_be_nil
-        valid_numbers.keys.each do |brand|
+        VALID_NUMBERS.keys.each do |brand|
           detector(card_number).send("#{brand}?").must_equal false
         end
       end
     end
 
     it "should support multiple brands for single check" do
-      valid_numbers.slice(:visa, :mastercard).each do |key, value|
+      VALID_NUMBERS.slice(:visa, :mastercard).each do |key, value|
         detector(value.first).brand(:visa, :mastercard).must_equal key
       end
 
-      valid_numbers.except(:visa, :mastercard).each do |_, value|
+      VALID_NUMBERS.except(:visa, :mastercard).each do |_, value|
         detector(value.first).brand(:visa, :mastercard).must_be_nil
       end
     end
 
     it "should check if valid brand without arguments" do
-      valid_numbers.each do |key, value|
+      VALID_NUMBERS.each do |key, value|
         value.each do |card_number|
           detector(card_number).valid?(key).must_equal true
           assert detector(card_number).valid?.must_equal true
@@ -88,13 +86,13 @@ class CreditCardValidationsTest < CreditCardValidations::Specs
     end
 
     it "should not be valid? if wrong brand" do
-      detector(valid_numbers[:visa].first).valid?(:mastercard).must_equal false
-      detector(valid_numbers[:mastercard].first).valid?(:visa).must_equal false
+      detector(VALID_NUMBERS[:visa].first).valid?(:mastercard).must_equal false
+      detector(VALID_NUMBERS[:mastercard].first).valid?(:visa).must_equal false
     end
 
     it "should  be valid? if right brand" do
-      detector(valid_numbers[:visa].first).valid?(:mastercard, :visa).must_equal true
-      detector(valid_numbers[:visa].first).valid?(:mastercard, :amex).must_equal false
+      detector(VALID_NUMBERS[:visa].first).valid?(:mastercard, :visa).must_equal true
+      detector(VALID_NUMBERS[:visa].first).valid?(:mastercard, :amex).must_equal false
     end
 
 
@@ -132,4 +130,3 @@ class CreditCardValidationsTest < CreditCardValidations::Specs
     end
 
   end
-end
