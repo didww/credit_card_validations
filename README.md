@@ -90,7 +90,7 @@ Examples using CreditCardValidations::Detector class
     detector.issuer_category  #"Banking and financial"
 ```
 
-Also You can add your own rules to detect other credit card brands/types
+Also You can add your own brand rules to detect other credit card brands/types
 passing name,length(integer/array of integers) and prefix(string/array of strings)
 Example
 
@@ -106,6 +106,14 @@ Example
     CreditCardValidations::Detector.new(en_route_test_card_number).brand #:en_route
     CreditCardValidations::Detector.new(en_route_test_card_number).en_route? #true
 ```
+
+Remove brands also supported
+
+```ruby
+    CreditCardValidations.delete_brand(:maestro)
+```
+
+
 
 Check luhn
 

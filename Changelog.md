@@ -1,5 +1,7 @@
 # UNRELEASED
 
+  * added possibility to remove card brands globally
+  * support for procs using :brand option for CreditCardNumberValidator
   * :only and :except options for CreditCardNumberValidator
   * credit card generator
   * test unit -> specs migration
