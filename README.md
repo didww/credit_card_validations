@@ -47,7 +47,7 @@ The following issuing institutes are accepted:
 <tr><td>[Rupay  ](http://en.wikipedia.org/wiki/RuPay)          </td>            <td> :rupay       </td>       
 <tr><td>[Solo ](http://en.wikipedia.org/wiki/Solo_(debit_card))            </td>            <td> :solo        </td>          </tr> 
 <tr><td>[Switch  ](http://en.wikipedia.org/wiki/Switch_(debit_card))         </td>            <td> :switch      </td>        </tr> 
-<tr><td>[Visa    ](http://en.wikipedia.org/wiki/American_Express)         </td>            <td> :visa        </td>       </tr> 
+<tr><td>[Visa    ](http://en.wikipedia.org/wiki/Visa_Inc.)         </td>            <td> :visa        </td>       </tr> 
 </table>
 
 Examples using string monkey patch
