@@ -31,25 +31,24 @@ Or install it yourself as:
 
 The following issuing institutes are accepted:
     
-    name             | key          |
-    -------------------------------------------------------------------
-    American Express | :amex        | http://en.wikipedia.org/wiki/American_Express
-    China UnionPay   | :unionpay    | http://en.wikipedia.org/wiki/China_UnionPay
-    Dankrot          | :dankrot     | http://en.wikipedia.org/wiki/Dankort
-    Diners Club      | :diners      | http://en.wikipedia.org/wiki/Diners_Club_International
-    Dinner Club US   | :diners_us   | http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance
-    Discover         | :discover    | http://en.wikipedia.org/wiki/Discover_Card
-    Hipercard        | :hipercard   | http://pt.wikipedia.org/wiki/Hipercard
-    JCB              | :jcb         | http://en.wikipedia.org/wiki/Japan_Credit_Bureau
-    Laser            | :laser       | http://en.wikipedia.org/wiki/Laser_%28debit_card%29
-    Maestro          | :maestro     | http://en.wikipedia.org/wiki/Maestro_%28debit_card%29
-    MasterCard       | :mastercard  | http://en.wikipedia.org/wiki/MasterCard
-    Rupay            | :rupay       | http://en.wikipedia.org/wiki/RuPay
-    Solo             | :solo        | http://en.wikipedia.org/wiki/Solo_(debit_card)
-    Switch           | :switch      | http://en.wikipedia.org/wiki/Switch_(debit_card)
-    Visa             | :visa        | http://en.wikipedia.org/wiki/Visa_Inc.
+   <table><tr><td>name</td>            <td>key</td>         </tr>  
 
-
+<tr><td>[American Express](http://en.wikipedia.org/wiki/American_Express) </td>            <td> :amex        </td>         </tr> 
+<tr><td>[China UnionPay ](http://en.wikipedia.org/wiki/China_UnionPay)  </td>            <td> :unionpay   </td>       </tr> 
+<tr><td>[Dankrot  ](http://en.wikipedia.org/wiki/Dankort)        </td>            <td> :dankrot     </td>        </tr> 
+<tr><td>[Diners Club ](http://en.wikipedia.org/wiki/Diners_Club_International)     </td>            <td> :diners      </td>          </tr> 
+<tr><td>[Dinner Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance)   </td>            <td> :diners_us   </td>          </tr> 
+<tr><td>[Discover](http://en.wikipedia.org/wiki/Discover_Card)         </td>            <td> :discover    </td>        </tr> 
+<tr><td>[Hipercard   ](http://pt.wikipedia.org/wiki/Hipercard)     </td>            <td> :hipercard   </td>        </tr> 
+<tr><td>[JCB  ](http://en.wikipedia.org/wiki/Japan_Credit_Bureau)            </td>            <td> :jcb         </td>        </tr> 
+<tr><td>[Laser ](http://en.wikipedia.org/wiki/Laser_%28debit_card%29)           </td>            <td> :laser       </td>        </tr> 
+<tr><td>[Maestro](http://en.wikipedia.org/wiki/Maestro_%28debit_card%29)          </td>            <td> :maestro     </td>        </tr> 
+<tr><td>[MasterCard ](http://en.wikipedia.org/wiki/MasterCard)      </td>            <td> :mastercard  </td>          </tr> 
+<tr><td>[Rupay  ](http://en.wikipedia.org/wiki/RuPay)          </td>            <td> :rupay       </td>       
+<tr><td>[Solo ](http://en.wikipedia.org/wiki/Solo_(debit_card))            </td>            <td> :solo        </td>          </tr> 
+<tr><td>[Switch  ](http://en.wikipedia.org/wiki/Switch_(debit_card))         </td>            <td> :switch      </td>        </tr> 
+<tr><td>[Visa    ](http://en.wikipedia.org/wiki/American_Express)         </td>            <td> :visa        </td>       </tr> 
+</table>
 
 Examples using string monkey patch
 
