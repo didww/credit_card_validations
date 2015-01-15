@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Credit card validations by Fivell</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Credit card validations</h1>
+        <h2>A ruby gem for validating credit card numbers, generating ones, luhn checks</h2>
+        <a href="https://github.com/Fivell/credit_card_validations" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="creditcardvalidations" class="anchor" href="#creditcardvalidations" aria-hidden="true"><span class="octicon octicon-link"></span></a>CreditCardValidations</h1>
+
+<p><a href="https://travis-ci.org/Fivell/credit_card_validations"><img src="http://img.shields.io/travis/Fivell/credit_card_validations.svg" alt="Build Status"></a>
+<a href="https://gemnasium.com/Fivell/credit_card_validations"><img src="http://img.shields.io/gemnasium/Fivell/credit_card_validations.svg" alt="Dependency Status"></a>
+<a href="https://coveralls.io/r/Fivell/credit_card_validations"><img src="http://img.shields.io/coveralls/Fivell/credit_card_validations.svg" alt="Coverage Status"></a>
+<a href="https://codeclimate.com/github/Fivell/credit_card_validations"><img src="http://img.shields.io/codeclimate/github/Fivell/credit_card_validations.svg" alt="Code Climate"></a>
+<a href="https://rubygems.org/gems/credit_card_validations"><img src="http://img.shields.io/gem/v/credit_card_validations.svg" alt="Gem Version"></a>
+<a href="http://Fivell.mit-license.org"><img src="http://img.shields.io/:license-mit-blue.svg" alt="License"></a></p>
+
+<p>Gem adds validator  to check whether or not a given number actually falls within the ranges of possible numbers prior to performing such verification, and, as such, CreditCardValidations simply verifies that the credit card number provided is well-formed.</p>
+
+<p>More info about card BIN numbers <a href="http://en.wikipedia.org/wiki/Bank_card_number">http://en.wikipedia.org/wiki/Bank_card_number</a></p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<pre><code>gem 'credit_card_validations'
+</code></pre>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install credit_card_validations
+</code></pre>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>The following issuing institutes are accepted:</p>
+
+<pre><code>name             | key          |
+-------------------------------------------------------------------
+American Express | :amex        | http://en.wikipedia.org/wiki/American_Express
+China UnionPay   | :unionpay    | http://en.wikipedia.org/wiki/China_UnionPay
+Dankrot          | :dankrot     | http://en.wikipedia.org/wiki/Dankort
+Diners Club      | :diners      | http://en.wikipedia.org/wiki/Diners_Club_International
+Dinner Club US   | :diners_us   | http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance
+Discover         | :discover    | http://en.wikipedia.org/wiki/Discover_Card
+Hipercard        | :hipercard   | http://pt.wikipedia.org/wiki/Hipercard
+JCB              | :jcb         | http://en.wikipedia.org/wiki/Japan_Credit_Bureau
+Laser            | :laser       | http://en.wikipedia.org/wiki/Laser_%28debit_card%29
+Maestro          | :maestro     | http://en.wikipedia.org/wiki/Maestro_%28debit_card%29
+MasterCard       | :mastercard  | http://en.wikipedia.org/wiki/MasterCard
+Rupay            | :rupay       | http://en.wikipedia.org/wiki/RuPay
+Solo             | :solo        | http://en.wikipedia.org/wiki/Solo_(debit_card)
+Switch           | :switch      | http://en.wikipedia.org/wiki/Switch_(debit_card)
+Visa             | :visa        | http://en.wikipedia.org/wiki/Visa_Inc.
+</code></pre>
+
+<p>Examples using string monkey patch</p>
+
+<div class="highlight highlight-ruby"><pre>    <span class="pl-k">require</span> <span class="pl-s1"><span class="pl-pds">'</span>credit_card_validations/string<span class="pl-pds">'</span></span>
+    <span class="pl-s1"><span class="pl-pds">'</span>5274 5763 9425 9961<span class="pl-pds">'</span></span>.credit_card_brand   <span class="pl-c">#=&gt; :mastercard</span>
+    <span class="pl-s1"><span class="pl-pds">'</span>5274 5763 9425 9961<span class="pl-pds">'</span></span>.credit_card_brand_name   <span class="pl-c">#=&gt; "MasterCard"</span>
+    <span class="pl-s1"><span class="pl-pds">'</span>5274 5763 9425 9961<span class="pl-pds">'</span></span>.valid_credit_card_brand?(<span class="pl-c1">:mastercard</span>, <span class="pl-c1">:visa</span>) <span class="pl-c">#=&gt; true</span>
+    <span class="pl-s1"><span class="pl-pds">'</span>5274 5763 9425 9961<span class="pl-pds">'</span></span>.valid_credit_card_brand?(<span class="pl-c1">:amex</span>) <span class="pl-c">#=&gt; false</span>
+    <span class="pl-s1"><span class="pl-pds">'</span>5274 5763 9425 9961<span class="pl-pds">'</span></span>.valid_credit_card_brand?(<span class="pl-s1"><span class="pl-pds">'</span>MasterCard<span class="pl-pds">'</span></span>) <span class="pl-c">#=&gt; true</span></pre></div>
+
+<p>ActiveModel support</p>
+
+<p>only for certain brads</p>
+
+<div class="highlight highlight-ruby"><pre>    <span class="pl-k">class</span> <span class="pl-en">CreditCardModel</span> 
+        <span class="pl-k">attr_accessor</span> <span class="pl-c1">:number</span>
+        <span class="pl-k">include</span> <span class="pl-s3">ActiveModel</span>::<span class="pl-vo">Validations</span>
+        validates <span class="pl-c1">:number</span>, <span class="pl-c1">credit_card_number:</span> {<span class="pl-c1">brands:</span> [<span class="pl-c1">:amex</span>, <span class="pl-c1">:maestro</span>]} 
+    <span class="pl-k">end</span></pre></div>
+
+<p>for all known brands</p>
+
+<div class="highlight highlight-ruby"><pre>    validates <span class="pl-c1">:number</span>, <span class="pl-c1">presence:</span> <span class="pl-c1">true</span>, <span class="pl-c1">credit_card_number:</span> <span class="pl-c1">true</span></pre></div>
+
+<p>Examples using CreditCardValidations::Detector class</p>
+
+<div class="highlight highlight-ruby"><pre>    number <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>4111111111111111<span class="pl-pds">"</span></span>
+    detector <span class="pl-k">=</span> <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Detector</span>.<span class="pl-k">new</span>(number)
+    detector.brand <span class="pl-c">#:visa</span>
+    detector.visa? <span class="pl-c">#true</span>
+    detector.valid?(<span class="pl-c1">:mastercard</span>,<span class="pl-c1">:maestro</span>) <span class="pl-c">#false</span>
+    detector.valid?(<span class="pl-c1">:visa</span>, <span class="pl-c1">:mastercard</span>) <span class="pl-c">#true</span>
+    detector.issuer_category  <span class="pl-c">#"Banking and financial"</span></pre></div>
+
+<p>Also You can add your own brand rules to detect other credit card brands/types
+passing name,length(integer/array of integers) and prefix(string/array of strings)
+Example</p>
+
+<div class="highlight highlight-ruby"><pre>    <span class="pl-s3">CreditCardValidations</span>.add_brand(<span class="pl-c1">:voyager</span>, {<span class="pl-c1">length:</span> <span class="pl-c1">15</span>, <span class="pl-c1">prefixes:</span> <span class="pl-s1"><span class="pl-pds">'</span>86<span class="pl-pds">'</span></span>})
+    <span class="pl-s3">CreditCardValidations</span>.add_brand(<span class="pl-c1">:en_route</span>, {<span class="pl-c1">length:</span> <span class="pl-c1">15</span>, <span class="pl-c1">prefixes:</span> [<span class="pl-s1"><span class="pl-pds">'</span>2014<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>2149<span class="pl-pds">'</span></span>]}, {<span class="pl-c1">skip_luhn:</span> <span class="pl-c1">true</span>}) <span class="pl-c">#skip luhn</span>
+
+    voyager_test_card_number <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>869926275400212<span class="pl-pds">'</span></span>
+    <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Detector</span>.<span class="pl-k">new</span>(voyager_test_card_number).brand <span class="pl-c">#:voyager</span>
+    <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Detector</span>.<span class="pl-k">new</span>(voyager_test_card_number).voyager? <span class="pl-c">#true</span>
+
+    en_route_test_card_number <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>2014-0000-0000-001<span class="pl-pds">'</span></span>
+    <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Detector</span>.<span class="pl-k">new</span>(en_route_test_card_number).brand <span class="pl-c">#:en_route</span>
+    <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Detector</span>.<span class="pl-k">new</span>(en_route_test_card_number).en_route? <span class="pl-c">#true</span></pre></div>
+
+<p>Remove brands also supported</p>
+
+<div class="highlight highlight-ruby"><pre>    <span class="pl-s3">CreditCardValidations</span>.delete_brand(<span class="pl-c1">:maestro</span>)</pre></div>
+
+<p>Check luhn</p>
+
+<div class="highlight highlight-ruby"><pre>    <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Detector</span>.<span class="pl-k">new</span>(<span class="pl-vo">@credit_card_number</span>).valid_luhn?
+    <span class="pl-c">#or</span>
+    <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Luhn</span>.valid?(<span class="pl-vo">@credit_card_number</span>)</pre></div>
+
+<p>Generate credit card numbers that pass validation</p>
+
+<div class="highlight highlight-ruby"><pre> <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Factory</span>.random(<span class="pl-c1">:amex</span>)
+ <span class="pl-c"># =&gt; "348051773827666"</span>
+ <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Factory</span>.random(<span class="pl-c1">:maestro</span>)
+ <span class="pl-c"># =&gt; "6010430241237266856"</span></pre></div>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Fivell/credit_card_validations/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Fivell/credit_card_validations/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Fivell/credit_card_validations"></a> is maintained by <a href="https://github.com/Fivell">Fivell</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
