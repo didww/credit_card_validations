@@ -65,24 +65,24 @@
 
 <p>The following issuing institutes are accepted:</p>
 
-<pre><code>name             | key          |
--------------------------------------------------------------------
-American Express | :amex        | http://en.wikipedia.org/wiki/American_Express
-China UnionPay   | :unionpay    | http://en.wikipedia.org/wiki/China_UnionPay
-Dankrot          | :dankrot     | http://en.wikipedia.org/wiki/Dankort
-Diners Club      | :diners      | http://en.wikipedia.org/wiki/Diners_Club_International
-Dinner Club US   | :diners_us   | http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance
-Discover         | :discover    | http://en.wikipedia.org/wiki/Discover_Card
-Hipercard        | :hipercard   | http://pt.wikipedia.org/wiki/Hipercard
-JCB              | :jcb         | http://en.wikipedia.org/wiki/Japan_Credit_Bureau
-Laser            | :laser       | http://en.wikipedia.org/wiki/Laser_%28debit_card%29
-Maestro          | :maestro     | http://en.wikipedia.org/wiki/Maestro_%28debit_card%29
-MasterCard       | :mastercard  | http://en.wikipedia.org/wiki/MasterCard
-Rupay            | :rupay       | http://en.wikipedia.org/wiki/RuPay
-Solo             | :solo        | http://en.wikipedia.org/wiki/Solo_(debit_card)
-Switch           | :switch      | http://en.wikipedia.org/wiki/Switch_(debit_card)
-Visa             | :visa        | http://en.wikipedia.org/wiki/Visa_Inc.
-</code></pre>
+<table><tr><td>name</td>            <td>key</td>         </tr>  
+
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/American_Express">American Express</a> </td>            <td> :amex        </td>         </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/China_UnionPay">China UnionPay </a>  </td>            <td> :unionpay   </td>       </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Dankort">Dankrot  </a>        </td>            <td> :dankrot     </td>        </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Diners_Club_International">Diners Club </a>     </td>            <td> :diners      </td>          </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance">Dinner Club US</a>   </td>            <td> :diners_us   </td>          </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Discover_Card">Discover</a>         </td>            <td> :discover    </td>        </tr> 
+<tr><td><a target="_blank" href="http://pt.wikipedia.org/wiki/Hipercard">Hipercard   </a>     </td>            <td> :hipercard   </td>        </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Japan_Credit_Bureau">JCB  </a>            </td>            <td> :jcb         </td>        </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Laser_%28debit_card%29">Laser </a>           </td>            <td> :laser       </td>        </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Maestro_%28debit_card%29">Maestro</a>          </td>            <td> :maestro     </td>        </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/MasterCard">MasterCard </a>      </td>            <td> :mastercard  </td>          </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/RuPay">Rupay  </a>          </td>            <td> :rupay       </td>       
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Solo_(debit_card)">Solo </a>            </td>            <td> :solo        </td>          </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/Switch_(debit_card)">Switch  </a>         </td>            <td> :switch      </td>        </tr> 
+<tr><td><a target="_blank" href="http://en.wikipedia.org/wiki/American_Express">Visa    </a>         </td>            <td> :visa        </td>       </tr> 
+</table>
 
 <p>Examples using string monkey patch</p>
 
@@ -122,7 +122,10 @@ passing name,length(integer/array of integers) and prefix(string/array of string
 Example</p>
 
 <div class="highlight highlight-ruby"><pre>    <span class="pl-s3">CreditCardValidations</span>.add_brand(<span class="pl-c1">:voyager</span>, {<span class="pl-c1">length:</span> <span class="pl-c1">15</span>, <span class="pl-c1">prefixes:</span> <span class="pl-s1"><span class="pl-pds">'</span>86<span class="pl-pds">'</span></span>})
-    <span class="pl-s3">CreditCardValidations</span>.add_brand(<span class="pl-c1">:en_route</span>, {<span class="pl-c1">length:</span> <span class="pl-c1">15</span>, <span class="pl-c1">prefixes:</span> [<span class="pl-s1"><span class="pl-pds">'</span>2014<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>2149<span class="pl-pds">'</span></span>]}, {<span class="pl-c1">skip_luhn:</span> <span class="pl-c1">true</span>}) <span class="pl-c">#skip luhn</span>
+    <span class="pl-s3">CreditCardValidations</span>.add_brand(<span class="pl-c1">:en_route</span>, {
+        <span class="pl-c1">length:</span> <span class="pl-c1">15</span>,
+        <span class="pl-c1">prefixes:</span> [<span class="pl-s1"><span class="pl-pds">'</span>2014<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>2149<span class="pl-pds">'</span></span>]
+        },{<span class="pl-c1">skip_luhn:</span> <span class="pl-c1">true</span>}) <span class="pl-c">#skip luhn</span>
 
     voyager_test_card_number <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>869926275400212<span class="pl-pds">'</span></span>
     <span class="pl-s3">CreditCardValidations</span>::<span class="pl-s3">Detector</span>.<span class="pl-k">new</span>(voyager_test_card_number).brand <span class="pl-c">#:voyager</span>
