@@ -1,3 +1,6 @@
+# 2.0.1
+   * fix typo dankrot -> dankort    
+ 
 # 2.0.0
 
   * added support for full brand names
@@ -53,7 +56,7 @@
 
 # 1.4.0
 
-  *  Dankrot brand support
+  *  Dankort brand support
 
 # 1.3.0
 

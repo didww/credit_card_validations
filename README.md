@@ -35,7 +35,7 @@ The following issuing institutes are accepted:
 
 <tr><td>[American Express](http://en.wikipedia.org/wiki/American_Express) </td>            <td> :amex        </td>         </tr> 
 <tr><td>[China UnionPay ](http://en.wikipedia.org/wiki/China_UnionPay)  </td>            <td> :unionpay   </td>       </tr> 
-<tr><td>[Dankrot  ](http://en.wikipedia.org/wiki/Dankort)        </td>            <td> :dankrot     </td>        </tr> 
+<tr><td>[Dankort ](http://en.wikipedia.org/wiki/Dankort)        </td>            <td> :dankort     </td>        </tr> 
 <tr><td>[Diners Club ](http://en.wikipedia.org/wiki/Diners_Club_International)     </td>            <td> :diners      </td>          </tr> 
 <tr><td>[Dinner Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance)   </td>            <td> :diners_us   </td>          </tr> 
 <tr><td>[Discover](http://en.wikipedia.org/wiki/Discover_Card)         </td>            <td> :discover    </td>        </tr> 

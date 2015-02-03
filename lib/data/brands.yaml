@@ -206,7 +206,7 @@
   :options:
     :skip_luhn: true
     :brand_name: China UnionPay
-:dankrot:
+:dankort:
   :rules:
   - :length:
     - 16
