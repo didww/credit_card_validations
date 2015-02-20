@@ -43,7 +43,7 @@ module ActiveModel
     class CreditCardNumberValidator < EachValidator
 
       def validate_each(record, attribute, value)
-        record.errors.add(attribute) unless credit_card_valid?(value, extract_brands(record, options))
+        record.errors.add(attribute, options[:message] || :invalid) unless credit_card_valid?(value, extract_brands(record, options))
       end
 
       def credit_card_valid?(number, brands = [])
