@@ -1,3 +1,6 @@
+# 2.0.2
+   * fix using ActiveModel Validator's message option
+
 # 2.0.1
    * fix typo dankrot -> dankort    
  
