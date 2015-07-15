@@ -1,9 +1,13 @@
+# 2.0.3
+   * Remove Laser brand because Laser cards were withdrawn from the market on February 28 2014
+   * Move Laser ranges to Maestro. Add 6390 range to Maestro
+
 # 2.0.2
    * fix using ActiveModel Validator's message option
 
 # 2.0.1
-   * fix typo dankrot -> dankort    
- 
+   * fix typo dankrot -> dankort
+
 # 2.0.0
 
   * added support for full brand names

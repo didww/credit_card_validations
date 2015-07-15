@@ -41,7 +41,6 @@ The following issuing institutes are accepted:
 <tr><td>[Discover](http://en.wikipedia.org/wiki/Discover_Card)         </td>            <td> :discover    </td>        </tr> 
 <tr><td>[Hipercard   ](http://pt.wikipedia.org/wiki/Hipercard)     </td>            <td> :hipercard   </td>        </tr> 
 <tr><td>[JCB  ](http://en.wikipedia.org/wiki/Japan_Credit_Bureau)            </td>            <td> :jcb         </td>        </tr> 
-<tr><td>[Laser ](http://en.wikipedia.org/wiki/Laser_%28debit_card%29)           </td>            <td> :laser       </td>        </tr> 
 <tr><td>[Maestro](http://en.wikipedia.org/wiki/Maestro_%28debit_card%29)          </td>            <td> :maestro     </td>        </tr> 
 <tr><td>[MasterCard ](http://en.wikipedia.org/wiki/MasterCard)      </td>            <td> :mastercard  </td>          </tr> 
 <tr><td>[Rupay  ](http://en.wikipedia.org/wiki/RuPay)          </td>            <td> :rupay       </td>       
@@ -98,7 +97,8 @@ Example
 ```ruby	
     CreditCardValidations.add_brand(:voyager, {length: 15, prefixes: '86'})
     CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
-          
+    CreditCardValidations.add_brand(:laser, {length: 18, prefixes: ['6304', '6706', '6771']})
+      
     voyager_test_card_number = '869926275400212'
     CreditCardValidations::Detector.new(voyager_test_card_number).brand #:voyager
     CreditCardValidations::Detector.new(voyager_test_card_number).voyager? #true
@@ -106,6 +106,11 @@ Example
     en_route_test_card_number = '2014-0000-0000-001'
     CreditCardValidations::Detector.new(en_route_test_card_number).brand #:en_route
     CreditCardValidations::Detector.new(en_route_test_card_number).en_route? #true
+
+    laser_test_card_number = '6304 9506 0000 0000 00'
+    CreditCardValidations.delete_brand(:maestro) # Maestro is crossing Laser range
+    CreditCardValidations::Detector.new(laser_test_card_number).brand #:laser
+    CreditCardValidations::Detector.new(laser_test_card_number).laser? #true
 ```
 
 Remove brands also supported
