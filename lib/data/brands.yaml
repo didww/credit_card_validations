@@ -42,15 +42,6 @@
     - '38'
   :options:
     :brand_name: Diners Club
-:diners_us:
-  :rules:
-  - :length:
-    - 16
-    :prefixes:
-    - '54'
-    - '55'
-  :options:
-    :brand_name: Diners Club US
 :discover:
   :rules:
   - :length:

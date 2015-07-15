@@ -1,6 +1,8 @@
-# 2.0.3
+# 3.0.0
    * Remove Laser brand because Laser cards were withdrawn from the market on February 28 2014
+   * Remove Diners US brand for similar reason
    * Move Laser ranges to Maestro. Add 6390 range to Maestro
+   * Add plugins for removed brands
 
 # 2.0.2
    * fix using ActiveModel Validator's message option
