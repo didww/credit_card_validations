@@ -49,7 +49,7 @@ The following issuing institutes are accepted:
 <tr><td>[Visa    ](http://en.wikipedia.org/wiki/Visa_Inc.)         </td>            <td> :visa        </td>       </tr> 
 </table>
 
-Examples using string monkey patch
+### Examples using string monkey patch
 
 ```ruby
     require 'credit_card_validations/string'
@@ -60,7 +60,7 @@ Examples using string monkey patch
     '5274 5763 9425 9961'.valid_credit_card_brand?('MasterCard') #=> true
 ```
 
-ActiveModel support
+### ActiveModel support
 
 only for certain brads
 
@@ -78,7 +78,7 @@ for all known brands
     validates :number, presence: true, credit_card_number: true
 ```
 
-Examples using CreditCardValidations::Detector class
+### Examples using CreditCardValidations::Detector class
 
 ```ruby	
     number = "4111111111111111"
@@ -90,38 +90,24 @@ Examples using CreditCardValidations::Detector class
     detector.issuer_category  #"Banking and financial"
 ```
 
-Also You can add your own brand rules to detect other credit card brands/types
+### Also You can add your own brand rules to detect other credit card brands/types
 passing name,length(integer/array of integers) and prefix(string/array of strings)
 Example
 
 ```ruby	
     CreditCardValidations.add_brand(:voyager, {length: 15, prefixes: '86'})
-    CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
-    CreditCardValidations.add_brand(:laser, {length: 18, prefixes: ['6304', '6706', '6771']})
-      
     voyager_test_card_number = '869926275400212'
     CreditCardValidations::Detector.new(voyager_test_card_number).brand #:voyager
     CreditCardValidations::Detector.new(voyager_test_card_number).voyager? #true
-    
-    en_route_test_card_number = '2014-0000-0000-001'
-    CreditCardValidations::Detector.new(en_route_test_card_number).brand #:en_route
-    CreditCardValidations::Detector.new(en_route_test_card_number).en_route? #true
-
-    laser_test_card_number = '6304 9506 0000 0000 00'
-    CreditCardValidations.delete_brand(:maestro) # Maestro is crossing Laser range
-    CreditCardValidations::Detector.new(laser_test_card_number).brand #:laser
-    CreditCardValidations::Detector.new(laser_test_card_number).laser? #true
 ```
 
-Remove brands also supported
+### Remove brands also supported
 
 ```ruby
     CreditCardValidations.delete_brand(:maestro)
 ```
 
-
-
-Check luhn
+### Check luhn
 
 ```ruby	
     CreditCardValidations::Detector.new(@credit_card_number).valid_luhn?
@@ -129,7 +115,7 @@ Check luhn
     CreditCardValidations::Luhn.valid?(@credit_card_number)
 ```  
 
-Generate credit card numbers that pass validation
+### Generate credit card numbers that pass validation
 
 ```ruby
  CreditCardValidations::Factory.random(:amex)
@@ -137,6 +123,16 @@ Generate credit card numbers that pass validation
  CreditCardValidations::Factory.random(:maestro)
  # => "6010430241237266856"
 ```
+
+### Plugins 
+
+  ```ruby 
+  require 'credit_card_validations/plugins/en_route'
+  require 'credit_card_validations/plugins/voyager'
+  require 'credit_card_validations/plugins/laser'
+  require 'credit_card_validations/plugins/diners_us'
+
+  ```
 
 ## Contributing
 
