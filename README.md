@@ -41,7 +41,6 @@ The following issuing institutes are accepted:
 <tr><td>[Discover](http://en.wikipedia.org/wiki/Discover_Card)         </td>            <td> :discover    </td>        </tr> 
 <tr><td>[Hipercard   ](http://pt.wikipedia.org/wiki/Hipercard)     </td>            <td> :hipercard   </td>        </tr> 
 <tr><td>[JCB  ](http://en.wikipedia.org/wiki/Japan_Credit_Bureau)            </td>            <td> :jcb         </td>        </tr> 
-<tr><td>[Laser ](http://en.wikipedia.org/wiki/Laser_%28debit_card%29)           </td>            <td> :laser       </td>        </tr> 
 <tr><td>[Maestro](http://en.wikipedia.org/wiki/Maestro_%28debit_card%29)          </td>            <td> :maestro     </td>        </tr> 
 <tr><td>[MasterCard ](http://en.wikipedia.org/wiki/MasterCard)      </td>            <td> :mastercard  </td>          </tr> 
 <tr><td>[Rupay  ](http://en.wikipedia.org/wiki/RuPay)          </td>            <td> :rupay       </td>       
