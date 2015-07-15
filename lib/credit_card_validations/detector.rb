@@ -119,7 +119,7 @@ module CreditCardValidations
       #create rule for detecting brand
       def add_rule(key, length, prefixes)
         unless brands.has_key?(key)
-          raise CreditCardValidations::Error.new("brand #{key} is undefined, please use #add_brand method")
+          raise Error.new("brand #{key} is undefined, please use #add_brand method")
         end
         length, prefixes = Array(length), Array(prefixes)
         brands[key][:rules] << {length: length, regexp: compile_regexp(prefixes), prefixes: prefixes}

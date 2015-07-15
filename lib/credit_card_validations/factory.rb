@@ -12,13 +12,11 @@ module CreditCardValidations
   class Factory
     class << self
       def random(brand = nil)
-        if brand.nil?
-          brand = Detector.brands.keys.sample
-        else
-          raise CreditCardValidations::Error.new("Unsupported brand") if Detector.brands[brand].nil?
+        brand = Detector.brands.keys.sample if brand.nil?
+        if Detector.brands[brand].nil?
+          raise Error.new('Unsupported brand')
         end
         generate(Detector.brands[brand][:rules].sample)
-
       end
 
       def generate(rule)
