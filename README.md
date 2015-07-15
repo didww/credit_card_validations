@@ -31,23 +31,32 @@ Or install it yourself as:
 
 The following issuing institutes are accepted:
     
-   <table><tr><td>name</td>            <td>key</td>         </tr>  
+    Name   |    Key     | 
+---------------------   | ------------| 
+[American Express](http://en.wikipedia.org/wiki/American_Express) | :amex
+[China UnionPay](http://en.wikipedia.org/wiki/China_UnionPay)    | :unionpay 
+[Dankort](http://en.wikipedia.org/wiki/Dankort)      | :dankort
+[Diners Club](http://en.wikipedia.org/wiki/Diners_Club_International)  | :diners    
+[Discover](http://en.wikipedia.org/wiki/Discover_Card) | :discover   
+[Hipercard](http://pt.wikipedia.org/wiki/Hipercard) | :hipercard  
+[JCB](http://en.wikipedia.org/wiki/Japan_Credit_Bureau)  | :jcb
+[Maestro](http://en.wikipedia.org/wiki/Maestro_%28debit_card%29)    | :maestro
+[MasterCard](http://en.wikipedia.org/wiki/MasterCard)  |   :mastercard
+[Rupay](http://en.wikipedia.org/wiki/RuPay) |   :rupay 
+[Solo](http://en.wikipedia.org/wiki/Solo_(debit_card))     | :solo
+[Switch](http://en.wikipedia.org/wiki/Switch_(debit_card)) | :switch 
+[Visa](http://en.wikipedia.org/wiki/Visa_Inc.)      | :visa  
 
-<tr><td>[American Express](http://en.wikipedia.org/wiki/American_Express) </td>            <td> :amex        </td>         </tr> 
-<tr><td>[China UnionPay ](http://en.wikipedia.org/wiki/China_UnionPay)  </td>            <td> :unionpay   </td>       </tr> 
-<tr><td>[Dankort ](http://en.wikipedia.org/wiki/Dankort)        </td>            <td> :dankort     </td>        </tr> 
-<tr><td>[Diners Club ](http://en.wikipedia.org/wiki/Diners_Club_International)     </td>            <td> :diners      </td>          </tr> 
-<tr><td>[Dinner Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance)   </td>            <td> :diners_us   </td>          </tr> 
-<tr><td>[Discover](http://en.wikipedia.org/wiki/Discover_Card)         </td>            <td> :discover    </td>        </tr> 
-<tr><td>[Hipercard   ](http://pt.wikipedia.org/wiki/Hipercard)     </td>            <td> :hipercard   </td>        </tr> 
-<tr><td>[JCB  ](http://en.wikipedia.org/wiki/Japan_Credit_Bureau)            </td>            <td> :jcb         </td>        </tr> 
-<tr><td>[Maestro](http://en.wikipedia.org/wiki/Maestro_%28debit_card%29)          </td>            <td> :maestro     </td>        </tr> 
-<tr><td>[MasterCard ](http://en.wikipedia.org/wiki/MasterCard)      </td>            <td> :mastercard  </td>          </tr> 
-<tr><td>[Rupay  ](http://en.wikipedia.org/wiki/RuPay)          </td>            <td> :rupay       </td>       
-<tr><td>[Solo ](http://en.wikipedia.org/wiki/Solo_(debit_card))            </td>            <td> :solo        </td>          </tr> 
-<tr><td>[Switch  ](http://en.wikipedia.org/wiki/Switch_(debit_card))         </td>            <td> :switch      </td>        </tr> 
-<tr><td>[Visa    ](http://en.wikipedia.org/wiki/Visa_Inc.)         </td>            <td> :visa        </td>       </tr> 
-</table>
+
+The following are supported with with plugins
+
+    Name   |    Key     | 
+---------------------   | ------------| 
+[Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance)  | :diners_us  
+[EnRoute](https://en.wikipedia.org/wiki/EnRoute_(credit_card)) | :en_route
+[Laser](https://en.wikipedia.org/wiki/Laser_%28debit_card%29)      | :laser
+
+
 
 ### Examples using string monkey patch
 
@@ -128,7 +137,6 @@ Example
 
   ```ruby 
   require 'credit_card_validations/plugins/en_route'
-  require 'credit_card_validations/plugins/voyager'
   require 'credit_card_validations/plugins/laser'
   require 'credit_card_validations/plugins/diners_us'
 
