@@ -105,48 +105,59 @@ describe CreditCardValidations do
 
   describe "adding/removing brand" do
 
-
-    let(:voyager_number) {
-      '869926275400212'
-    }
-
-    it "should validate number as voyager" do
-      CreditCardValidations::Detector.add_brand(:voyager, {length: 15, prefixes: '86'})
-      detector(voyager_number).valid?(:voyager).must_equal true
-      detector(voyager_number).voyager?.must_equal true
-      detector(voyager_number).brand.must_equal :voyager
+    [:diners_us, :en_route, :laser, :voyager].each do |brand|
+      it "should support #{brand}" do
+        ->{ CreditCardValidations::Factory.random(brand) }.must_raise(CreditCardValidations::Error)
+        detector('somenumber').respond_to?("#{brand}?").must_equal false
+        require "credit_card_validations/plugins/#{brand}"
+        number = CreditCardValidations::Factory.random(brand)
+        CreditCardValidations::Detector.new(number).valid?("#{brand}".to_sym).must_equal true
+        detector('somenumber').respond_to?("#{brand}?").must_equal true
+      end
     end
 
 
-    describe "Add voyager rule" do
-      before do
-        CreditCardValidations::Detector.add_brand(:voyager, {length: 15, prefixes: '86'})
-      end
 
-      it "should validate number as voyager" do
+    # let(:voyager_number) {
+    #   '869926275400212'
+    # }
+    #
+    # it "should validate number as voyager" do
+    #   CreditCardValidations::Detector.add_brand(:voyager, {length: 15, prefixes: '86'})
+    #   detector(voyager_number).valid?(:voyager).must_equal true
+    #   detector(voyager_number).voyager?.must_equal true
+    #   detector(voyager_number).brand.must_equal :voyager
+    # end
+    #
+    #
+    # describe "Add voyager rule" do
+    #   before do
+    #     CreditCardValidations::Detector.add_brand(:voyager, {length: 15, prefixes: '86'})
+    #   end
+    #
+    #   it "should validate number as voyager" do
+    #
+    #     detector(voyager_number).valid?(:voyager).must_equal true
+    #     detector(voyager_number).voyager?.must_equal true
+    #     detector(voyager_number).brand.must_equal :voyager
+    #
+    #   end
+    #
+    #   describe "Remove voyager rule" do
+    #     before do
+    #       CreditCardValidations::Detector.delete_brand(:voyager)
+    #     end
+    #
+    #     it "should not validate number as voyager" do
+    #       detector(voyager_number).respond_to?(:voyager?).must_equal false
+    #       detector(voyager_number).brand.must_be_nil
+    #     end
+    #   end
+    #
+    # end
 
-        detector(voyager_number).valid?(:voyager).must_equal true
-        detector(voyager_number).voyager?.must_equal true
-        detector(voyager_number).brand.must_equal :voyager
-
-      end
-
-      describe "Remove voyager rule" do
-        before do
-          CreditCardValidations::Detector.delete_brand(:voyager)
-        end
-
-        it "should not validate number as voyager" do
-          detector(voyager_number).respond_to?(:voyager?).must_equal false
-          detector(voyager_number).brand.must_be_nil
-        end
-      end
-
-    end
-
-
-    it "should raise RuntimeError" do
-      proc { CreditCardValidations::Detector::add_rule(:undefined_brand, 20, [20]) }.must_raise RuntimeError
+    it "should raise Error if no brand added before" do
+      -> { CreditCardValidations::Detector::add_rule(:undefined_brand, 20, [20]) }.must_raise(CreditCardValidations::Error)
     end
 
   end

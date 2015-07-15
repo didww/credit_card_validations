@@ -1,4 +1,5 @@
 require 'credit_card_validations/version'
+require 'credit_card_validations/error'
 require 'active_model'
 require 'active_support/core_ext'
 require 'active_model/validations'

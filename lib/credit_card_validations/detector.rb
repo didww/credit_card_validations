@@ -101,7 +101,6 @@ module CreditCardValidations
         else
           nil
         end
-
       end
 
       def brand_key(brand_name)
@@ -120,7 +119,7 @@ module CreditCardValidations
       #create rule for detecting brand
       def add_rule(key, length, prefixes)
         unless brands.has_key?(key)
-          raise RuntimeError.new("brand #{key} is undefined, please use #add_brand method")
+          raise CreditCardValidations::Error.new("brand #{key} is undefined, please use #add_brand method")
         end
         length, prefixes = Array(length), Array(prefixes)
         brands[key][:rules] << {length: length, regexp: compile_regexp(prefixes), prefixes: prefixes}
@@ -139,14 +138,10 @@ module CreditCardValidations
         undef_method "#{key}?".to_sym if method_defined? "#{key}?".to_sym
       end
 
-
       #create regexp by array of prefixes
       def compile_regexp(prefixes)
         Regexp.new("^((#{prefixes.join(")|(")}))")
       end
-
     end
-
   end
-
 end

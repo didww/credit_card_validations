@@ -15,7 +15,7 @@ module CreditCardValidations
         if brand.nil?
           brand = Detector.brands.keys.sample
         else
-          raise RuntimeError.new("Unsupported brand") if Detector.brands[brand].nil?
+          raise CreditCardValidations::Error.new("Unsupported brand") if Detector.brands[brand].nil?
         end
         generate(Detector.brands[brand][:rules].sample)
 

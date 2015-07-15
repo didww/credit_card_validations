@@ -1,0 +1,1 @@
+CreditCardValidations.add_brand(:voyager, {length: 15, prefixes: '86'})
