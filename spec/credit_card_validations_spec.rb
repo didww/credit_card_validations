@@ -67,9 +67,9 @@ describe CreditCardValidations do
   end
 
   it "should detect by full brand name" do
-    amex =  CreditCardValidations::Factory.random(:amex)
+    amex = CreditCardValidations::Factory.random(:amex)
     detector(amex).valid?('American Express').must_equal true
-    visa =  CreditCardValidations::Factory.random(:visa)
+    visa = CreditCardValidations::Factory.random(:visa)
     detector(visa).valid?('American Express').must_equal false
   end
 
@@ -105,23 +105,59 @@ describe CreditCardValidations do
 
   describe "adding/removing brand" do
 
-    [:diners_us, :en_route, :laser, :voyager].each do |brand|
-      it "should support #{brand}" do
-        ->{ CreditCardValidations::Factory.random(brand) }.must_raise(CreditCardValidations::Error)
-        detector('somenumber').respond_to?("#{brand}?").must_equal false
-        require "credit_card_validations/plugins/#{brand}"
-        number = CreditCardValidations::Factory.random(brand)
-        CreditCardValidations::Detector.new(number).valid?("#{brand}".to_sym).must_equal true
-        detector('somenumber').respond_to?("#{brand}?").must_equal true
+    describe "adding rules" do
+
+      let(:voyager_number) { '869926275400212' }
+
+      it "should validate number as voyager" do
+        CreditCardValidations::Detector.add_brand(:voyager, { length: 15, prefixes: '86' })
+        detector(voyager_number).valid?(:voyager).must_equal true
+        detector(voyager_number).voyager?.must_equal true
+        detector(voyager_number).brand.must_equal :voyager
+      end
+
+      describe "Add voyager rule" do
+        before do
+          CreditCardValidations::Detector.add_brand(:voyager, { length: 15, prefixes: '86' })
+        end
+
+        it "should validate number as voyager" do
+          detector(voyager_number).valid?(:voyager).must_equal true
+          detector(voyager_number).voyager?.must_equal true
+          detector(voyager_number).brand.must_equal :voyager
+        end
+
+        describe "Remove voyager rule" do
+          before do
+            CreditCardValidations::Detector.delete_brand(:voyager)
+          end
+
+          it "should not validate number as voyager" do
+            detector(voyager_number).respond_to?(:voyager?).must_equal false
+            detector(voyager_number).brand.must_be_nil
+          end
+        end
+      end
+    end
+
+    describe "plugins" do
+
+      [:diners_us, :en_route, :laser].each do |brand|
+        it "should support #{brand}" do
+          -> { CreditCardValidations::Factory.random(brand) }.must_raise(CreditCardValidations::Error)
+          detector('somenumber').respond_to?("#{brand}?").must_equal false
+          require "credit_card_validations/plugins/#{brand}"
+          number = CreditCardValidations::Factory.random(brand)
+          CreditCardValidations::Detector.new(number).valid?("#{brand}".to_sym).must_equal true
+          detector('somenumber').respond_to?("#{brand}?").must_equal true
+        end
       end
     end
 
     it "should raise Error if no brand added before" do
       -> { CreditCardValidations::Detector::add_rule(:undefined_brand, 20, [20]) }.must_raise(CreditCardValidations::Error)
     end
-
   end
-
 
   def luhn_valid?(number)
     CreditCardValidations::Luhn.valid?(number)
@@ -130,7 +166,6 @@ describe CreditCardValidations do
   def detector(number)
     CreditCardValidations::Detector.new(number)
   end
-
 
   def has_luhn_check_rule?(key)
     CreditCardValidations::Detector.has_luhn_check_rule?(key)
