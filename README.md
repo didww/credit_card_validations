@@ -46,6 +46,7 @@ The following issuing institutes are accepted:
 [Solo](http://en.wikipedia.org/wiki/Solo_(debit_card))     | :solo
 [Switch](http://en.wikipedia.org/wiki/Switch_(debit_card)) | :switch 
 [Visa](http://en.wikipedia.org/wiki/Visa_Inc.)      | :visa  
+[Elo](https://pt.wikipedia.org/wiki/Elo_Participa%C3%A7%C3%B5es_S/A)      | :elo
 
 
 The following are supported with with plugins
