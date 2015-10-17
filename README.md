@@ -36,7 +36,8 @@ The following issuing institutes are accepted:
 [American Express](http://en.wikipedia.org/wiki/American_Express) | :amex
 [China UnionPay](http://en.wikipedia.org/wiki/China_UnionPay)    | :unionpay 
 [Dankort](http://en.wikipedia.org/wiki/Dankort)      | :dankort
-[Diners Club](http://en.wikipedia.org/wiki/Diners_Club_International)  | :diners    
+[Diners Club](http://en.wikipedia.org/wiki/Diners_Club_International)  | :diners   
+[Elo](https://pt.wikipedia.org/wiki/Elo_Participa%C3%A7%C3%B5es_S/A)      | :elo
 [Discover](http://en.wikipedia.org/wiki/Discover_Card) | :discover   
 [Hipercard](http://pt.wikipedia.org/wiki/Hipercard) | :hipercard  
 [JCB](http://en.wikipedia.org/wiki/Japan_Credit_Bureau)  | :jcb
@@ -46,7 +47,7 @@ The following issuing institutes are accepted:
 [Solo](http://en.wikipedia.org/wiki/Solo_(debit_card))     | :solo
 [Switch](http://en.wikipedia.org/wiki/Switch_(debit_card)) | :switch 
 [Visa](http://en.wikipedia.org/wiki/Visa_Inc.)      | :visa  
-[Elo](https://pt.wikipedia.org/wiki/Elo_Participa%C3%A7%C3%B5es_S/A)      | :elo
+
 
 
 The following are supported with with plugins
