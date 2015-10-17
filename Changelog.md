@@ -1,3 +1,6 @@
+# 3.1.0
+   * Added support for ELO brand
+
 # 3.0.0
    * Remove Laser brand because Laser cards were withdrawn from the market on February 28 2014
    * Remove Diners US brand for similar reason
