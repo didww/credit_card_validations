@@ -73,7 +73,7 @@ The following are supported with with plugins
 
 ### ActiveModel support
 
-only for certain brads
+only for certain brands
 
 ```ruby
     class CreditCardModel 
