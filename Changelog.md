@@ -1,3 +1,7 @@
+# 3.2.0
+   * Added support for MIR brand (220100-220499)
+   * Added support for new Mastercard range (222100 – 272099)
+
 # 3.1.0
    * Added support for ELO brand
 
