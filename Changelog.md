@@ -1,3 +1,6 @@
+# 3.2.0
+   * Added support for new Mastercard range (222100 – 272099)
+
 # 3.1.0
    * Added support for ELO brand
 
