@@ -1,0 +1,10 @@
+source "https://rubygems.org"
+
+gem "activemodel", ">= 3", '< 5'
+gem "activesupport", ">= 3", '< 5'
+
+group :test do
+  gem 'coveralls', require: false # Test coverage website. Go to https://coveralls.io
+end
+
+gemspec :path => "../"

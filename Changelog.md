@@ -1,3 +1,6 @@
+# 3.2.2
+   * Relaxing dependency requirements to support Rails 5
+
 # 3.2.1
    * Improved support for new Mastercard range (222100 – 272099)
 
