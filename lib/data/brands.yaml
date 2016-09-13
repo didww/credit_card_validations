@@ -6,6 +6,8 @@
     - 16
     :prefixes:
     - '4'
+  :options:
+    :brand_name: Visa
 :mastercard:
   :rules:
   - :length:
