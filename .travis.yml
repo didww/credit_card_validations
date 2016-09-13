@@ -20,6 +20,6 @@ matrix:
     - gemfile: gemfiles/rails5.gemfile
       rvm: jruby-19mode
 before_install:
-  - gem install bundler -v '= 1.11.2'
+  - gem install bundler  # use the very latest Bundler
   - gem update --system
   - gem --version
