@@ -43,6 +43,7 @@ The following issuing institutes are accepted:
 [JCB](http://en.wikipedia.org/wiki/Japan_Credit_Bureau)  | :jcb
 [Maestro](http://en.wikipedia.org/wiki/Maestro_%28debit_card%29)    | :maestro
 [MasterCard](http://en.wikipedia.org/wiki/MasterCard)  |   :mastercard
+[MIR](http://www.nspk.ru/en/cards-mir/)  |   :mir
 [Rupay](http://en.wikipedia.org/wiki/RuPay) |   :rupay 
 [Solo](http://en.wikipedia.org/wiki/Solo_(debit_card))     | :solo
 [Switch](http://en.wikipedia.org/wiki/Switch_(debit_card)) | :switch 

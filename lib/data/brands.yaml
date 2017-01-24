@@ -277,3 +277,13 @@
   :options:
     :skip_luhn: true
     :brand_name: Elo
+:mir:
+  :rules:
+  - :length:
+    - 16
+    :prefixes:
+    - '2200'
+    - '2201'
+    - '2202'
+    - '2203'
+    - '2204'

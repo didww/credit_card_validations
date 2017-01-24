@@ -1,3 +1,6 @@
+# 3.3.0
+   * Added support for MIR card brand
+
 # 3.2.2
    * Relaxing dependency requirements to support Rails 5
 
