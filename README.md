@@ -116,7 +116,7 @@ Example
 ### Remove brands also supported
 
 ```ruby
-    CreditCardValidations.delete_brand(:maestro)
+    CreditCardValidations::Detector.delete_brand(:maestro)
 ```
 
 ### Check luhn
