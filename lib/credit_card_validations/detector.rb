@@ -142,6 +142,7 @@ module CreditCardValidations
       def compile_regexp(prefixes)
         Regexp.new("^((#{prefixes.join(")|(")}))")
       end
+
     end
   end
 end
