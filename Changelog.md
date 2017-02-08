@@ -1,3 +1,6 @@
+# 3.4.0
+   * Elo support enhanced, PR #75
+   
 # 3.3.0
    * Added support for MIR card brand
 
