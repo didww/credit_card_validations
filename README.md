@@ -31,7 +31,7 @@ Or install it yourself as:
 
 The following issuing institutes are accepted:
     
-    Name   |    Key     | 
+|    Name   |    Key     | 
 ---------------------   | ------------| 
 [American Express](http://en.wikipedia.org/wiki/American_Express) | :amex
 [China UnionPay](http://en.wikipedia.org/wiki/China_UnionPay)    | :unionpay 
@@ -53,7 +53,7 @@ The following issuing institutes are accepted:
 
 The following are supported with with plugins
 
-    Name   |    Key     | 
+|    Name   |    Key     | 
 ---------------------   | ------------| 
 [Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance)  | :diners_us  
 [EnRoute](https://en.wikipedia.org/wiki/EnRoute_(credit_card)) | :en_route
