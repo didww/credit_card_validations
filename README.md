@@ -113,6 +113,14 @@ Example
     CreditCardValidations::Detector.new(voyager_test_card_number).voyager? #true
 ```
 
+If you only want to add a rule to a previosly created brand
+```ruby
+    CreditCardValidations::Detector.add_rule(:mastercard, 16, '50111')
+    new_rule_card_number = '5011162754002121'
+    CreditCardValidations::Detector.new(new_rule_card_number).brand #:mastercard
+    CreditCardValidations::Detector.new(new_rule_card_number).mastercard? #true
+```
+
 ### Remove brands also supported
 
 ```ruby
