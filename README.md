@@ -16,15 +16,21 @@ More info about card BIN numbers http://en.wikipedia.org/wiki/Bank_card_number
 
 Add this line to your application's Gemfile:
 
-    gem 'credit_card_validations'
+```sh
+$ gem 'credit_card_validations'
+```
 
 And then execute:
 
-    $ bundle
+```sh
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install credit_card_validations
+```sh
+$ gem install credit_card_validations
+```
 
 ## Usage
 
@@ -64,12 +70,12 @@ The following are supported with with plugins
 ### Examples using string monkey patch
 
 ```ruby
-    require 'credit_card_validations/string'
-    '5274 5763 9425 9961'.credit_card_brand   #=> :mastercard
-    '5274 5763 9425 9961'.credit_card_brand_name   #=> "MasterCard"
-    '5274 5763 9425 9961'.valid_credit_card_brand?(:mastercard, :visa) #=> true
-    '5274 5763 9425 9961'.valid_credit_card_brand?(:amex) #=> false
-    '5274 5763 9425 9961'.valid_credit_card_brand?('MasterCard') #=> true
+require 'credit_card_validations/string'
+'5274 5763 9425 9961'.credit_card_brand   #=> :mastercard
+'5274 5763 9425 9961'.credit_card_brand_name   #=> "MasterCard"
+'5274 5763 9425 9961'.valid_credit_card_brand?(:mastercard, :visa) #=> true
+'5274 5763 9425 9961'.valid_credit_card_brand?(:amex) #=> false
+'5274 5763 9425 9961'.valid_credit_card_brand?('MasterCard') #=> true
 ```
 
 ### ActiveModel support
@@ -77,73 +83,72 @@ The following are supported with with plugins
 only for certain brands
 
 ```ruby
-    class CreditCardModel 
-        attr_accessor :number
-        include ActiveModel::Validations
-        validates :number, credit_card_number: {brands: [:amex, :maestro]} 
-    end
+class CreditCardModel
+  attr_accessor :number
+  include ActiveModel::Validations
+  validates :number, credit_card_number: {brands: [:amex, :maestro]}
+end
 ```
 
 for all known brands
 
-```ruby	
-    validates :number, presence: true, credit_card_number: true
+```ruby
+validates :number, presence: true, credit_card_number: true
 ```
 
 ### Examples using CreditCardValidations::Detector class
 
-```ruby	
-    number = "4111111111111111"
-    detector = CreditCardValidations::Detector.new(number)
-    detector.brand #:visa
-    detector.visa? #true
-    detector.valid?(:mastercard,:maestro) #false
-    detector.valid?(:visa, :mastercard) #true
-    detector.issuer_category  #"Banking and financial"
+```ruby
+number = "4111111111111111"
+detector = CreditCardValidations::Detector.new(number)
+detector.brand #:visa
+detector.visa? #true
+detector.valid?(:mastercard,:maestro) #false
+detector.valid?(:visa, :mastercard) #true
+detector.issuer_category  #"Banking and financial"
 ```
 
 ### Also You can add your own brand rules to detect other credit card brands/types
 passing name,length(integer/array of integers) and prefix(string/array of strings)
 Example
 
-```ruby	
-    CreditCardValidations.add_brand(:voyager, {length: 15, prefixes: '86'})
-    voyager_test_card_number = '869926275400212'
-    CreditCardValidations::Detector.new(voyager_test_card_number).brand #:voyager
-    CreditCardValidations::Detector.new(voyager_test_card_number).voyager? #true
+```ruby
+CreditCardValidations.add_brand(:voyager, {length: 15, prefixes: '86'})
+voyager_test_card_number = '869926275400212'
+CreditCardValidations::Detector.new(voyager_test_card_number).brand #:voyager
+CreditCardValidations::Detector.new(voyager_test_card_number).voyager? #true
 ```
 
 ### Remove brands also supported
 
 ```ruby
-    CreditCardValidations::Detector.delete_brand(:maestro)
+CreditCardValidations::Detector.delete_brand(:maestro)
 ```
 
 ### Check luhn
 
-```ruby	
-    CreditCardValidations::Detector.new(@credit_card_number).valid_luhn?
-    #or
-    CreditCardValidations::Luhn.valid?(@credit_card_number)
+```ruby
+CreditCardValidations::Detector.new(@credit_card_number).valid_luhn?
+#or
+CreditCardValidations::Luhn.valid?(@credit_card_number)
 ```  
 
 ### Generate credit card numbers that pass validation
 
 ```ruby
- CreditCardValidations::Factory.random(:amex)
- # => "348051773827666"
- CreditCardValidations::Factory.random(:maestro)
- # => "6010430241237266856"
+CreditCardValidations::Factory.random(:amex)
+# => "348051773827666"
+CreditCardValidations::Factory.random(:maestro)
+# => "6010430241237266856"
 ```
 
 ### Plugins 
 
-  ```ruby 
-  require 'credit_card_validations/plugins/en_route'
-  require 'credit_card_validations/plugins/laser'
-  require 'credit_card_validations/plugins/diners_us'
-
-  ```
+```ruby
+require 'credit_card_validations/plugins/en_route'
+require 'credit_card_validations/plugins/laser'
+require 'credit_card_validations/plugins/diners_us'
+```
 
 ## Contributing
 
