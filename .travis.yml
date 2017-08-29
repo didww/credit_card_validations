@@ -1,24 +1,12 @@
 language: ruby
 rvm:
-  - 1.9.3
-  - 2.0.0
-  - 2.1.9
   - 2.2.5
   - 2.3.1
   - jruby-9.1.6.0
 gemfile:
   - gemfiles/rails1-4.gemfile
   - gemfiles/rails5.gemfile
-matrix:
-  exclude:
-    - gemfile: gemfiles/rails5.gemfile
-      rvm: 1.9.3
-    - gemfile: gemfiles/rails5.gemfile
-      rvm: 2.0.0
-    - gemfile: gemfiles/rails5.gemfile
-      rvm: 2.1.9
-    - gemfile: gemfiles/rails5.gemfile
-      rvm: jruby-9.1.6.0
+env: JRUBY_OPTS=--debug  
 before_install:
   - gem update --system
   - rvm @global do gem uninstall bundler -a -x
