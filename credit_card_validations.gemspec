@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'credit_card_validations/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = "credit_card_validations"
+  gem.name          = "cw_credit_card_validations"
   gem.version       = CreditCardValidations::VERSION
   gem.authors       = ["Igor"]
   gem.email         = ["fedoronchuk@gmail.com"]
