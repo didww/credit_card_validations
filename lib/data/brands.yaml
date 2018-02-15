@@ -8,6 +8,7 @@
     :prefixes:
     - '4'
   :options:
+    :skip_luhn: true
     :brand_name: Visa
 :mastercard:
   :rules:
@@ -42,6 +43,7 @@
     - '54'
     - '55'
   :options:
+    :skip_luhn: true
     :brand_name: MasterCard
 :amex:
   :rules:
@@ -51,6 +53,7 @@
     - '34'
     - '37'
   :options:
+    :skip_luhn: true
     :brand_name: American Express
 :diners:
   :rules:
@@ -66,6 +69,7 @@
     - '36'
     - '38'
   :options:
+    :skip_luhn: true
     :brand_name: Diners Club
 :jcb:
   :rules:
@@ -91,6 +95,7 @@
     :prefixes:
     - '357266'
   :options:
+    :skip_luhn: true
     :brand_name: JCB
 :solo:
   :rules:
@@ -101,6 +106,8 @@
     :prefixes:
     - '6334'
     - '6767'
+  :options:
+    :skip_luhn: true
 :switch:
   :rules:
   - :length:
@@ -114,6 +121,8 @@
     - '633303'
     - '633301'
     - '633300'
+  :options:
+    :skip_luhn: true
 :maestro:
   :rules:
   - :length:
@@ -185,6 +194,8 @@
     - '6769'
     - '6771'
     - '679'
+  :options:
+    :skip_luhn: true
 :unionpay:
   :rules:
   - :length:
@@ -207,6 +218,8 @@
     - 16
     :prefixes:
     - '5019'
+  :options:
+    :skip_luhn: true
 :rupay:
   :rules:
   - :length:
@@ -237,6 +250,8 @@
     - '637599'
     - '637609'
     - '637612'
+  :options:
+    :skip_luhn: true
 :elo:
   :rules:
   - :length:
@@ -393,6 +408,8 @@
     - '2202'
     - '2203'
     - '2204'
+  :options:
+    :skip_luhn: true
 :discover:
   :rules:
   - :length:
@@ -407,3 +424,5 @@
     - '648'
     - '649'
     - '65'
+  :options:
+    :skip_luhn: true
