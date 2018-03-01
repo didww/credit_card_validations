@@ -40,6 +40,7 @@ The following issuing institutes are accepted:
 |    Name   |    Key     | 
 ---------------------   | ------------| 
 [American Express](http://en.wikipedia.org/wiki/American_Express) | :amex
+[Belkart](https://ru.wikipedia.org/wiki/%D0%91%D0%B5%D0%BB%D0%BA%D0%B0%D1%80%D1%82) | :belkart
 [China UnionPay](http://en.wikipedia.org/wiki/China_UnionPay)    | :unionpay 
 [Dankort](http://en.wikipedia.org/wiki/Dankort)      | :dankort
 [Diners Club](http://en.wikipedia.org/wiki/Diners_Club_International)  | :diners   

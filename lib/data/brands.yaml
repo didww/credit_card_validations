@@ -407,3 +407,11 @@
     - '648'
     - '649'
     - '65'
+:belkart:
+  :rules:
+  - :length:
+    - 16
+    :prefixes:
+    - '9112'
+  :options:
+    :brand_name: Belkart
