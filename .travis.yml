@@ -10,11 +10,7 @@ gemfile:
 matrix:
   exclude:
     - gemfile: gemfiles/rails5.gemfile
-      rvm: 1.9.3
-    - gemfile: gemfiles/rails5.gemfile
-      rvm: 2.0.0
-    - gemfile: gemfiles/rails5.gemfile
-      rvm: 2.1.9
+      rvm: 2.1.10
     - gemfile: gemfiles/rails5.gemfile
       rvm: jruby-9.1.6.0
 
