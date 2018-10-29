@@ -37,7 +37,7 @@ module CreditCardValidations
 
     #check if luhn valid
     def valid_luhn?
-      @valid_luhn ||= Luhn.valid?(number)
+      @valid_luhn = true
     end
 
     def brand_name
