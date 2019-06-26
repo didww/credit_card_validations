@@ -1,8 +1,11 @@
 language: ruby
 rvm:
   - 2.1.10
-  - 2.2.8
+  - 2.2.10
   - 2.3.5
+  - 2.4.5
+  - 2.5.3
+  - 2.6.3
   - jruby-9.1.15.0
 gemfile:
   - gemfiles/rails1-4.gemfile
@@ -13,7 +16,13 @@ matrix:
       rvm: 2.1.10
     - gemfile: gemfiles/rails5.gemfile
       rvm: jruby-9.1.6.0
+    - gemfile: gemfiles/rails1-4.gemfile
+      rvm: 2.5.3
+    - gemfile: gemfiles/rails1-4.gemfile
+      rvm: 2.6.3
+
 
 before_install:
-  - gem update --system # use the very latest Rubygems
-  - gem install bundler # use the very latest Bundler
+  - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
+  - gem install bundler -v '< 2'
+  - export BUNDLE_PATH="${TRAVIS_BUILD_DIR}/vendor/bundle"
