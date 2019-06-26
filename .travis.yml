@@ -16,6 +16,11 @@ matrix:
       rvm: 2.1.10
     - gemfile: gemfiles/rails5.gemfile
       rvm: jruby-9.1.6.0
+    - gemfile: gemfiles/rails1-4.gemfile
+      rvm: 2.5.3
+    - gemfile: gemfiles/rails1-4.gemfile
+      rvm: 2.6.3
+
 
 before_install:
   - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
