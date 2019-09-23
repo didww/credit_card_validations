@@ -1,3 +1,8 @@
+# 3.5.0
+   * Unionpay and Maestro range updates, PR #88
+   * Hipercard range updates , PR #79
+   * Visa and Discover length fix, PR #81
+   
 # 3.4.0
    * Elo support enhanced, PR #75
    

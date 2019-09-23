@@ -3,6 +3,10 @@ require_relative 'test_helper'
 describe CreditCardValidations do
 
 
+  it 'should detect bin 506723 as elo brand' do
+    detector('5067230000000009056').brand.to_s.downcase.must_equal 'elo'
+  end
+
   before do
     CreditCardValidations.reload!
   end
