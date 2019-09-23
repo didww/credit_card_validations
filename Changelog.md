@@ -1,3 +1,6 @@
+# 3.5.1
+   * Adding some Brazilian Bins
+
 # 3.5.0
    * Unionpay and Maestro range updates, PR #88
    * Hipercard range updates , PR #79
