@@ -1,3 +1,6 @@
+# 3.5.1
+   * Bump activemodel and activesupport versions
+
 # 3.5.0
    * Unionpay and Maestro range updates, PR #88
    * Hipercard range updates , PR #79
