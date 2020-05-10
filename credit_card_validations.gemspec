@@ -10,8 +10,14 @@ Gem::Specification.new do |gem|
   gem.email         = ["fedoronchuk@gmail.com"]
   gem.description   = %q{A ruby gem for validating credit card numbers}
   gem.summary       = "gem should be used for credit card numbers validation, card brands detections, luhn checks"
-  gem.homepage      = "http://fivell.github.io/credit_card_validations/"
+  gem.homepage      = "http://didww.github.io/credit_card_validations/"
   gem.license       = "MIT"
+  
+  s.metadata    = {
+    'bug_tracker_uri'   => 'https://github.com/didww/credit_card_validations/issues',
+    'changelog_uri'     => 'https://github.com/didww/credit_card_validations/blob/master/Changelog.md',
+    'source_code_uri'   => 'https://github.com/didww/credit_card_validations'
+  }
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
