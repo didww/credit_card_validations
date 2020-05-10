@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "http://didww.github.io/credit_card_validations/"
   gem.license       = "MIT"
   
-  s.metadata    = {
+  gem.metadata    = {
     'bug_tracker_uri'   => 'https://github.com/didww/credit_card_validations/issues',
     'changelog_uri'     => 'https://github.com/didww/credit_card_validations/blob/master/Changelog.md',
     'source_code_uri'   => 'https://github.com/didww/credit_card_validations'
