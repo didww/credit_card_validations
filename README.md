@@ -1,9 +1,9 @@
 # CreditCardValidations
 
-[![Build Status](http://img.shields.io/travis/Fivell/credit_card_validations.svg)](https://travis-ci.org/Fivell/credit_card_validations)
+[![Build Status](http://img.shields.io/travis/didww/credit_card_validations.svg)](https://travis-ci.org/didww/credit_card_validations)
 [![Coverage Status](http://img.shields.io/coveralls/Fivell/credit_card_validations.svg)](https://coveralls.io/r/Fivell/credit_card_validations)
 [![Gem Version](http://img.shields.io/gem/v/credit_card_validations.svg)](https://rubygems.org/gems/credit_card_validations)
-[![License](http://img.shields.io/:license-mit-blue.svg)](http://Fivell.mit-license.org)
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://didww.mit-license.org)
 
 
 Gem adds validator  to check whether or not a given number actually falls within the ranges of possible numbers prior to performing such verification, and, as such, CreditCardValidations simply verifies that the credit card number provided is well-formed.
