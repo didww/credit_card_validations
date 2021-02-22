@@ -21,6 +21,8 @@ matrix:
       rvm: 2.5.3
     - gemfile: gemfiles/rails1-4.gemfile
       rvm: 2.6.3
+     - gemfile: gemfiles/rails1-4.gemfile
+      rvm: 3.0.0
   allow_failures:
     - rvm: 2.1.10
 
