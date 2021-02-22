@@ -8,25 +8,25 @@ describe 'String ext' do
   let(:invalid) { INVALID_NUMBERS.sample }
 
   it 'should allow detect brand for mastercard' do
-    mastercard.credit_card_brand.must_equal :mastercard
-    mastercard.credit_card_brand_name.must_equal 'MasterCard'
-    mastercard.valid_credit_card_brand?(:mastercard).must_equal true
-    mastercard.valid_credit_card_brand?('MasterCard').must_equal true
-    mastercard.valid_credit_card_brand?(:visa, :amex).must_equal false
+    expect(mastercard.credit_card_brand).must_equal :mastercard
+    expect(mastercard.credit_card_brand_name).must_equal 'MasterCard'
+    expect(mastercard.valid_credit_card_brand?(:mastercard)).must_equal true
+    expect(mastercard.valid_credit_card_brand?('MasterCard')).must_equal true
+    expect(mastercard.valid_credit_card_brand?(:visa, :amex)).must_equal false
   end
 
   it 'should allow detect brand for visa' do
-    visa.credit_card_brand.must_equal :visa
-    visa.credit_card_brand_name.must_equal 'Visa'
-    visa.valid_credit_card_brand?(:mastercard).must_equal false
-    visa.valid_credit_card_brand?(:visa, :amex).must_equal true
+    expect(visa.credit_card_brand).must_equal :visa
+    expect(visa.credit_card_brand_name).must_equal 'Visa'
+    expect(visa.valid_credit_card_brand?(:mastercard)).must_equal false
+    expect(visa.valid_credit_card_brand?(:visa, :amex)).must_equal true
   end
 
   it 'should not allow detect brand for invalid card' do
     invalid.credit_card_brand.must_be_nil
     invalid.credit_card_brand_name.must_be_nil
-    invalid.valid_credit_card_brand?(:mastercard).must_equal false
-    invalid.valid_credit_card_brand?(:visa, :amex).must_equal false
+    expect(invalid.valid_credit_card_brand?(:mastercard)).must_equal false
+    expect(invalid.valid_credit_card_brand?(:visa, :amex)).must_equal false
   end
 
 end
