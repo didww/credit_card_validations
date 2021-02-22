@@ -58,7 +58,7 @@ describe CreditCardValidations do
   it 'should check if card invalid' do
     INVALID_NUMBERS.each do |card_number|
       expect(detector(card_number).valid?).must_equal false
-      detector(card_number).brand.must_be_nil
+      expect(detector(card_number).brand).must_be_nil
       VALID_NUMBERS.keys.each do |brand|
         expect(detector(card_number).send("#{brand}?")).must_equal false
       end
@@ -78,7 +78,7 @@ describe CreditCardValidations do
     end
 
     VALID_NUMBERS.except(:visa, :mastercard).each do |_, value|
-      detector(value.first).brand(:visa, :mastercard).must_be_nil
+      expect(detector(value.first).brand(:visa, :mastercard)).must_be_nil
     end
   end
 
@@ -133,7 +133,7 @@ describe CreditCardValidations do
 
           it 'should not validate number as voyager' do
             expect(detector(voyager_number).respond_to?(:voyager?)).must_equal false
-            detector(voyager_number).brand.must_be_nil
+            expect(detector(voyager_number).brand).must_be_nil
           end
         end
       end
@@ -142,7 +142,7 @@ describe CreditCardValidations do
     describe 'plugins' do
       [:diners_us, :en_route, :laser].each do |brand|
         it "should support #{brand}" do
-          -> { CreditCardValidations::Factory.random(brand) }.
+          expect(-> { CreditCardValidations::Factory.random(brand) }).
             must_raise(CreditCardValidations::Error)
           custom_number = 'some_number'
           expect(detector(custom_number).respond_to?("#{brand}?")).must_equal false
@@ -155,7 +155,7 @@ describe CreditCardValidations do
     end
 
     it 'should raise Error if no brand added before' do
-      -> { CreditCardValidations::Detector::add_rule(:undefined_brand, 20, [20]) }.
+      expect(-> { CreditCardValidations::Detector::add_rule(:undefined_brand, 20, [20]) }).
         must_raise(CreditCardValidations::Error)
     end
   end

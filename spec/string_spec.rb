@@ -23,8 +23,8 @@ describe 'String ext' do
   end
 
   it 'should not allow detect brand for invalid card' do
-    invalid.credit_card_brand.must_be_nil
-    invalid.credit_card_brand_name.must_be_nil
+    expect(invalid.credit_card_brand).must_be_nil
+    expect(invalid.credit_card_brand_name).must_be_nil
     expect(invalid.valid_credit_card_brand?(:mastercard)).must_equal false
     expect(invalid.valid_credit_card_brand?(:visa, :amex)).must_equal false
   end
