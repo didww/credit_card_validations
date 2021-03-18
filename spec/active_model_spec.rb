@@ -9,9 +9,9 @@ describe 'ActiveModel Validator' do
        card = model.dup
        card.card_type = 'Master Card'
        card.number6 =  CreditCardValidations::Factory.random(:visa)
-       card.valid?.must_equal false
+       expect(card.valid?).must_equal false
        card.number6 =  CreditCardValidations::Factory.random(:mastercard)
-       card.valid?.must_equal true
+       expect(card.valid?).must_equal true
     end
   end
 
@@ -22,7 +22,7 @@ describe 'ActiveModel Validator' do
           card = model
           card.number4 = number
           card.number5 = number
-          card.valid?.must_equal true
+          expect(card.valid?).must_equal true
         end
       end
     end
@@ -33,8 +33,8 @@ describe 'ActiveModel Validator' do
       VALID_NUMBERS.except(:amex, :maestro).each do |_, numbers|
         card = model
         card.number = numbers.first
-        card.valid?.must_equal false
-        card.errors[:number].include?(card.errors.generate_message(:number, :invalid)).must_equal true
+        expect(card.valid?).must_equal false
+        expect(card.errors[:number].include?(card.errors.generate_message(:number, :invalid))).must_equal true
       end
     end
 
@@ -42,7 +42,7 @@ describe 'ActiveModel Validator' do
       VALID_NUMBERS.except(:amex, :maestro).each do |_, numbers|
         card = model
         card.number3 = numbers.first
-        card.valid?.must_equal true
+        expect(card.valid?).must_equal true
       end
     end
   end
@@ -53,7 +53,7 @@ describe 'ActiveModel Validator' do
         card = model
         card.number = numbers.first
         card.number2 = numbers.first
-        card.valid?.must_equal true
+        expect(card.valid?).must_equal true
       end
     end
   end
@@ -62,8 +62,8 @@ describe 'ActiveModel Validator' do
     it 'should allow custom message' do
       card = model
       card.number7 =  'wrong'
-      card.valid?.must_equal false
-      card.errors[:number7].must_equal ['Custom message']
+      expect(card.valid?).must_equal false
+      expect(card.errors[:number7]).must_equal ['Custom message']
     end
   end
 
