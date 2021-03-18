@@ -1,3 +1,3 @@
 module CreditCardValidations
-  VERSION = '3.5.1'
+  VERSION = '4.0.0'
 end
