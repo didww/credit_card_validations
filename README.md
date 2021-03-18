@@ -55,7 +55,7 @@ The following issuing institutes are accepted:
 
 
 
-The following are supported with with plugins
+The following are supported with plugins
 
 |    Name   |    Key     | 
 ---------------------   | ------------| 
@@ -129,7 +129,7 @@ CreditCardValidations::Detector.delete_brand(:maestro)
 CreditCardValidations::Detector.new(@credit_card_number).valid_luhn?
 #or
 CreditCardValidations::Luhn.valid?(@credit_card_number)
-```  
+```
 
 ### Generate credit card numbers that pass validation
 
@@ -140,7 +140,7 @@ CreditCardValidations::Factory.random(:maestro)
 # => "6010430241237266856"
 ```
 
-### Plugins 
+### Plugins
 
 ```ruby
 require 'credit_card_validations/plugins/en_route'
