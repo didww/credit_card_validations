@@ -25,8 +25,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
 
-  gem.add_dependency "activemodel", ">= 3", ">= 6.2"
-  gem.add_dependency "activesupport", ">= 3", ">= 6.2"
+  gem.add_dependency "activemodel", ">= 6.2"
+  gem.add_dependency "activesupport", ">= 6.2"
 
 
   gem.add_development_dependency "minitest", '~> 5.14.3'
