@@ -1,7 +1,5 @@
 # CreditCardValidations
 
-[![Build Status](http://img.shields.io/travis/didww/credit_card_validations.svg)](https://travis-ci.org/didww/credit_card_validations)
-[![Coverage Status](http://img.shields.io/coveralls/Fivell/credit_card_validations.svg)](https://coveralls.io/r/Fivell/credit_card_validations)
 [![Gem Version](http://img.shields.io/gem/v/credit_card_validations.svg)](https://rubygems.org/gems/credit_card_validations)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://didww.mit-license.org)
 

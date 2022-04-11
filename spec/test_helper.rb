@@ -1,6 +1,3 @@
-require 'coveralls'
-Coveralls.wear!
-
 require 'minitest/autorun'
 require 'i18n'
 require 'mocha/mini_test'
