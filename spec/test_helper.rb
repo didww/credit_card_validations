@@ -1,6 +1,7 @@
 require 'minitest/autorun'
 require 'i18n'
 require 'mocha/mini_test'
+require 'byebug'
 
 lib = File.expand_path("#{File.dirname(__FILE__)}/../lib")
 specs = File.expand_path("#{File.dirname(__FILE__)}/../spec")

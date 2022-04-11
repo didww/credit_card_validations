@@ -32,5 +32,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "minitest", '~> 5.14.3'
   gem.add_development_dependency "mocha", '1.1.0'
   gem.add_development_dependency 'rake', '~> 10'
-
+  gem.add_development_dependency 'byebug'
 end
