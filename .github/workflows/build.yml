@@ -1,0 +1,30 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+jobs:
+  test:
+    name: Tests with Ruby ${{ matrix.ruby }} Rails ${{ matrix.rails }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version:
+        - 2.7
+        - 3.0
+        rails:
+        - '6.1.5'
+        - '7.0.2.3'
+    env:
+      RAILS_VERSION: ${{ matrix.rails }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+    - name: Run tests
+      run: |
+        gem install bundler -v '< 2'
+        bundle install
+        bundle exec rake
