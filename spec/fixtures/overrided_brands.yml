@@ -1,0 +1,19 @@
+---
+:visa:
+  :rules:
+  - :length:
+    - 13
+    - 16
+    - 19
+    :prefixes:
+    - '4'
+  :options:
+    :brand_name: Visa
+:discover:
+  :rules:
+  - :length:
+    - 16
+    :prefixes:
+    - '61111111'
+  :options:
+    :brand_name: DiscoverBrand

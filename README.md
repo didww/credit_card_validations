@@ -146,6 +146,18 @@ require 'credit_card_validations/plugins/laser'
 require 'credit_card_validations/plugins/diners_us'
 ```
 
+
+### Configuration
+
+In order to override default data source you can copy original one, change it and configure during rails initializer
+
+```ruby
+ CreditCardValidations.configure do |config|
+      config.source = '/path/to/my_brands.yml'
+ end
+```
+
+
 ## Contributing
 
 1. Fork it

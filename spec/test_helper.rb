@@ -15,4 +15,5 @@ require 'models/credit_card'
 
 VALID_NUMBERS = YAML.load_file File.join(File.dirname(__FILE__), 'fixtures/valid_cards.yml')
 INVALID_NUMBERS = YAML.load_file File.join(File.dirname(__FILE__), 'fixtures/invalid_cards.yml')
+OVERRIDED_BRANDS_FILE =  File.join(File.dirname(__FILE__), 'fixtures/overrided_brands.yml')
 

@@ -1,3 +1,18 @@
+# 6.0.0
+  * changes to discover branch
+  * allows to configure usage of own yaml brands file 
+  
+# 5.0.0
+  * rails 7 support
+  * drop rails support < 5.2
+
+# 4.1.0
+ * changes to disover and maesto rules
+
+# 4.0.0
+ * support rails 6
+ * test against ruby 3.0, drop ruby 2.1 support
+
 # 3.5.1
    * Bump activemodel and activesupport versions
 

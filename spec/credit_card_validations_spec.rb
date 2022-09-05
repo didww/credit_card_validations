@@ -7,6 +7,39 @@ describe CreditCardValidations do
     CreditCardValidations.reload!
   end
 
+
+  describe 'configure' do
+
+    let(:number) { '6111111180456137' }
+
+    before do
+      expect(card_detector.valid?(:discover)).must_equal false
+      CreditCardValidations.configure do |config|
+        config.source = OVERRIDED_BRANDS_FILE
+      end
+    end
+
+    let(:card_detector) {
+      detector(number)
+    }
+
+    it 'should generate overrided discover' do
+      discover = CreditCardValidations::Factory.random(:discover)
+      expect(detector(discover).valid?('DiscoverBrand')).must_equal true
+    end
+
+    it 'should detect patched discover' do
+      expect(card_detector.valid?(:discover)).must_equal true
+      expect(card_detector.valid?(:visa)).must_equal false
+    end
+
+    after do
+      CreditCardValidations.reset
+      CreditCardValidations.reload!
+    end
+
+  end
+
   describe 'MMI' do
     it 'should detect issuer category' do
       d = detector(VALID_NUMBERS[:visa].first)
