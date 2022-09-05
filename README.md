@@ -149,7 +149,7 @@ require 'credit_card_validations/plugins/diners_us'
 
 ### Configuration
 
-In order to override default data source you can copy original one, change it and configure during rails initializer
+In order to override default data source you can copy [original one](https://github.com/didww/credit_card_validations/blob/master/lib/data/brands.yaml) , change it and configure during rails initializer
 
 ```ruby
  CreditCardValidations.configure do |config|
