@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.summary       = "gem should be used for credit card numbers validation, card brands detections, luhn checks"
   gem.homepage      = "http://didww.github.io/credit_card_validations/"
   gem.license       = "MIT"
-  
+
   gem.metadata    = {
     'bug_tracker_uri'   => 'https://github.com/didww/credit_card_validations/issues',
     'changelog_uri'     => 'https://github.com/didww/credit_card_validations/blob/master/Changelog.md',
@@ -31,6 +31,6 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency "minitest", '~> 5.14.3'
   gem.add_development_dependency "mocha", '1.1.0'
-  gem.add_development_dependency 'rake', '~> 10'
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'byebug'
 end
