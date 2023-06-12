@@ -6,7 +6,7 @@ on:
     - master
 jobs:
   test:
-    name: Tests with Ruby ${{ matrix.ruby }} Rails ${{ matrix.rails }}
+    name: Tests with Ruby ${{ matrix.ruby-version }} Rails ${{ matrix.rails }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
