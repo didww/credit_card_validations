@@ -18,5 +18,4 @@ class String
   def credit_card_brand_name
     CreditCardValidations::Detector.new(self).brand_name
   end
-
-end  
+end

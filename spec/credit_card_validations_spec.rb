@@ -1,15 +1,11 @@
 require_relative 'test_helper'
 
 describe CreditCardValidations do
-
-
   before do
     CreditCardValidations.reload!
   end
 
-
   describe 'configure' do
-
     let(:number) { '6111111180456137' }
 
     before do
@@ -37,7 +33,6 @@ describe CreditCardValidations do
       CreditCardValidations.reset
       CreditCardValidations.reload!
     end
-
   end
 
   describe 'MMI' do
@@ -65,9 +60,7 @@ describe CreditCardValidations do
       CreditCardValidations::Luhn.expects(:valid?).never
       expect(card_detector.valid?(:unionpay)).must_equal true
     end
-
   end
-
 
   it 'should check luhn' do
     VALID_NUMBERS.each do |brand, card_numbers|
@@ -136,9 +129,7 @@ describe CreditCardValidations do
 
 
   describe 'adding/removing brand' do
-
     describe 'adding rules' do
-
       let(:voyager_number) { '869926275400212' }
 
       it 'should validate number as voyager' do
@@ -204,5 +195,4 @@ describe CreditCardValidations do
   def has_luhn_check_rule?(key)
     CreditCardValidations::Detector.has_luhn_check_rule?(key)
   end
-
 end
