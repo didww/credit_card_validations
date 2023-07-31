@@ -32,32 +32,35 @@ $ gem install credit_card_validations
 
 
 The following issuing institutes are accepted:
-    
-|    Name   |    Key     | 
----------------------   | ------------| 
+
+|    Name   |    Key     |
+---------------------   | ------------|
 [American Express](http://en.wikipedia.org/wiki/American_Express) | :amex
-[China UnionPay](http://en.wikipedia.org/wiki/China_UnionPay)    | :unionpay 
+[China UnionPay](http://en.wikipedia.org/wiki/China_UnionPay)    | :unionpay
 [Dankort](http://en.wikipedia.org/wiki/Dankort)      | :dankort
-[Diners Club](http://en.wikipedia.org/wiki/Diners_Club_International)  | :diners   
+[Diners Club](http://en.wikipedia.org/wiki/Diners_Club_International)  | :diners
 [Elo](https://pt.wikipedia.org/wiki/Elo_Participa%C3%A7%C3%B5es_S/A)      | :elo
-[Discover](http://en.wikipedia.org/wiki/Discover_Card) | :discover   
-[Hipercard](http://pt.wikipedia.org/wiki/Hipercard) | :hipercard  
+[Discover](http://en.wikipedia.org/wiki/Discover_Card) | :discover
+[Hipercard](http://pt.wikipedia.org/wiki/Hipercard) | :hipercard
 [JCB](http://en.wikipedia.org/wiki/Japan_Credit_Bureau)  | :jcb
 [Maestro](http://en.wikipedia.org/wiki/Maestro_%28debit_card%29)    | :maestro
 [MasterCard](http://en.wikipedia.org/wiki/MasterCard)  |   :mastercard
 [MIR](http://www.nspk.ru/en/cards-mir/)  |   :mir
-[Rupay](http://en.wikipedia.org/wiki/RuPay) |   :rupay 
+[Rupay](http://en.wikipedia.org/wiki/RuPay) |   :rupay
 [Solo](http://en.wikipedia.org/wiki/Solo_(debit_card))     | :solo
-[Switch](http://en.wikipedia.org/wiki/Switch_(debit_card)) | :switch 
-[Visa](http://en.wikipedia.org/wiki/Visa_Inc.)      | :visa  
+[Switch](http://en.wikipedia.org/wiki/Switch_(debit_card)) | :switch
+[Visa](http://en.wikipedia.org/wiki/Visa_Inc.)      | :visa
+[Visa](https://www.vr.com.br/)      | :vr_alimentacao
+[Visa](https://www.vr.com.br/)      | :vr_refeicao
+[Visa](https://www.vr.com.br/)      | :vr_multi
 
 
 
 The following are supported with plugins
 
-|    Name   |    Key     | 
----------------------   | ------------| 
-[Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance)  | :diners_us  
+|    Name   |    Key     |
+---------------------   | ------------|
+[Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance)  | :diners_us
 [EnRoute](https://en.wikipedia.org/wiki/EnRoute_(credit_card)) | :en_route
 [Laser](https://en.wikipedia.org/wiki/Laser_%28debit_card%29)      | :laser
 
