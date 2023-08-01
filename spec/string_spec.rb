@@ -30,21 +30,19 @@ describe 'String ext' do
     expect(invalid.valid_credit_card_brand?(:visa, :amex)).must_equal false
   end
 
-  context 'VR' do
-    it 'should allow detect brand for VR Alimentação' do
-      expect(mastercard.credit_card_brand).must_equal :vr_alimentacao
-      expect(mastercard.credit_card_brand_name).must_equal 'VR Alimentação'
-      expect(mastercard.valid_credit_card_brand?(:vr_alimentacao)).must_equal true
-      expect(mastercard.valid_credit_card_brand?('VR Alimentação')).must_equal true
-      expect(mastercard.valid_credit_card_brand?(:visa, :amex)).must_equal false
-    end
+  it 'should allow detect brand for VR Alimentação' do
+    expect(vr_alimentacao.credit_card_brand).must_equal :vr_alimentacao
+    expect(vr_alimentacao.credit_card_brand_name).must_equal 'VR Alimentação'
+    expect(vr_alimentacao.valid_credit_card_brand?(:vr_alimentacao)).must_equal true
+    expect(vr_alimentacao.valid_credit_card_brand?('VR Alimentação')).must_equal true
+    expect(vr_alimentacao.valid_credit_card_brand?(:visa, :amex)).must_equal false
+  end
 
-    it 'should allow detect brand for VR Refeição' do
-      expect(mastercard.credit_card_brand).must_equal :vr_refeicao
-      expect(mastercard.credit_card_brand_name).must_equal 'VR Refeição'
-      expect(mastercard.valid_credit_card_brand?(:vr_refeicao)).must_equal true
-      expect(mastercard.valid_credit_card_brand?('VR Refeição')).must_equal true
-      expect(mastercard.valid_credit_card_brand?(:visa, :amex)).must_equal false
-    end
+  it 'should allow detect brand for VR Refeição' do
+    expect(vr_refeicao.credit_card_brand).must_equal :vr_refeicao
+    expect(vr_refeicao.credit_card_brand_name).must_equal 'VR Refeição'
+    expect(vr_refeicao.valid_credit_card_brand?(:vr_refeicao)).must_equal true
+    expect(vr_refeicao.valid_credit_card_brand?('VR Refeição')).must_equal true
+    expect(vr_refeicao.valid_credit_card_brand?(:visa, :amex)).must_equal false
   end
 end

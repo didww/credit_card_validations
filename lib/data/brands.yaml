@@ -114,6 +114,36 @@
     - '633303'
     - '633301'
     - '633300'
+:vr_refeicao:
+  :rules:
+  - :length:
+    - 16
+    :prefixes:
+    - '627416'
+    - '637202'
+    - '637200'
+  :options:
+    :brand_name: VR Refeição
+:vr_alimentacao:
+  :rules:
+  - :length:
+    - 16
+    :prefixes:
+    - '637036'
+    - '637001'
+    - '637200'
+  :options:
+    :brand_name: VR Alimentação
+::vr_multi:
+  :rules:
+  - :length:
+    - 16
+    :prefixes:
+    - '637200'
+    - '637430'
+    - '637441'
+  :options:
+    :brand_name: VR Multi (VR + VA)
 :maestro:
   :rules:
   - :length:
@@ -512,33 +542,3 @@
     - '65'
   :options:
     :brand_name: Discover
-:vr_refeicao:
-  :rules:
-  - :length:
-    - 16
-    :prefixes:
-    - '627416'
-    - '637202'
-    - '637200'
-  :options:
-    :brand_name: VR Refeição
-:vr_alimentacao:
-  :rules:
-  - :length:
-    - 16
-    :prefixes:
-    - '637036'
-    - '637001'
-    - '637200'
-  :options:
-    :brand_name: VR Alimentação
-::vr_multi:
-  :rules:
-  - :length:
-    - 16
-    :prefixes:
-    - '637200'
-    - '637430'
-    - '637441'
-  :options:
-    :brand_name: VR Multi (VR + VA)
