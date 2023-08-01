@@ -50,9 +50,9 @@ The following issuing institutes are accepted:
 [Solo](http://en.wikipedia.org/wiki/Solo_(debit_card))     | :solo
 [Switch](http://en.wikipedia.org/wiki/Switch_(debit_card)) | :switch
 [Visa](http://en.wikipedia.org/wiki/Visa_Inc.)      | :visa
-[Visa](https://www.vr.com.br/)      | :vr_alimentacao
-[Visa](https://www.vr.com.br/)      | :vr_refeicao
-[Visa](https://www.vr.com.br/)      | :vr_multi
+[VR Alimentação](https://www.vr.com.br/)      | :vr_alimentacao
+[VR Refeição](https://www.vr.com.br/)      | :vr_refeicao
+[VR Multi (Alimentação + Refeição)](https://www.vr.com.br/)      | :vr_multi
 
 
 
