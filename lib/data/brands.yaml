@@ -9,6 +9,38 @@
     - '4'
   :options:
     :brand_name: Visa
+:uzcard:
+  :rules:
+  - length:
+    - 16
+    :prefixes:
+      - 8600
+  :options:
+    :brand_name: Uzcard
+:uzcard_unionpay:
+  :rules:
+  - length:
+    - 16
+    :prefixes:
+      - 6262
+  :options:
+    :brand_name: Uzcard-UnionPay
+:uzcard_mir:
+  :rules:
+  - length:
+    - 16
+    :prefixes:
+      - 5614
+  :options:
+    :brand_name: Uzcard-MIR
+:humo:
+  :rules:
+  - length:
+    - 16
+    :prefixes:
+      - 9860
+  :options:
+    :brand_name: HUMO
 :mastercard:
   :rules:
   - :length:
