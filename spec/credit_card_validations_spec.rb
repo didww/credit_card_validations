@@ -170,6 +170,28 @@ describe CreditCardValidations do
           end
         end
       end
+
+      describe 'Add kortimilli rule' do
+        let(:kortimilli_number) { '505827028341713' }
+
+        it 'before invoke add_brand credit card behaves like maestro' do
+          expect(detector(kortimilli_number).valid?(:maestro)).must_equal true
+          expect(detector(kortimilli_number).maestro?).must_equal true
+          expect(detector(kortimilli_number).brand).must_equal :maestro
+        end
+
+        describe 'after adding wider prefix for kortimilli' do
+          before do
+            CreditCardValidations::Detector.add_brand(:kortimilli, length: 15, prefixes: '505827028')
+          end
+
+          it 'should validate number as kortimilli' do
+            expect(detector(kortimilli_number).valid?(:kortimilli)).must_equal true
+            expect(detector(kortimilli_number).kortimilli?).must_equal true
+            expect(detector(kortimilli_number).brand).must_equal :kortimilli
+          end
+        end
+      end
     end
 
     describe 'plugins' do
