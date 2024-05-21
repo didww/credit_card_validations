@@ -28,8 +28,14 @@ module CreditCardValidations
     def valid_number?(*keys)
       selected_brands = keys.blank? ? self.brands : resolve_keys(*keys)
       if selected_brands.any?
+        matched_brands = []
         selected_brands.each do |key, brand|
-          return key if matches_brand?(brand)
+          match_data = matches_brand?(brand)
+          matched_brands << {brand: key, matched_prefix_length: match_data.to_s.length} if match_data
+        end
+
+        if matched_brands.present?
+          return matched_brands.sort{|a, b| a[:matched_prefix_length] <=> b[:matched_prefix_length]}.last[:brand]
         end
       end
       nil
@@ -64,8 +70,8 @@ module CreditCardValidations
       rules.each do |rule|
         if (options[:skip_luhn] || valid_luhn?) &&
             rule[:length].include?(number.length) &&
-            number.match(rule[:regexp])
-          return true
+            match_data = number.match(rule[:regexp])
+          return match_data
         end
       end
       false
