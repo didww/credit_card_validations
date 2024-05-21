@@ -1,3 +1,10 @@
+# 6.2.0
+  * support ruby 3.3
+  * more accurate brand matching using matched prefix length
+  
+# 6.1.0
+  * support rails 7.1
+
 # 6.0.0
   * changes to discover branch
   * allows to configure usage of own yaml brands file 
