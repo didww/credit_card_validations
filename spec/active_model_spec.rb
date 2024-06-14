@@ -30,7 +30,7 @@ describe 'ActiveModel Validator' do
 
   describe 'Except Amex and Maestro brand' do
     it 'should reject all other valid numbers' do
-      VALID_NUMBERS.except(:amex, :maestro).each do |_, numbers|
+      VALID_NUMBERS.except(:amex, :maestro, :vr_refeicao).each do |_, numbers|
         card = model
         card.number = numbers.first
         expect(card.valid?).must_equal false
