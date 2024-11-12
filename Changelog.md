@@ -1,3 +1,11 @@
+# 7.0.0
+  * allow rails 8 
+  * drop rails 6.1 and rails 7.0
+  * drop support of eol ruby versions 2.7, 3.0
+  
+# 6.3.0
+  * rails 7.2 support
+   
 # 6.2.0
   * support ruby 3.3
   * more accurate brand matching using matched prefix length
