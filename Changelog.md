@@ -1,3 +1,6 @@
+# Unreleased
+  * Reduce gem size by excluding test files
+
 # 7.0.0
   * allow rails 8 
   * drop rails 6.1 and rails 7.0
