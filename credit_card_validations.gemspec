@@ -21,11 +21,8 @@ Gem::Specification.new do |gem|
 
   gem.files = Dir.glob('lib/**/*') + [
     'Changelog.md',
-    'Gemfile',
     'LICENSE.txt',
-    'Rakefile',
-    'README.md',
-    'credit_card_validations.gemspec',
+    'README.md'
   ]
 
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
