@@ -2,6 +2,7 @@
 
 [![Gem Version](http://img.shields.io/gem/v/credit_card_validations.svg)](https://rubygems.org/gems/credit_card_validations)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://didww.mit-license.org)
+![Coverage](https://didww.github.io/credit_card_validations/badge.svg)
 
 
 Gem adds validator  to check whether or not a given number actually falls within the ranges of possible numbers prior to performing such verification, and, as such, CreditCardValidations simply verifies that the credit card number provided is well-formed.
