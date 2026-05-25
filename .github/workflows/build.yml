@@ -4,6 +4,12 @@ on:
   push:
     branches:
     - master
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test:
     name: Tests with Ruby ${{ matrix.ruby-version }} Rails ${{ matrix.rails }}
@@ -44,3 +50,45 @@ jobs:
     - name: Run tests
       run: |
         bundle exec rake
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    env:
+      RAILS_VERSION: '8.0.0'
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.4'
+        bundler-cache: true
+    - name: Run coverage
+      run: bundle exec rake coverage
+    - name: Upload coverage artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: coverage
+
+  deploy-coverage:
+    needs: coverage
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Download coverage artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: coverage
+        path: coverage
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: coverage
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
