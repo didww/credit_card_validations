@@ -195,7 +195,9 @@ describe CreditCardValidations do
     end
 
     describe 'plugins' do
-      [:diners_us, :en_route, :laser].each do |brand|
+      [:diners_us, :en_route, :laser,
+       :cabal, :dinacard, :girocard, :hiper, :humocard,
+       :troy, :uatp, :uzcard, :verve, :voyager, :vpay].each do |brand|
         it "should support #{brand}" do
           expect(-> { CreditCardValidations::Factory.random(brand) }).
             must_raise(CreditCardValidations::Error)
