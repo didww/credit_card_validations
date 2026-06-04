@@ -1,6 +1,3 @@
-# V PAY is a Visa-issued European debit network. The BIN footprint is
-# scattered (single-issuer prefixes); the list below covers the prefixes
-# observed in the public BIN dataset.
 CreditCardValidations.add_brand(
   :vpay,
   {

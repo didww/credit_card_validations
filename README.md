@@ -66,7 +66,6 @@ The following are supported with plugins
 [Hiper](https://en.wikipedia.org/wiki/Itau_Unibanco) | :hiper
 [Humo](https://en.wikipedia.org/wiki/Humo_(payment_system)) | :humocard
 [Laser](https://en.wikipedia.org/wiki/Laser_%28debit_card%29)      | :laser
-[PagoBancomat](https://en.wikipedia.org/wiki/Bancomat_(Italian_debit_card)) | :pagobancomat
 [Troy](https://en.wikipedia.org/wiki/Troy_(payment_system)) | :troy
 [UATP](https://en.wikipedia.org/wiki/Universal_Air_Travel_Plan) | :uatp
 [Uzcard](https://en.wikipedia.org/wiki/Uzcard) | :uzcard
@@ -163,7 +162,6 @@ require 'credit_card_validations/plugins/dinacard'
 require 'credit_card_validations/plugins/girocard'
 require 'credit_card_validations/plugins/hiper'
 require 'credit_card_validations/plugins/humocard'
-require 'credit_card_validations/plugins/pagobancomat'
 require 'credit_card_validations/plugins/troy'
 require 'credit_card_validations/plugins/uatp'
 require 'credit_card_validations/plugins/uzcard'
