@@ -195,8 +195,16 @@ describe CreditCardValidations do
     end
 
     describe 'plugins' do
-      [:diners_us, :en_route, :laser].each do |brand|
+      [:diners_us, :en_route, :laser,
+       :cabal, :dinacard, :girocard, :hiper, :humocard,
+       :troy, :uatp, :uzcard, :verve, :voyager, :vpay].each do |brand|
         it "should support #{brand}" do
+          # Sibling tests in this file dynamically `add_brand` symbols that
+          # collide with shipped plugin names (notably :voyager via the
+          # README tutorial example). `reload!` clears the registry hash
+          # but doesn't `undef_method` the predicate, so we explicitly
+          # delete the brand here to guarantee a clean slate.
+          CreditCardValidations::Detector.delete_brand(brand)
           expect(-> { CreditCardValidations::Factory.random(brand) }).
             must_raise(CreditCardValidations::Error)
           custom_number = 'some_number'
