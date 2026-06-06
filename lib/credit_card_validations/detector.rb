@@ -87,6 +87,19 @@ module CreditCardValidations
       end.join(separator)
     end
 
+    # Validates the card verification value (CVV / CVC / CID) against the
+    # detected brand's declared code size. Each brand must declare
+    # :code:{:name, :size} under :options. Raises when a detected brand
+    # has no :code (misconfigured registry). Returns false when the brand
+    # cannot be determined or when the input has the wrong shape.
+    def valid_cvv?(code)
+      return false if code.nil? || !code.to_s.match?(/\A\d+\z/)
+      return false if brand.nil?
+      spec = self.class.brands.dig(brand, :options, :code)
+      raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
+      code.to_s.length == spec[:size]
+    end
+
     protected
 
     def groups_for(detected_brand)
