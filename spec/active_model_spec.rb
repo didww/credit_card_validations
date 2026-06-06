@@ -17,7 +17,8 @@ describe 'ActiveModel Validator' do
 
   describe 'Any Brand' do
     it 'should be valid for all prepared valid numbers' do
-      VALID_NUMBERS.each do |_, numbers|
+      VALID_NUMBERS.each do |brand, numbers|
+        load_legacy_plugin(brand)
         numbers.each do |number|
           card = model
           card.number4 = number
@@ -30,7 +31,8 @@ describe 'ActiveModel Validator' do
 
   describe 'Except Amex and Maestro brand' do
     it 'should reject all other valid numbers' do
-      VALID_NUMBERS.except(:amex, :maestro).each do |_, numbers|
+      VALID_NUMBERS.except(:amex, :maestro).each do |brand, numbers|
+        load_legacy_plugin(brand)
         card = model
         card.number = numbers.first
         expect(card.valid?).must_equal false
@@ -39,7 +41,8 @@ describe 'ActiveModel Validator' do
     end
 
     it 'should accept using except options' do
-      VALID_NUMBERS.except(:amex, :maestro).each do |_, numbers|
+      VALID_NUMBERS.except(:amex, :maestro).each do |brand, numbers|
+        load_legacy_plugin(brand)
         card = model
         card.number3 = numbers.first
         expect(card.valid?).must_equal true

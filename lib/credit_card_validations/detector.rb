@@ -9,6 +9,13 @@ module CreditCardValidations
     class_attribute :brands
     self.brands = {}
 
+    # Brands that were part of the default set up to v8.x and moved to
+    # opt-in plugins in v9.0. The shim below auto-loads the plugin on first
+    # reference and emits a one-time deprecation warning. To be removed in
+    # v10.0 — users should add explicit `require` statements by then.
+    LEGACY_PLUGIN_BRANDS = %i[mir rupay elo dankort hipercard solo switch].freeze
+    @@legacy_autoloaded = {}
+
     attr_reader :number
 
     def initialize(number)
@@ -114,7 +121,23 @@ module CreditCardValidations
         end
         el.downcase
       end
+      brand_keys.each { |k| autoload_legacy_plugin(k) }
       self.brands.slice(*brand_keys)
+    end
+
+    def autoload_legacy_plugin(key)
+      return unless LEGACY_PLUGIN_BRANDS.include?(key)
+      return if self.class.brands.key?(key)
+      return if @@legacy_autoloaded[key]
+      @@legacy_autoloaded[key] = true
+
+      Warning.warn(
+        "[credit_card_validations] :#{key} was moved to a plugin in v9.0. " \
+        "Auto-loading 'credit_card_validations/plugins/#{key}' for backward " \
+        "compatibility. Add `require 'credit_card_validations/plugins/#{key}'` " \
+        "to your initializer to silence; auto-load is removed in v10.\n"
+      )
+      load "credit_card_validations/plugins/#{key}.rb"
     end
 
     def matches_brand?(brand)
@@ -153,6 +176,10 @@ module CreditCardValidations
       #   CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
       #
       def add_brand(key, rules, options = {})
+        # Mark legacy plugin brands as handled so the v9 auto-require shim
+        # never re-loads them after the user takes any explicit action
+        # (require, add_brand, or a later delete_brand).
+        @@legacy_autoloaded[key] = true if LEGACY_PLUGIN_BRANDS.include?(key)
 
         brands[key] = {rules: [], options: options || {}}
 
