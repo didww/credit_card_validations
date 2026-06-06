@@ -87,17 +87,12 @@ module CreditCardValidations
       end.join(separator)
     end
 
-    # Validates the card verification value (CVV / CVC / CID) against the
-    # detected brand's declared code size. Each brand must declare
-    # :code:{:name, :size} under :options. Raises when a detected brand
-    # has no :code (misconfigured registry). Returns false when the brand
-    # cannot be determined or when the input has the wrong shape.
+    # Validates the card verification value against the detected brand's
+    # declared :code size. Returns false when the brand cannot be determined
+    # from the PAN or the input has the wrong shape. Raises when a detected
+    # brand is missing :code in the registry.
     def valid_cvv?(code)
-      return false if code.nil? || !code.to_s.match?(/\A\d+\z/)
-      return false if brand.nil?
-      spec = self.class.brands.dig(brand, :options, :code)
-      raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
-      code.to_s.length == spec[:size]
+      self.class.valid_cvv?(code, brand)
     end
 
     protected
@@ -140,6 +135,16 @@ module CreditCardValidations
 
       def has_luhn_check_rule?(key)
         !brands[key].fetch(:options, {}).fetch(:skip_luhn, false)
+      end
+
+      # Class-level CVV check: validates a code against an explicit brand,
+      # without needing a Detector instance. Useful when only the brand is
+      # known (form input bound to a brand select, separate CVV field, etc.).
+      def valid_cvv?(code, brand)
+        return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
+        spec = brands.dig(brand, :options, :code)
+        raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
+        code.to_s.length == spec[:size]
       end
 
       #

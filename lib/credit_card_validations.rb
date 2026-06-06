@@ -5,6 +5,8 @@ require 'active_model'
 require 'active_support/core_ext'
 require 'active_model/validations'
 require 'active_model/credit_card_number_validator'
+require 'active_model/credit_card_cvv_validator'
+require 'active_model/credit_card_expiration_validator'
 require 'yaml'
 
 module CreditCardValidations
@@ -15,6 +17,7 @@ module CreditCardValidations
   autoload :Factory, 'credit_card_validations/factory'
   autoload :Mmi, 'credit_card_validations/mmi'
   autoload :Expiration, 'credit_card_validations/expiration'
+  autoload :Card, 'credit_card_validations/card'
 
   attr_accessor :configuration
 
