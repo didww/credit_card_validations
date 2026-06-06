@@ -53,6 +53,10 @@
     - '37'
   :options:
     :brand_name: American Express
+    :segments:
+    - 4
+    - 6
+    - 5
 :diners:
   :rules:
   - :length:
@@ -68,6 +72,10 @@
     - '38'
   :options:
     :brand_name: Diners Club
+    :segments:
+    - 4
+    - 6
+    - 5
 :jcb:
   :rules:
   - :length:

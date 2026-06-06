@@ -50,7 +50,53 @@ module CreditCardValidations
       self.class.brand_name(brand)
     end
 
+    # Last four digits of the PAN, or nil if the PAN has fewer than 4 digits.
+    def last4
+      number.length >= 4 ? number[-4, 4] : nil
+    end
+
+    # PAN with every digit but the last 4 replaced by mask_char.
+    # Returns the original number when shorter than 4 digits — never raises.
+    def masked(mask_char = '*')
+      return number if number.length < 4
+      mask_char.to_s[0] * (number.length - 4) + last4.to_s
+    end
+
+    # All brands whose prefixes can still match the (possibly partial) PAN.
+    # Length and Luhn are not checked — useful for live UX before the user
+    # finishes typing.
+    def possible_brands
+      return [] if number.empty?
+      self.class.brands.each_with_object([]) do |(key, brand), acc|
+        next unless brand.fetch(:rules).any? do |rule|
+          rule[:prefixes].any? do |prefix|
+            n = [number.length, prefix.length].min
+            number[0, n] == prefix[0, n]
+          end
+        end
+        acc << key
+      end
+    end
+
+    # Human-readable PAN grouped per network convention. Falls back to the
+    # first possible brand while the user is still typing.
+    def formatted(separator = ' ')
+      groups_for(brand || possible_brands.first).each_with_object([]) do |size, acc|
+        slice = number[acc.join.length, size]
+        acc << slice if slice && !slice.empty?
+      end.join(separator)
+    end
+
     protected
+
+    def groups_for(detected_brand)
+      segments = self.class.brands.dig(detected_brand, :options, :segments)
+      return segments if segments
+      groups = Array.new(number.length / 4, 4)
+      remainder = number.length % 4
+      groups << remainder if remainder.positive?
+      groups
+    end
 
     def resolve_keys(*keys)
       brand_keys = keys.map do |el|

@@ -154,6 +154,98 @@ describe CreditCardValidations do
     expect(detector(visa).valid?('American Express')).must_equal false
   end
 
+  describe 'PAN display helpers' do
+    let(:visa) { detector('4111 1111 1111 1111') }
+    let(:amex) { detector('3782 822463 10005') }
+
+    describe '#last4' do
+      it 'returns the last four digits of the PAN' do
+        expect(visa.last4).must_equal '1111'
+        expect(amex.last4).must_equal '0005'
+      end
+
+      it 'returns nil for a PAN shorter than 4 digits' do
+        expect(detector('12').last4).must_be_nil
+        expect(detector('').last4).must_be_nil
+      end
+    end
+
+    describe '#masked' do
+      it 'replaces every digit except the last 4 with the mask char' do
+        expect(visa.masked).must_equal '************1111'
+        expect(amex.masked).must_equal '***********0005'
+      end
+
+      it 'accepts a custom mask char' do
+        expect(visa.masked('#')).must_equal '############1111'
+      end
+
+      it 'does not raise and returns the input when PAN is shorter than 4' do
+        expect(detector('12').masked).must_equal '12'
+        expect(detector('').masked).must_equal ''
+      end
+    end
+
+    describe '#formatted' do
+      it 'groups by 4 for non-amex brands' do
+        expect(visa.formatted).must_equal '4111 1111 1111 1111'
+      end
+
+      it 'groups 4-6-5 for amex' do
+        expect(amex.formatted).must_equal '3782 822463 10005'
+      end
+
+      it 'uses possible_brands fallback for partial amex input' do
+        # length 10, not yet a full 15-digit amex; brand returns nil but
+        # possible_brands knows the leading "37" can become amex
+        partial_amex = detector('3782822463')
+        expect(partial_amex.brand).must_be_nil
+        expect(partial_amex.formatted).must_equal '3782 822463'
+      end
+
+      it 'falls back to default 4-by-4 grouping when brand has no :segments option' do
+        # simulates a user-supplied YAML that predates the :segments option:
+        # the brand is registered without it, so #formatted must not crash
+        # and must apply the default grouping.
+        CreditCardValidations::Detector.add_brand(:my_brand, length: 16, prefixes: '8000')
+        sample = CreditCardValidations::Factory.random(:my_brand)
+        expect(detector(sample).brand).must_equal :my_brand
+        expect(detector(sample).formatted).must_equal sample.scan(/.{4}/).join(' ')
+      ensure
+        CreditCardValidations::Detector.delete_brand(:my_brand)
+      end
+
+      it 'accepts a custom separator' do
+        expect(visa.formatted('-')).must_equal '4111-1111-1111-1111'
+      end
+    end
+
+    describe '#possible_brands' do
+      it 'returns brands whose prefix matches the partial PAN' do
+        expect(detector('4').possible_brands).must_include :visa
+        expect(detector('37').possible_brands).must_include :amex
+      end
+
+      it 'returns all brands sharing the partial prefix' do
+        # leading "5" is ambiguous across mastercard, maestro, elo, dankort
+        expect(detector('5').possible_brands.sort).must_equal %i[dankort elo maestro mastercard]
+      end
+
+      it 'narrows as more digits arrive' do
+        expect(detector('2').possible_brands.sort).must_equal %i[jcb mastercard mir]
+        expect(detector('2199').possible_brands).must_equal []
+      end
+
+      it 'returns [] for empty input' do
+        expect(detector('').possible_brands).must_equal []
+      end
+
+      it 'returns [] for a prefix not matching any brand' do
+        expect(detector('9999').possible_brands).must_equal []
+      end
+    end
+  end
+
   it 'should support multiple brands for single check' do
     VALID_NUMBERS.slice(:visa, :mastercard).each do |key, value|
       expect(detector(value.first).brand(:visa, :mastercard)).must_equal key
