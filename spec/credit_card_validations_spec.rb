@@ -390,7 +390,8 @@ describe CreditCardValidations do
     describe 'plugins' do
       [:diners_us, :en_route, :laser,
        :cabal, :dinacard, :girocard, :hiper, :humocard,
-       :troy, :uatp, :uzcard, :verve, :voyager, :vpay].each do |brand|
+       :troy, :uatp, :uzcard, :verve, :voyager, :vpay,
+       :mada, :naranja, :carnet, :cartes_bancaires].each do |brand|
         it "should support #{brand}" do
           # Sibling tests in this file dynamically `add_brand` symbols that
           # collide with shipped plugin names (notably :voyager via the

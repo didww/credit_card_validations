@@ -59,6 +59,8 @@ The following are supported with plugins
 |    Name   |    Key     |
 ---------------------   | ------------|
 [Cabal](https://en.wikipedia.org/wiki/Cabal_(debit_card)) | :cabal
+[Carnet](https://en.wikipedia.org/wiki/Carnet_(card)) | :carnet
+[Cartes Bancaires](https://en.wikipedia.org/wiki/Cartes_Bancaires) | :cartes_bancaires
 [DinaCard](https://en.wikipedia.org/wiki/DinaCard) | :dinacard
 [Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance)  | :diners_us
 [EnRoute](https://en.wikipedia.org/wiki/EnRoute_(credit_card)) | :en_route
@@ -66,6 +68,8 @@ The following are supported with plugins
 [Hiper](https://en.wikipedia.org/wiki/Itau_Unibanco) | :hiper
 [Humo](https://en.wikipedia.org/wiki/Humo_(payment_system)) | :humocard
 [Laser](https://en.wikipedia.org/wiki/Laser_%28debit_card%29)      | :laser
+[Mada](https://en.wikipedia.org/wiki/Mada_(payment_system)) | :mada
+[Naranja](https://en.wikipedia.org/wiki/Tarjeta_Naranja) | :naranja
 [Troy](https://en.wikipedia.org/wiki/Troy_(payment_system)) | :troy
 [UATP](https://en.wikipedia.org/wiki/Universal_Air_Travel_Plan) | :uatp
 [Uzcard](https://en.wikipedia.org/wiki/Uzcard) | :uzcard
@@ -218,10 +222,14 @@ require 'credit_card_validations/plugins/laser'
 require 'credit_card_validations/plugins/diners_us'
 
 require 'credit_card_validations/plugins/cabal'
+require 'credit_card_validations/plugins/carnet'
+require 'credit_card_validations/plugins/cartes_bancaires'
 require 'credit_card_validations/plugins/dinacard'
 require 'credit_card_validations/plugins/girocard'
 require 'credit_card_validations/plugins/hiper'
 require 'credit_card_validations/plugins/humocard'
+require 'credit_card_validations/plugins/mada'
+require 'credit_card_validations/plugins/naranja'
 require 'credit_card_validations/plugins/troy'
 require 'credit_card_validations/plugins/uatp'
 require 'credit_card_validations/plugins/uzcard'
