@@ -104,6 +104,66 @@ for all known brands
 validates :number, presence: true, credit_card_number: true
 ```
 
+### CVV and Expiration validators
+
+CVV against a brand pulled from another attribute:
+
+```ruby
+class Payment
+  include ActiveModel::Validations
+  attr_accessor :card_number, :cvv
+
+  validates :card_number, credit_card_number: true
+  validates :cvv,         credit_card_cvv: { brand_from: :card_number }
+end
+```
+
+CVV against a literal brand:
+
+```ruby
+validates :cvv, credit_card_cvv: { brand: :amex }
+```
+
+Expiration held in a single string attribute (`MM/YY`, `MM/YYYY`, `MMYY`, ...):
+
+```ruby
+validates :expiration, credit_card_expiration: true
+```
+
+When the form uses two separate fields (month and year dropdowns), use the
+`Expiration` class directly in a `validate` block:
+
+```ruby
+class Payment
+  attr_accessor :exp_month, :exp_year
+
+  validate do
+    exp = CreditCardValidations::Expiration.new(exp_month, exp_year)
+    errors.add(:exp_month, :invalid) unless exp.valid?
+  end
+end
+```
+
+### CreditCardValidations::Card
+
+A composite model wrapping `Detector` and `Expiration` behind a single
+ActiveModel-aware object:
+
+```ruby
+card = CreditCardValidations::Card.new(
+  number: '4111 1111 1111 1111',
+  month: 12, year: 2027,
+  verification_value: '123',
+  name: 'John Smith'
+)
+card.valid?            # => true
+card.brand             # => :visa
+card.display_number    # => "************1111"
+card.last_digits       # => "1111"
+card.expired?          # => false
+card.formatted_number  # => "4111 1111 1111 1111"
+```
+
 ### Examples using CreditCardValidations::Detector class
 
 ```ruby
