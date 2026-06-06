@@ -120,6 +120,7 @@ describe CreditCardValidations do
 
   it 'should check luhn' do
     VALID_NUMBERS.each do |brand, card_numbers|
+      load_legacy_plugin(brand)
       if has_luhn_check_rule?(brand)
         card_numbers.each do |number|
           expect(luhn_valid?(detector(number).number)).must_equal true
@@ -130,6 +131,7 @@ describe CreditCardValidations do
 
   it 'should check valid brand' do
     VALID_NUMBERS.each do |brand, card_numbers|
+      load_legacy_plugin(brand)
       card_numbers.each do |card_number|
         expect(detector(card_number).send("#{brand}?")).must_equal true
         expect(detector(card_number).brand).must_equal brand
@@ -138,6 +140,7 @@ describe CreditCardValidations do
   end
 
   it 'should check if card invalid' do
+    VALID_NUMBERS.keys.each { |brand| load_legacy_plugin(brand) }
     INVALID_NUMBERS.each do |card_number|
       expect(detector(card_number).valid?).must_equal false
       expect(detector(card_number).brand).must_be_nil
@@ -227,12 +230,13 @@ describe CreditCardValidations do
       end
 
       it 'returns all brands sharing the partial prefix' do
-        # leading "5" is ambiguous across mastercard, maestro, elo, dankort
-        expect(detector('5').possible_brands.sort).must_equal %i[dankort elo maestro mastercard]
+        # leading "5" is ambiguous across mastercard and maestro in the v9
+        # default brand set (elo and dankort are opt-in plugins now)
+        expect(detector('5').possible_brands.sort).must_equal %i[maestro mastercard]
       end
 
       it 'narrows as more digits arrive' do
-        expect(detector('2').possible_brands.sort).must_equal %i[jcb mastercard mir]
+        expect(detector('2').possible_brands.sort).must_equal %i[jcb mastercard]
         expect(detector('2199').possible_brands).must_equal []
       end
 
@@ -320,6 +324,7 @@ describe CreditCardValidations do
 
   it 'should check if valid brand without arguments' do
     VALID_NUMBERS.each do |key, value|
+      load_legacy_plugin(key)
       value.each do |card_number|
         expect(detector(card_number).valid?(key)).must_equal true
         expect(assert detector(card_number).valid?).must_equal true
