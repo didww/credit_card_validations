@@ -9,6 +9,9 @@
     - '4'
   :options:
     :brand_name: Visa
+    :code:
+      :name: CVV
+      :size: 3
 :mastercard:
   :rules:
   - :length:
@@ -44,6 +47,9 @@
     - '55'
   :options:
     :brand_name: MasterCard
+    :code:
+      :name: CVC
+      :size: 3
 :amex:
   :rules:
   - :length:
@@ -57,6 +63,9 @@
     - 4
     - 6
     - 5
+    :code:
+      :name: CID
+      :size: 4
 :diners:
   :rules:
   - :length:
@@ -76,6 +85,9 @@
     - 4
     - 6
     - 5
+    :code:
+      :name: CVV
+      :size: 3
 :jcb:
   :rules:
   - :length:
@@ -101,6 +113,9 @@
     - '357266'
   :options:
     :brand_name: JCB
+    :code:
+      :name: CVV
+      :size: 3
 :solo:
   :rules:
   - :length:
@@ -110,6 +125,10 @@
     :prefixes:
     - '6334'
     - '6767'
+  :options:
+    :code:
+      :name: CVV
+      :size: 3
 :switch:
   :rules:
   - :length:
@@ -123,6 +142,10 @@
     - '633303'
     - '633301'
     - '633300'
+  :options:
+    :code:
+      :name: CVV
+      :size: 3
 :maestro:
   :rules:
   - :length:
@@ -228,6 +251,10 @@
     - '6769'
     - '6771'
     - '679'
+  :options:
+    :code:
+      :name: CVC
+      :size: 3
 :unionpay:
   :rules:
   - :length:
@@ -293,12 +320,19 @@
   :options:
     :skip_luhn: true
     :brand_name: China UnionPay
+    :code:
+      :name: CVN
+      :size: 3
 :dankort:
   :rules:
   - :length:
     - 16
     :prefixes:
     - '5019'
+  :options:
+    :code:
+      :name: CVV
+      :size: 3
 :rupay:
   :rules:
   - :length:
@@ -341,6 +375,9 @@
     - '8202'
   :options:
     :skip_luhn: true
+    :code:
+      :name: CVV
+      :size: 3
 :hipercard:
   :rules:
   - :length:
@@ -353,6 +390,10 @@
     - '637599'
     - '637609'
     - '637612'
+  :options:
+    :code:
+      :name: CVC
+      :size: 3
 :elo:
   :rules:
   - :length:
@@ -499,6 +540,9 @@
   :options:
     :skip_luhn: true
     :brand_name: Elo
+    :code:
+      :name: CVE
+      :size: 3
 :mir:
   :rules:
   - :length:
@@ -509,6 +553,10 @@
     - '2202'
     - '2203'
     - '2204'
+  :options:
+    :code:
+      :name: CVP2
+      :size: 3
 :discover:
   :rules:
   - :length:
@@ -535,3 +583,6 @@
     - '65'
   :options:
     :brand_name: Discover
+    :code:
+      :name: CID
+      :size: 3

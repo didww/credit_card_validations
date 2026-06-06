@@ -246,6 +246,58 @@ describe CreditCardValidations do
     end
   end
 
+  describe '#valid_cvv?' do
+    it 'requires 4 digits for amex' do
+      d = detector(VALID_NUMBERS[:amex].first)
+      expect(d.valid_cvv?('1234')).must_equal true
+      expect(d.valid_cvv?('123')).must_equal false
+    end
+
+    it 'requires 3 digits for visa and mastercard' do
+      [VALID_NUMBERS[:visa].first, VALID_NUMBERS[:mastercard].first].each do |pan|
+        d = detector(pan)
+        expect(d.valid_cvv?('123')).must_equal true
+        expect(d.valid_cvv?('1234')).must_equal false
+      end
+    end
+
+    it 'rejects non-digit input' do
+      d = detector(VALID_NUMBERS[:visa].first)
+      expect(d.valid_cvv?('12a')).must_equal false
+      expect(d.valid_cvv?(nil)).must_equal false
+      expect(d.valid_cvv?('')).must_equal false
+    end
+
+    it 'returns false when brand is unknown' do
+      d = detector('9999999999999999')
+      expect(d.brand).must_be_nil
+      expect(d.valid_cvv?('123')).must_equal false
+      expect(d.valid_cvv?('1234')).must_equal false
+    end
+
+    it 'raises when detected brand has no :code option configured' do
+      CreditCardValidations::Detector.add_brand(:misconfigured, length: 16, prefixes: '8001')
+      sample = CreditCardValidations::Factory.random(:misconfigured)
+      expect(-> { detector(sample).valid_cvv?('123') }).must_raise CreditCardValidations::Error
+    ensure
+      CreditCardValidations::Detector.delete_brand(:misconfigured)
+    end
+
+    it 'uses :code option from brands.yaml when present' do
+      CreditCardValidations::Detector.add_brand(
+        :custom_5digit_cvv, { length: 16, prefixes: '8000' },
+        code: { name: 'CSC', size: 5 }
+      )
+      sample = CreditCardValidations::Factory.random(:custom_5digit_cvv)
+      d = detector(sample)
+      expect(d.brand).must_equal :custom_5digit_cvv
+      expect(d.valid_cvv?('12345')).must_equal true
+      expect(d.valid_cvv?('1234')).must_equal false
+    ensure
+      CreditCardValidations::Detector.delete_brand(:custom_5digit_cvv)
+    end
+  end
+
   it 'should support multiple brands for single check' do
     VALID_NUMBERS.slice(:visa, :mastercard).each do |key, value|
       expect(detector(value.first).brand(:visa, :mastercard)).must_equal key
