@@ -40,6 +40,22 @@ describe CreditCardValidations do
 
   end
 
+  describe 'safe YAML loading' do
+    it 'rejects a brand source containing arbitrary Ruby objects' do
+      require 'tempfile'
+      Tempfile.create(['unsafe', '.yaml']) do |f|
+        f.write("--- !ruby/object:Object {}\n")
+        f.flush
+        expect(-> {
+          CreditCardValidations.configure { |c| c.source = f.path }
+        }).must_raise Psych::DisallowedClass
+      end
+    ensure
+      CreditCardValidations.reset
+      CreditCardValidations.reload!
+    end
+  end
+
   describe 'MMI' do
     it 'should detect issuer category' do
       d = detector(VALID_NUMBERS[:visa].first)

@@ -39,7 +39,7 @@ module CreditCardValidations
   end
 
   def self.data
-    YAML.load_file(source) || {}
+    YAML.safe_load_file(source, permitted_classes: [Symbol]) || {}
   end
 
   def self.reload!
