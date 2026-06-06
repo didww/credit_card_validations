@@ -14,6 +14,7 @@ module CreditCardValidations
   autoload :Detector, 'credit_card_validations/detector'
   autoload :Factory, 'credit_card_validations/factory'
   autoload :Mmi, 'credit_card_validations/mmi'
+  autoload :Expiration, 'credit_card_validations/expiration'
 
   attr_accessor :configuration
 
