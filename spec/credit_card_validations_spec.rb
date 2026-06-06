@@ -243,6 +243,16 @@ describe CreditCardValidations do
       it 'returns [] for a prefix not matching any brand' do
         expect(detector('9999').possible_brands).must_equal []
       end
+
+      it 'reflects add_brand and delete_brand on the registry' do
+        initial = detector('7').possible_brands
+        CreditCardValidations::Detector.add_brand(:fictional, length: 16, prefixes: '7777')
+        expect(detector('7').possible_brands).must_equal(initial + [:fictional])
+        CreditCardValidations::Detector.delete_brand(:fictional)
+        expect(detector('7').possible_brands).must_equal initial
+      ensure
+        CreditCardValidations::Detector.delete_brand(:fictional)
+      end
     end
   end
 
@@ -339,6 +349,7 @@ describe CreditCardValidations do
         expect(detector(voyager_number).valid?(:voyager)).must_equal true
         expect(detector(voyager_number).voyager?).must_equal true
         expect(detector(voyager_number).brand).must_equal :voyager
+        expect(detector('8').possible_brands).must_include :voyager
       end
 
       describe 'Add voyager rule' do
