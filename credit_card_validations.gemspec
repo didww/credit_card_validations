@@ -12,6 +12,7 @@ Gem::Specification.new do |gem|
   gem.summary       = 'gem should be used for credit card numbers validation, card brands detections, luhn checks'
   gem.homepage      = 'http://didww.github.io/credit_card_validations/'
   gem.license       = 'MIT'
+  gem.required_ruby_version = '>= 3.1'
 
   gem.metadata    = {
     'bug_tracker_uri'   => 'https://github.com/didww/credit_card_validations/issues',
