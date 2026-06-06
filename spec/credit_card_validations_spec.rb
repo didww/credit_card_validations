@@ -66,6 +66,39 @@ describe CreditCardValidations do
       expect(card_detector.valid?(:unionpay)).must_equal true
     end
 
+    describe 'strict input contract' do
+      let(:valid_pan) { VALID_NUMBERS[:visa].first.tr(' -', '') }
+
+      it 'rejects formatted PAN (caller must strip)' do
+        expect(CreditCardValidations::Luhn.valid?("4111 1111 1111 1111")).must_equal false
+        expect(CreditCardValidations::Luhn.valid?("4111-1111-1111-1111")).must_equal false
+        expect(CreditCardValidations::Luhn.valid?("#{valid_pan}\n")).must_equal false
+      end
+
+      it 'rejects non-digit garbage' do
+        expect(CreditCardValidations::Luhn.valid?("4111abcd11111111")).must_equal false
+      end
+
+      it 'rejects nil and empty string' do
+        expect(CreditCardValidations::Luhn.valid?(nil)).must_equal false
+        expect(CreditCardValidations::Luhn.valid?('')).must_equal false
+      end
+
+      it 'accepts a clean digit string' do
+        expect(CreditCardValidations::Luhn.valid?(valid_pan)).must_equal true
+      end
+    end
+
+    describe 'Detector strips formatting before delegating' do
+      it 'accepts spaces, dashes, and whitespace in Detector input' do
+        formatted  = '4111 1111 1111 1111'
+        with_dashes = '4111-1111-1111-1111'
+        from_csv    = "4111111111111111\n"
+        expect(CreditCardValidations::Detector.new(formatted).valid?).must_equal true
+        expect(CreditCardValidations::Detector.new(with_dashes).valid?).must_equal true
+        expect(CreditCardValidations::Detector.new(from_csv).valid?).must_equal true
+      end
+    end
   end
 
 
