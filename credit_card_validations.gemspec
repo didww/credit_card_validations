@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['fedoronchuk@gmail.com']
   gem.description   = %q{A ruby gem for validating credit card numbers}
   gem.summary       = 'gem should be used for credit card numbers validation, card brands detections, luhn checks'
-  gem.homepage      = 'http://didww.github.io/credit_card_validations/'
+  gem.homepage      = 'https://github.com/didww/credit_card_validations'
   gem.license       = 'MIT'
   gem.required_ruby_version = '>= 3.3'
 
