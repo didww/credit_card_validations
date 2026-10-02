@@ -18,6 +18,7 @@ module CreditCardValidations
   autoload :Mmi, 'credit_card_validations/mmi'
   autoload :Expiration, 'credit_card_validations/expiration'
   autoload :Card, 'credit_card_validations/card'
+  autoload :BrandSet, 'credit_card_validations/brand_set'
 
   attr_accessor :configuration
 
@@ -36,6 +37,19 @@ module CreditCardValidations
 
   def self.add_brand(key, rules, options = {})
     Detector.add_brand(key, rules, options)
+  end
+
+  # Build an isolated brand set — detection scoped to the given brands, with
+  # the global registry left alone. Keys may be brand keys or brand names.
+  #
+  #   set = CreditCardValidations.with_brands(:visa, :mastercard)
+  #   set.detect('4111 1111 1111 1111').brand #=> :visa
+  #
+  # Raises Error for a key that is not registered: a typo, or a plugin brand
+  # whose plugin was never required. Dropping it silently would reject a
+  # perfectly valid card in production.
+  def self.with_brands(*keys)
+    BrandSet.new(keys.flatten)
   end
 
   def self.source

@@ -72,3 +72,95 @@ describe 'Detector carrying its own brand set' do
     expect(detector_class.has_luhn_check_rule?(:visa)).must_equal true
   end
 end
+
+describe 'CreditCardValidations.with_brands' do
+  let(:detector_class) { CreditCardValidations::Detector }
+  let(:visa)           { '4111111111111111' }
+  let(:mastercard)     { '5274576394259961' }
+  let(:amex)           { '348051773827666' }
+  let(:dankort)        { '5019717010103742' }
+
+  # Loading a plugin registers the brand globally and defines a predicate
+  # method on Detector that reload! does not remove — only delete_brand does.
+  # Reset both around every example so this spec can run in any order.
+  before do
+    detector_class.delete_brand(:dankort)
+    detector_class.class_variable_get(:@@legacy_autoloaded).delete(:dankort)
+  end
+
+  after do
+    detector_class.delete_brand(:dankort)
+    detector_class.class_variable_get(:@@legacy_autoloaded).delete(:dankort)
+    CreditCardValidations.reload!
+  end
+
+  it 'detects only the brands it was given' do
+    set = CreditCardValidations.with_brands(:visa, :mastercard)
+
+    expect(set.brands).must_equal [:visa, :mastercard]
+    expect(set.detect('4111 1111 1111 1111').brand).must_equal :visa
+    expect(set.detect('5274 5763 9425 9961').brand).must_equal :mastercard
+    expect(set.detect(amex).brand).must_be_nil
+    expect(set.detect(amex).valid?).must_equal false
+  end
+
+  it 'accepts string keys and brand names' do
+    set = CreditCardValidations.with_brands('visa', 'American Express')
+
+    expect(set.brands).must_equal [:visa, :amex]
+    expect(set.detect(amex).brand).must_equal :amex
+  end
+
+  it 'keeps two sets in the same process isolated from each other' do
+    merchant_a = CreditCardValidations.with_brands(:visa)
+    merchant_b = CreditCardValidations.with_brands(:mastercard)
+
+    expect(merchant_a.detect(visa).brand).must_equal :visa
+    expect(merchant_a.detect(mastercard).brand).must_be_nil
+    expect(merchant_b.detect(mastercard).brand).must_equal :mastercard
+    expect(merchant_b.detect(visa).brand).must_be_nil
+
+    # and again, to prove neither set degraded after the other was used
+    expect(merchant_a.brands).must_equal [:visa]
+    expect(merchant_b.brands).must_equal [:mastercard]
+  end
+
+  it 'leaves the global registry untouched' do
+    keys_before = detector_class.brands.keys
+
+    set = CreditCardValidations.with_brands(:visa)
+    set.detect(mastercard).brand
+    set.detect(visa).brand
+
+    expect(detector_class.brands.keys).must_equal keys_before
+    expect(detector_class.new(mastercard).brand).must_equal :mastercard
+    expect(detector_class.new(amex).valid?(:amex)).must_equal true
+  end
+
+  it 'raises on an unknown brand key' do
+    error = expect(-> { CreditCardValidations.with_brands(:visa, :nope) })
+            .must_raise CreditCardValidations::Error
+
+    expect(error.message).must_match(/nope/)
+  end
+
+  it 'raises for a plugin brand whose plugin was never required' do
+    expect(detector_class.brands).wont_include :dankort
+
+    error = expect(-> { CreditCardValidations.with_brands(:visa, :dankort) })
+            .must_raise CreditCardValidations::Error
+
+    expect(error.message).must_match(/dankort/)
+    expect(detector_class.brands).wont_include :dankort
+  end
+
+  it 'accepts a plugin brand once its plugin is required' do
+    load 'credit_card_validations/plugins/dankort.rb'
+
+    set = CreditCardValidations.with_brands(:visa, :dankort)
+
+    expect(set.brands).must_equal [:visa, :dankort]
+    expect(set.detect(dankort).brand).must_equal :dankort
+    expect(set.detect(mastercard).brand).must_be_nil
+  end
+end
