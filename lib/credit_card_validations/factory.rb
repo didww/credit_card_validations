@@ -1,10 +1,10 @@
 # == CreditCardValidations Factory
-# Generates card number that passes validation
+# Generates cards and card numbers that pass validation
 #
-# #random
-#   CreditCardValidations::Factory.random
+# #random_number
+#   CreditCardValidations::Factory.random_number
 # #or particular brand
-#   CreditCardValidations::Factory.random(:maestro) # "6010430241237266856"
+#   CreditCardValidations::Factory.random_number(:maestro) # "6010430241237266856"
 #
 # #random_card
 #   CreditCardValidations::Factory.random_card(:amex) # #<CreditCardValidations::Card>
@@ -13,13 +13,16 @@
 module CreditCardValidations
   class Factory
     class << self
-      def random(brand = nil)
+      def random_number(brand = nil)
         brand = Detector.brands.keys.sample if brand.nil?
         if Detector.brands[brand].nil?
           raise Error.new('Unsupported brand')
         end
         generate(Detector.brands[brand][:rules].sample)
       end
+
+      # Released as the only generator up to v9; keep it working.
+      alias_method :random, :random_number
 
       # Whole test card, not just a PAN: valid number, expiration a year out
       # and a verification value of the size the brand declares.
@@ -32,7 +35,7 @@ module CreditCardValidations
       # Detector.valid_cvv? raises on those, so no verification value we could
       # pick would give back a card that answers true to #valid?.
       def random_card(brand = nil)
-        number = random(brand)
+        number = random_number(brand)
         key = brand || Detector.new(number).brand
         size = Detector.brands.dig(key, :options, :code, :size)
         raise Error.new("brand #{key.inspect} has no :code option") if size.nil?

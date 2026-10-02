@@ -16,6 +16,29 @@ describe CreditCardValidations::Factory do
     end
   end
 
+  describe '.random_number' do
+    it 'generates a valid number for the given brand' do
+      number = CreditCardValidations::Factory.random_number(:visa)
+      expect(CreditCardValidations::Detector.new(number).valid?(:visa)).must_equal true
+    end
+
+    it 'generates a valid number for a random brand when none is given' do
+      number = CreditCardValidations::Factory.random_number
+      expect(CreditCardValidations::Detector.new(number).valid?).must_equal true
+    end
+
+    it 'keeps .random as an alias of the very same method' do
+      factory = CreditCardValidations::Factory
+      expect(factory.method(:random)).must_equal factory.method(:random_number)
+      expect(factory.method(:random).original_name).must_equal :random_number
+    end
+
+    it 'still accepts the legacy .random name' do
+      number = CreditCardValidations::Factory.random(:amex)
+      expect(CreditCardValidations::Detector.new(number).valid?(:amex)).must_equal true
+    end
+  end
+
   describe '.random_card' do
     plugin_brands = Dir[File.expand_path('../lib/credit_card_validations/plugins/*.rb', __dir__)]
                       .map { |path| File.basename(path, '.rb').to_sym }.sort
