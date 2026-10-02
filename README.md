@@ -93,9 +93,9 @@ require 'credit_card_validations/plugins/hipercard'
 # ... whichever brands the app actually accepts
 ```
 
-## Migrating from v9.x → v10.0
+## Migrating from v9.x → v10.0 (unreleased)
 
-The auto-require shim is gone. In v9.0 the seven brands below moved out of the
+On `master`, ahead of the v10.0 release, the auto-require shim is gone. In v9.0 the seven brands below moved out of the
 default set, and referencing one of them still worked — the plugin was loaded
 for you and a deprecation warning was printed once. v10.0 removes that.
 
@@ -127,7 +127,7 @@ defined. Nothing raises and nothing warns, so **a missing `require` is silent**
 
 Seven brands moved from the default brand set to opt-in plugins in v9.0. Up to
 v9.x an auto-require shim kept existing code working with a one-time
-deprecation warning per brand; v10.0 removed it, see above.
+deprecation warning per brand; it is removed on master for v10.0, see above.
 
 ### Other breaking changes in v9.0
 
