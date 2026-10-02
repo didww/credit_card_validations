@@ -12,12 +12,18 @@ I18n.config.enforce_available_locales = true
 
 require 'credit_card_validations'
 
-# v9: brands that moved from core to plugins. Test fixtures still cover them,
-# so specs that exercise legacy-brand fixtures call `load_legacy_plugin` on
-# demand. We intentionally do NOT pre-load them here so the test environment
-# mirrors the gem's default behavior (core brands only).
+# Brands that ship as opt-in plugins rather than in the default set. Fixtures
+# still cover them, so specs load the plugin on demand. They are deliberately
+# NOT pre-loaded here, so the test environment mirrors what an application gets
+# out of the box: core brands only.
+PLUGIN_BRANDS = %i[
+  cabal carnet cartes_bancaires dankort dinacard diners_us elo en_route
+  girocard hiper hipercard humocard laser mada mir naranja rupay solo switch
+  troy uatp uzcard verve voyager vpay
+].freeze
+
 def load_legacy_plugin(brand)
-  return unless CreditCardValidations::Detector::LEGACY_PLUGIN_BRANDS.include?(brand)
+  return unless PLUGIN_BRANDS.include?(brand)
   load "credit_card_validations/plugins/#{brand}.rb"
 end
 

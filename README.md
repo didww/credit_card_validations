@@ -93,30 +93,41 @@ require 'credit_card_validations/plugins/hipercard'
 # ... whichever brands the app actually accepts
 ```
 
-## Migrating from v8.x → v9.0
+## Migrating from v9.x → v10.0
 
-Seven brands moved from the default brand set to opt-in plugins in v9.0. The auto-require shim keeps existing code working for one major version with a one-time deprecation warning per brand.
+The auto-require shim is gone. In v9.0 the seven brands below moved out of the
+default set, and referencing one of them still worked — the plugin was loaded
+for you and a deprecation warning was printed once. v10.0 removes that.
 
-| Brand | Status | Auto-loaded until |
-|---|---|---|
-| `:dankort` | Active (Denmark) | v10.0 |
-| `:elo` | Active (Brazil) | v10.0 |
-| `:hipercard` | Active (Brazil) | v10.0 |
-| `:mir` | Active (Russia) | v10.0 |
-| `:rupay` | Active (India) | v10.0 |
-| `:solo` | Withdrawn 2011 | v10.0 |
-| `:switch` | Withdrawn 2002 | v10.0 |
-
-If your code references any of these brands by symbol, add the matching `require` to your initializer to silence the warning and survive v10:
+If your code names any of these brands, add the matching `require`:
 
 ```ruby
 # config/initializers/credit_card_validations.rb
 require 'credit_card_validations/plugins/mir'
 require 'credit_card_validations/plugins/elo'
-# ...
+# ... whichever brands the app actually accepts
 ```
 
-When v10 lands, the auto-load disappears. Code that names these brands without a matching `require` will see them as unknown — `Detector#brand` returns `nil`, predicate methods (`mir?`, `elo?`, …) are not defined, and `valid?(:mir)` returns false.
+Without it the brand is simply unknown: `Detector#brand` returns `nil`,
+`valid?(:mir)` returns `false`, and predicate methods such as `mir?` are not
+defined. Nothing raises and nothing warns, so **a missing `require` is silent**
+— check the list against your initializer rather than waiting for an error.
+
+| Brand | Status |
+|---|---|
+| `:dankort` | Active (Denmark) |
+| `:elo` | Active (Brazil) |
+| `:hipercard` | Active (Brazil) |
+| `:mir` | Active (Russia) |
+| `:rupay` | Active (India) |
+| `:solo` | Withdrawn 2011 |
+| `:switch` | Withdrawn 2002 |
+
+## Migrating from v8.x → v9.0
+
+Seven brands moved from the default brand set to opt-in plugins in v9.0. Up to
+v9.x an auto-require shim kept existing code working with a one-time
+deprecation warning per brand; v10.0 removed it, see above.
 
 ### Other breaking changes in v9.0
 
