@@ -40,7 +40,11 @@ module CreditCardValidations
         size = Detector.brands.dig(key, :options, :code, :size)
         raise Error.new("brand #{key.inspect} has no :code option") if size.nil?
 
-        expires_on = Date.today.next_year
+        # Somewhere in the next five years, so two generated cards do not share
+        # an expiry. One month is the minimum: a card is live through the last
+        # day of its stated month, and starting at zero would put some cards in
+        # the current month, which reads as "about to expire" in fixtures.
+        expires_on = Date.today.next_month(rand(1..60))
         Card.new(number: number,
                  month: expires_on.month,
                  year: expires_on.year,

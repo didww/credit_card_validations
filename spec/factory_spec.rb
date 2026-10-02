@@ -83,5 +83,23 @@ describe CreditCardValidations::Factory do
       expect { CreditCardValidations::Factory.random_card(:nope) }
         .must_raise CreditCardValidations::Error
     end
+
+    it 'varies the expiration instead of stamping every card with the same date' do
+      dates = Array.new(50) do
+        card = CreditCardValidations::Factory.random_card(:visa)
+        [card.month, card.year]
+      end
+
+      expect(dates.uniq.size).must_be :>, 1
+    end
+
+    it 'keeps every expiration in the future' do
+      today = Date.today
+
+      Array.new(50) { CreditCardValidations::Factory.random_card(:visa) }.each do |card|
+        expect(card.expired?).must_equal false
+        expect(Date.new(card.year, card.month, 1)).must_be :>=, Date.new(today.year, today.month, 1)
+      end
+    end
   end
 end
