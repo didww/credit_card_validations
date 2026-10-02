@@ -255,14 +255,25 @@ CreditCardValidations::Detector.new(number).valid_luhn?
 CreditCardValidations::Luhn.valid?(number)
 ```
 
-### Generating Luhn-valid test numbers
+### Generating test numbers and test cards
 
 ```ruby
-CreditCardValidations::Factory.random(:amex)
-# => "348051773827666"
-CreditCardValidations::Factory.random(:maestro)
-# => "6010430241237266856"
+CreditCardValidations::Factory.random_number(:visa)  #=> "4012888888881881"
+
+card = CreditCardValidations::Factory.random_card(:amex)
+card.valid?              #=> true
+card.brand               #=> :amex
+card.verification_value  #=> "8812"   (4 digits for Amex, 3 elsewhere)
 ```
+
+`random_number` returns a Luhn-valid PAN; `random_card` returns a
+[`Card`](#creditcardvalidationscard) with a number, an expiration a year out and
+a verification value of the size the brand declares. `Factory.random` is kept as
+an alias of `random_number`.
+
+`random_card` raises `CreditCardValidations::Error` for a brand with no
+`:code` option (most plugin brands, e.g. `:uatp`): their CVV cannot be
+validated, so there is no verification value that would make the card valid.
 
 ## Configuration
 
