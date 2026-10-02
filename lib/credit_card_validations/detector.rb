@@ -9,10 +9,38 @@ module CreditCardValidations
     class_attribute :brands
     self.brands = {}
 
+    # Registry lookups that work against any brands hash. The class methods
+    # read the process-global registry, a scoped instance reads its own set,
+    # and both share these implementations.
+    module Lookups
+      module_function
+
+      def brand_name(brands, brand_key)
+        brand = brands[brand_key]
+        return nil unless brand
+        brand.fetch(:options, {})[:brand_name] || brand_key.to_s.titleize
+      end
+
+      def brand_key(brands, brand_name)
+        brands.detect { |_, brand| brand[:options][:brand_name] == brand_name }&.first
+      end
+
+      def valid_cvv?(brands, code, brand)
+        return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
+        spec = brands.dig(brand, :options, :code)
+        raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
+        code.to_s.length == spec[:size]
+      end
+    end
+
     attr_reader :number
 
-    def initialize(number)
+    # Pass :brands to detect against that hash only, leaving the global
+    # registry (Detector.brands) alone. See CreditCardValidations.with_brands.
+    def initialize(number, brands: nil)
       @number = number.to_s.gsub(/[\s\-]/, '')
+      @scoped = !brands.nil?
+      self.brands = brands if @scoped
     end
 
     # credit card number validation
@@ -47,7 +75,7 @@ module CreditCardValidations
     end
 
     def brand_name
-      self.class.brand_name(brand)
+      Lookups.brand_name(brands, brand)
     end
 
     # Last four digits of the PAN, or nil if the PAN has fewer than 4 digits.
@@ -67,7 +95,7 @@ module CreditCardValidations
     # finishes typing.
     def possible_brands
       return [] if number.empty?
-      self.class.brands.each_with_object([]) do |(key, brand), acc|
+      brands.each_with_object([]) do |(key, brand), acc|
         next unless brand.fetch(:rules).any? do |rule|
           rule[:prefixes].any? do |prefix|
             n = [number.length, prefix.length].min
@@ -92,13 +120,13 @@ module CreditCardValidations
     # from the PAN or the input has the wrong shape. Raises when a detected
     # brand is missing :code in the registry.
     def valid_cvv?(code)
-      self.class.valid_cvv?(code, brand)
+      Lookups.valid_cvv?(brands, code, brand)
     end
 
     protected
 
     def groups_for(detected_brand)
-      segments = self.class.brands.dig(detected_brand, :options, :segments)
+      segments = brands.dig(detected_brand, :options, :segments)
       return segments if segments
       groups = Array.new(number.length / 4, 4)
       remainder = number.length % 4
@@ -110,7 +138,7 @@ module CreditCardValidations
       brand_keys = keys.map do |el|
         if el.is_a? String
           #try to find key by name
-          el = (self.class.brand_key(el) || el).to_sym
+          el = (Lookups.brand_key(brands, el) || el).to_sym
         end
         el.downcase
       end
@@ -133,24 +161,15 @@ module CreditCardValidations
 
     class << self
 
-      # :skip_luhn is an opt-out, so anything without one -- including a brand
-      # the registry does not know -- is Luhn-checked.
       def has_luhn_check_rule?(key)
-        !brands.dig(key, :options, :skip_luhn)
+        !brands[key].fetch(:options, {}).fetch(:skip_luhn, false)
       end
 
       # Class-level CVV check: validates a code against an explicit brand,
       # without needing a Detector instance. Useful when only the brand is
       # known (form input bound to a brand select, separate CVV field, etc.).
-      # An unknown brand -- including a plugin brand whose file was never
-      # required -- is false, not an error. A brand that *is* registered but
-      # declares no :code raises, since that is registry data the caller owns.
       def valid_cvv?(code, brand)
-        return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
-        return false unless brands.key?(brand)
-        spec = brands.dig(brand, :options, :code)
-        raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
-        code.to_s.length == spec[:size]
+        Lookups.valid_cvv?(brands, code, brand)
       end
 
       #
@@ -159,6 +178,7 @@ module CreditCardValidations
       #   CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
       #
       def add_brand(key, rules, options = {})
+
         brands[key] = {rules: [], options: options || {}}
 
         Array.wrap(rules).each do |rule|
@@ -170,18 +190,11 @@ module CreditCardValidations
       end
 
       def brand_name(brand_key)
-        brand = brands[brand_key]
-        if brand
-          brand.fetch(:options, {})[:brand_name] || brand_key.to_s.titleize
-        else
-          nil
-        end
+        Lookups.brand_name(brands, brand_key)
       end
 
       def brand_key(brand_name)
-        brands.detect do |_, brand|
-          brand[:options][:brand_name] == brand_name
-        end.try(:first)
+        Lookups.brand_key(brands, brand_name)
       end
 
       # CreditCardValidations.delete_brand(:en_route)
