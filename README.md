@@ -295,6 +295,56 @@ CreditCardValidations::Detector.new('869926275400212').voyager?  # => true
 CreditCardValidations::Detector.delete_brand(:maestro)
 ```
 
+### Scoped brand sets
+
+`Detector.brands` is the registry for the whole process, so `add_brand` and
+`delete_brand` are global. Narrowing detection to one merchant's accepted
+brands breaks every other caller in the same app:
+
+```ruby
+D = CreditCardValidations::Detector
+D.brands.keys.reject { |k| k == :visa }.each { |k| D.delete_brand(k) } # merchant A narrows to visa
+D.new('5274 5763 9425 9961').valid?(:mastercard)                       # => false, merchant B is now broken
+```
+
+`with_brands` returns an isolated set instead. It never reads or writes the
+global registry, so sets for different merchants coexist in one process:
+
+```ruby
+merchant_a = CreditCardValidations.with_brands(:visa, :mastercard)
+merchant_b = CreditCardValidations.with_brands(:amex, :jcb)
+
+merchant_a.brands                                 # => [:visa, :mastercard]
+merchant_a.detect('4111 1111 1111 1111').brand    # => :visa
+merchant_a.detect('348051773827666').brand        # => nil, amex is not in this set
+merchant_b.detect('348051773827666').brand        # => :amex
+
+CreditCardValidations::Detector.brands.keys
+# => [:visa, :mastercard, :amex, :diners, :jcb, :maestro, :unionpay, :discover]
+```
+
+`detect` returns a regular `Detector` scoped to the set, so the full instance
+API works on it — `valid?`, `brand_name`, `possible_brands`, `formatted`,
+`valid_cvv?` and so on all see only the set's brands.
+
+Keys may be brand keys or brand names. An unknown key raises
+`CreditCardValidations::Error` rather than being dropped, since a dropped
+brand would mean a valid card is quietly rejected:
+
+```ruby
+CreditCardValidations.with_brands(:visa, :mastercrad)
+# => CreditCardValidations::Error: unknown brand(s) :mastercrad; registered: ...
+
+CreditCardValidations.with_brands(:visa, :dankort)
+# => CreditCardValidations::Error (plugin not required yet)
+require 'credit_card_validations/plugins/dankort'
+CreditCardValidations.with_brands(:visa, :dankort).brands  # => [:visa, :dankort]
+```
+
+For a per-record brand list inside ActiveModel, the `:brands` option on
+`validates :number, credit_card_number:` already covers it — a scoped set is
+for code paths that call `Detector` directly.
+
 ### Luhn check
 
 ```ruby
