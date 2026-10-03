@@ -62,9 +62,26 @@ describe 'Brands that live only in plugins' do
     expect(detector.brand).must_equal :mir
   end
 
-  it 'no longer expose the shim' do
-    expect(detector_class.const_defined?(:LEGACY_PLUGIN_BRANDS)).must_equal false
-    expect(detector_class.class_variable_defined?(:@@legacy_autoloaded)).must_equal false
-    expect(detector_class.private_method_defined?(:autoload_legacy_plugin)).must_equal false
+  # One assertion per example: minitest stops an example at its first failed
+  # assertion, and each of these three can rot independently.
+  describe 'no longer expose the shim' do
+    # `false` restricts the lookup to Detector itself. Without it the search
+    # walks up to Object, so any top-level LEGACY_PLUGIN_BRANDS -- this very
+    # file defines a top-level PLUGIN_ONLY_BRANDS -- would satisfy the check.
+    it 'has no LEGACY_PLUGIN_BRANDS constant of its own' do
+      expect(detector_class.const_defined?(:LEGACY_PLUGIN_BRANDS, false)).must_equal false
+    end
+
+    it 'has no @@legacy_autoloaded class variable' do
+      expect(detector_class.class_variable_defined?(:@@legacy_autoloaded)).must_equal false
+    end
+
+    # method_defined? covers public and protected. The shim method was
+    # protected, so private_method_defined? answered false while it still
+    # existed -- the assertion could not fail.
+    it 'has no autoload_legacy_plugin method' do
+      expect(detector_class.method_defined?(:autoload_legacy_plugin)).must_equal false
+      expect(detector_class.private_method_defined?(:autoload_legacy_plugin)).must_equal false
+    end
   end
 end
