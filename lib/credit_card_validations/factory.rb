@@ -21,10 +21,12 @@ module CreditCardValidations
     class << self
       def random_number(brand = nil)
         brand = Detector.brands.keys.sample if brand.nil?
-        if Detector.brands[brand].nil?
+        spec = Detector.brands[brand]
+        if spec.nil?
           raise Error.new('Unsupported brand')
         end
-        generate(Detector.brands[brand][:rules].sample)
+        # skip_luhn is declared on the brand, not on the individual rule.
+        generate(spec[:rules].sample, spec.fetch(:options, {})[:skip_luhn])
       end
 
       # Released as the only generator up to v9; keep it working.
@@ -77,8 +79,8 @@ module CreditCardValidations
                  verification_value: Array.new(size) { rand(10) }.join)
       end
 
-      def generate(rule)
-        number(rule[:prefixes].sample, rule[:length].sample, rule.fetch(:options, {})[:skip_luhn])
+      def generate(rule, skip_luhn = false)
+        number(rule[:prefixes].sample, rule[:length].sample, skip_luhn)
       end
 
       def number(prefix, length, skip_luhn = false)
