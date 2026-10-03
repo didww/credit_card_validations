@@ -166,12 +166,17 @@ describe CreditCardValidations::Factory do
       expect(dates.uniq.size).must_be :>, 10
     end
 
-    it 'keeps every expiration in the future' do
-      today = Date.today
+    it 'keeps every expiration past the current month' do
+      this_month = Date.new(Date.today.year, Date.today.month, 1)
 
-      Array.new(50) { CreditCardValidations::Factory.random_card(:visa) }.each do |card|
+      # The generator's floor is one month out, so the current month is out of
+      # bounds too -- `>=` accepted exactly the value the floor exists to avoid.
+      # The floor is only observable on a draw that hits it, so the example
+      # takes 1000 draws: an off-by-one floor escapes with probability
+      # (60/61)**1000 = 6.7e-8, two off with (60/62)**1000 = 5.6e-15.
+      Array.new(1000) { CreditCardValidations::Factory.random_card(:visa) }.each do |card|
         expect(card.expired?).must_equal false
-        expect(Date.new(card.year, card.month, 1)).must_be :>=, Date.new(today.year, today.month, 1)
+        expect(Date.new(card.year, card.month, 1)).must_be :>, this_month
       end
     end
   end
