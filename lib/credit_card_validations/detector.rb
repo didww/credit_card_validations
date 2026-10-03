@@ -226,9 +226,19 @@ module CreditCardValidations
         undef_method "#{key}?".to_sym if method_defined? "#{key}?".to_sym
       end
 
-      #create regexp by array of prefixes
+      # Regexp by array of prefixes, longest first.
+      #
+      # Alternation is first-match, left-to-right, not longest-match: in
+      # ^((677)|(6771)) a 6771... PAN matches "677", so the brand reports a
+      # shorter prefix than the one it declares and loses comparisons it
+      # should win. Ordering by length makes the match the longest prefix the
+      # brand actually declares, which is what valid_number? compares.
+      #
+      # The index keeps the order total, so the same prefix list always
+      # compiles to the same regexp -- sort_by alone is not stable.
       def compile_regexp(prefixes)
-        Regexp.new("^((#{prefixes.join(")|(")}))")
+        ordered = prefixes.each_with_index.sort_by { |prefix, i| [-prefix.to_s.length, i] }.map(&:first)
+        Regexp.new("^((#{ordered.join(")|(")}))")
       end
 
     end
