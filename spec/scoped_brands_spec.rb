@@ -238,6 +238,27 @@ describe 'a Detector scoped through the brands= writer' do
     expect(detector.valid?(:dankort)).must_equal false
     expect(detector_class.brands).wont_include :dankort
   end
+
+  # Hash#slice is shallow, so a hash a caller builds by hand still shares its
+  # rule and option hashes with the global registry. Without a copy, a write
+  # through what looks like a private registry reaches every other detector in
+  # the process.
+  it 'takes its own copy, so a write through it cannot reach the global registry' do
+    detector = detector_class.new(visa)
+    detector.brands = detector_class.brands.slice(:visa)
+
+    expect(detector.brands[:visa]).wont_be_same_as detector_class.brands[:visa]
+    expect { detector.brands[:visa][:rules] << {length: [16], prefixes: ['9']} }
+      .must_raise FrozenError
+    expect(detector_class.brands[:visa][:rules].size).must_equal 1
+  end
+
+  it 'copies for the brands: kwarg too, not just the writer' do
+    detector = detector_class.new(visa, brands: detector_class.brands.slice(:visa))
+
+    expect { detector.brands[:visa][:options][:brand_name] = 'Pwned' }.must_raise FrozenError
+    expect(detector_class.brand_name(:visa)).must_equal 'Visa'
+  end
 end
 
 describe 'an override of the class-level lookups' do
