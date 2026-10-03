@@ -9,13 +9,6 @@ module CreditCardValidations
     class_attribute :brands
     self.brands = {}
 
-    # Brands that were part of the default set up to v8.x and moved to
-    # opt-in plugins in v9.0. The shim below auto-loads the plugin on first
-    # reference and emits a one-time deprecation warning. To be removed in
-    # v10.0 — users should add explicit `require` statements by then.
-    LEGACY_PLUGIN_BRANDS = %i[mir rupay elo dankort hipercard solo switch].freeze
-    @@legacy_autoloaded = {}
-
     attr_reader :number
 
     def initialize(number)
@@ -121,23 +114,7 @@ module CreditCardValidations
         end
         el.downcase
       end
-      brand_keys.each { |k| autoload_legacy_plugin(k) }
       self.brands.slice(*brand_keys)
-    end
-
-    def autoload_legacy_plugin(key)
-      return unless LEGACY_PLUGIN_BRANDS.include?(key)
-      return if self.class.brands.key?(key)
-      return if @@legacy_autoloaded[key]
-      @@legacy_autoloaded[key] = true
-
-      Warning.warn(
-        "[credit_card_validations] :#{key} was moved to a plugin in v9.0. " \
-        "Auto-loading 'credit_card_validations/plugins/#{key}' for backward " \
-        "compatibility. Add `require 'credit_card_validations/plugins/#{key}'` " \
-        "to your initializer to silence; auto-load is removed in v10.\n"
-      )
-      load "credit_card_validations/plugins/#{key}.rb"
     end
 
     def matches_brand?(brand)
@@ -156,15 +133,21 @@ module CreditCardValidations
 
     class << self
 
+      # :skip_luhn is an opt-out, so anything without one -- including a brand
+      # the registry does not know -- is Luhn-checked.
       def has_luhn_check_rule?(key)
-        !brands[key].fetch(:options, {}).fetch(:skip_luhn, false)
+        !brands.dig(key, :options, :skip_luhn)
       end
 
       # Class-level CVV check: validates a code against an explicit brand,
       # without needing a Detector instance. Useful when only the brand is
       # known (form input bound to a brand select, separate CVV field, etc.).
+      # An unknown brand -- including a plugin brand whose file was never
+      # required -- is false, not an error. A brand that *is* registered but
+      # declares no :code raises, since that is registry data the caller owns.
       def valid_cvv?(code, brand)
         return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
+        return false unless brands.key?(brand)
         spec = brands.dig(brand, :options, :code)
         raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
         code.to_s.length == spec[:size]
@@ -176,11 +159,6 @@ module CreditCardValidations
       #   CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
       #
       def add_brand(key, rules, options = {})
-        # Mark legacy plugin brands as handled so the v9 auto-require shim
-        # never re-loads them after the user takes any explicit action
-        # (require, add_brand, or a later delete_brand).
-        @@legacy_autoloaded[key] = true if LEGACY_PLUGIN_BRANDS.include?(key)
-
         brands[key] = {rules: [], options: options || {}}
 
         Array.wrap(rules).each do |rule|

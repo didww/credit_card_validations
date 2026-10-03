@@ -118,6 +118,22 @@ describe CreditCardValidations do
   end
 
 
+  describe '.has_luhn_check_rule?' do
+    it 'is true for brands that are Luhn-checked and false for the opt-outs' do
+      expect(has_luhn_check_rule?(:visa)).must_equal true
+      expect(has_luhn_check_rule?(:unionpay)).must_equal false
+    end
+
+    # :skip_luhn is an opt-out, so "no opt-out on record" is true -- including
+    # for a brand the registry has never heard of. The point of the example is
+    # that asking is not an error.
+    it 'is true for an unknown brand instead of raising' do
+      expect(CreditCardValidations::Detector.brands.key?(:mir)).must_equal false
+      expect(has_luhn_check_rule?(:mir)).must_equal true
+      expect(has_luhn_check_rule?(:not_a_brand_xyz)).must_equal true
+    end
+  end
+
   it 'should check luhn' do
     VALID_NUMBERS.each do |brand, card_numbers|
       load_legacy_plugin(brand)
@@ -289,6 +305,15 @@ describe CreditCardValidations do
       expect(d.valid_cvv?('1234')).must_equal false
     end
 
+    # An unregistered brand is not a configuration error -- it is just a brand
+    # this installation does not know. Callers get false, same as an
+    # undetectable PAN. Only a *registered* brand missing :code raises.
+    it 'returns false for a brand that is not registered' do
+      expect(CreditCardValidations::Detector.brands.key?(:mir)).must_equal false
+      expect(CreditCardValidations::Detector.valid_cvv?('123', :mir)).must_equal false
+      expect(CreditCardValidations::Detector.valid_cvv?('123', :not_a_brand_xyz)).must_equal false
+    end
+
     it 'raises when detected brand has no :code option configured' do
       CreditCardValidations::Detector.add_brand(:misconfigured, length: 16, prefixes: '8001')
       sample = CreditCardValidations::Factory.random(:misconfigured)
@@ -310,6 +335,19 @@ describe CreditCardValidations do
     ensure
       CreditCardValidations::Detector.delete_brand(:custom_5digit_cvv)
     end
+  end
+
+  # resolve_keys must narrow the registry to exactly the keys asked for. The
+  # rest of the suite only ever restricts to a brand with a PAN that matches
+  # nothing else, so a fallback-to-all-brands bug in resolve_keys would leave
+  # every example green while `valid?(:mir)` accepted a Visa card. These
+  # assertions use a Visa PAN precisely so that fallback shows up.
+  it 'never matches a brand that was not asked for' do
+    visa = VALID_NUMBERS[:visa].first
+    expect(detector(visa).valid?).must_equal true
+    expect(detector(visa).valid?(:mir)).must_equal false
+    expect(detector(visa).valid?(:not_a_brand_xyz)).must_equal false
+    expect(detector(visa).brand(:mir)).must_be_nil
   end
 
   it 'should support multiple brands for single check' do

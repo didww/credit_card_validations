@@ -8,6 +8,16 @@ class PaymentForm
   validates :other_cvv, credit_card_cvv: { brand: :amex },        allow_blank: true
 end
 
+# :mir ships as an opt-in plugin, so it is absent from the registry unless the
+# app requires it. A CVV field pinned to such a brand must fail validation --
+# record.valid? is not allowed to raise.
+class PluginBrandPaymentForm
+  include ActiveModel::Model
+  attr_accessor :cvv
+
+  validates :cvv, credit_card_cvv: { brand: :mir }
+end
+
 describe ActiveModel::Validations::CreditCardCvvValidator do
   let(:amex_pan) { VALID_NUMBERS[:amex].first }
   let(:visa_pan) { VALID_NUMBERS[:visa].first }
@@ -43,6 +53,18 @@ describe ActiveModel::Validations::CreditCardCvvValidator do
 
       form.other_cvv = '123'
       expect(form.valid?).must_equal false
+    end
+  end
+
+  describe ':brand option naming a brand whose plugin is not required' do
+    before { CreditCardValidations.reload! }
+
+    it 'fails validation instead of raising' do
+      expect(CreditCardValidations::Detector.brands.key?(:mir)).must_equal false
+
+      form = PluginBrandPaymentForm.new(cvv: '123')
+      expect(form.valid?).must_equal false
+      expect(form.errors[:cvv]).wont_be_empty
     end
   end
 end
