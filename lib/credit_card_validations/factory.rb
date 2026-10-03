@@ -24,7 +24,7 @@ module CreditCardValidations
       # Released as the only generator up to v9; keep it working.
       alias_method :random, :random_number
 
-      # Whole test card, not just a PAN: valid number, expiration a year out
+      # Whole test card, not just a PAN: valid number, expiration 1-60 months out
       # and a verification value of the size the brand declares.
       #
       #   card = CreditCardValidations::Factory.random_card(:amex)

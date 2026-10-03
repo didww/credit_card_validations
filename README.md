@@ -267,7 +267,7 @@ card.verification_value  #=> "8812"   (4 digits for Amex, 3 elsewhere)
 ```
 
 `random_number` returns a Luhn-valid PAN; `random_card` returns a
-[`Card`](#creditcardvalidationscard) with a number, an expiration a year out and
+[`Card`](#creditcardvalidationscard) with a number, an expiration 1-60 months out and
 a verification value of the size the brand declares. `Factory.random` is kept as
 an alias of `random_number`.
 
