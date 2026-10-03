@@ -159,7 +159,11 @@ describe CreditCardValidations::Factory do
         [card.month, card.year]
       end
 
-      expect(dates.uniq.size).must_be :>, 1
+      # 50 draws over the 60 reachable (month, year) pairs: the expected number
+      # of distinct pairs is 60 * (1 - (59/60)**50) = 34.1, and the measured
+      # minimum over 200_000 simulated runs is 22. The bound on a false failure
+      # is C(60, 10) * (10/60)**50 = 9.3e-29.
+      expect(dates.uniq.size).must_be :>, 10
     end
 
     it 'keeps every expiration in the future' do
