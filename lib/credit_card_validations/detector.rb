@@ -133,8 +133,10 @@ module CreditCardValidations
 
     class << self
 
+      # :skip_luhn is an opt-out, so anything without one -- including a brand
+      # the registry does not know -- is Luhn-checked.
       def has_luhn_check_rule?(key)
-        !brands[key].fetch(:options, {}).fetch(:skip_luhn, false)
+        !brands.dig(key, :options, :skip_luhn)
       end
 
       # Class-level CVV check: validates a code against an explicit brand,
