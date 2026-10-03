@@ -241,3 +241,37 @@ describe 'a Detector scoped through the brands= writer' do
     expect(detector_class.brands).wont_include :dankort
   end
 end
+
+describe 'brand names that fall back to the titleized key' do
+  let(:detector_class) { CreditCardValidations::Detector }
+  let(:en_route)       { '201401234567890' }
+
+  # :en_route ships without an explicit :brand_name, so its display name comes
+  # from the key.to_s.titleize fallback in Lookups.brand_name. A single-word
+  # key survives the gap by accident -- downcasing the name happens to give
+  # the key back -- so pin it with a key that titleizes to two words.
+  before { load 'credit_card_validations/plugins/en_route.rb' }
+  after  { detector_class.delete_brand(:en_route) }
+
+  it 'round-trips a fallback brand name back to its key' do
+    expect(detector_class.brand_name(:en_route)).must_equal 'En Route'
+    expect(detector_class.brand_key('En Route')).must_equal :en_route
+  end
+
+  it 'accepts a fallback brand name in with_brands' do
+    set = CreditCardValidations.with_brands('En Route')
+
+    expect(set.brands).must_equal [:en_route]
+    expect(set.detect(en_route).brand).must_equal :en_route
+  end
+
+  it 'accepts a fallback brand name in valid?' do
+    expect(detector_class.new(en_route).valid?('En Route')).must_equal true
+  end
+
+  it 'looks names up in a brand hash that carries no :options' do
+    detector = detector_class.new(en_route, brands: {en_route: {rules: []}})
+
+    expect(detector.valid?('En Route')).must_equal false
+  end
+end
