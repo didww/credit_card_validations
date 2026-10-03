@@ -108,10 +108,47 @@ require 'credit_card_validations/plugins/elo'
 # ... whichever brands the app actually accepts
 ```
 
-Without it the brand is simply unknown: `Detector#brand` returns `nil`,
-`valid?(:mir)` returns `false`, and predicate methods such as `mir?` are not
-defined. Nothing raises and nothing warns, so **a missing `require` is silent**
-— check the list against your initializer rather than waiting for an error.
+Without it the brand is simply unknown. **Nothing warns** — the v9 deprecation
+warning is gone too — and the read-only paths stay quiet, so a missing
+`require` will not announce itself where you are most likely to notice it:
+
+```ruby
+Detector.new('2202 1234 1234 1234').brand                #=> nil
+Detector.new('2202 1234 1234 1234').valid?(:mir)         #=> false
+Detector.new('2202 1234 1234 1234').brand_name           #=> nil
+Detector.new('2202 1234 1234 1234').possible_brands      #=> []
+Detector.brand_name(:mir)                                #=> nil
+Detector.valid_cvv?('123', :mir)                         #=> false
+Detector.has_luhn_check_rule?(:mir)                      #=> true  (nothing opted out)
+'2202 1234 1234 1234'.credit_card_brand                  #=> nil
+'2202 1234 1234 1234'.credit_card_brand_name             #=> nil
+'2202 1234 1234 1234'.valid_credit_card_brand?(:mir)     #=> false
+```
+
+Three paths do raise, because there is nothing sensible to return:
+
+```ruby
+Detector.new(pan).mir?                  # NoMethodError — the predicate is never defined
+CreditCardValidations::Factory.random(:mir)   # CreditCardValidations::Error: Unsupported brand
+Detector.add_rule(:mir, 16, ['2202'])         # CreditCardValidations::Error: brand mir is undefined
+Detector::LEGACY_PLUGIN_BRANDS                # NameError — see below
+```
+
+ActiveModel validators never raise on a missing plugin; the record is just
+invalid. Which means a PAN field restricted to a plugin brand **rejects every
+number you give it**, including a valid card of that brand:
+
+```ruby
+validates :number, credit_card_number: { brands: [:mir] }   # nothing passes
+validates :cvv,    credit_card_cvv:    { brand: :mir }      # nothing passes
+```
+
+`Detector::LEGACY_PLUGIN_BRANDS` was a public constant in v9 and is gone. An
+app that read it to build its own require list now gets `NameError`; replace it
+with a literal list of the brands you accept.
+
+So check the brand list against your initializer rather than waiting for an
+error — in the paths an app exercises most, there will not be one.
 
 | Brand | Status |
 |---|---|
