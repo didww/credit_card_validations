@@ -118,6 +118,22 @@ describe CreditCardValidations do
   end
 
 
+  describe '.has_luhn_check_rule?' do
+    it 'is true for brands that are Luhn-checked and false for the opt-outs' do
+      expect(has_luhn_check_rule?(:visa)).must_equal true
+      expect(has_luhn_check_rule?(:unionpay)).must_equal false
+    end
+
+    # :skip_luhn is an opt-out, so "no opt-out on record" is true -- including
+    # for a brand the registry has never heard of. The point of the example is
+    # that asking is not an error.
+    it 'is true for an unknown brand instead of raising' do
+      expect(CreditCardValidations::Detector.brands.key?(:mir)).must_equal false
+      expect(has_luhn_check_rule?(:mir)).must_equal true
+      expect(has_luhn_check_rule?(:not_a_brand_xyz)).must_equal true
+    end
+  end
+
   it 'should check luhn' do
     VALID_NUMBERS.each do |brand, card_numbers|
       load_legacy_plugin(brand)
