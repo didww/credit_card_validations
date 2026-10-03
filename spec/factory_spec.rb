@@ -27,6 +27,17 @@ describe CreditCardValidations::Factory do
       expect(CreditCardValidations::Detector.new(number).valid?).must_equal true
     end
 
+    it 'leaves the check digit random for a brand that declares skip_luhn' do
+      numbers = Array.new(500) { CreditCardValidations::Factory.random_number(:unionpay) }
+      luhn_valid = numbers.count { |number| CreditCardValidations::Luhn.valid?(number) }
+
+      # :unionpay declares skip_luhn, so the last digit is drawn, not computed,
+      # and lands on the Luhn-valid value about 1 in 10 times. P(more than 200
+      # of 500) is bounded by exp(-500 * D(0.4||0.1)) = 2e-68. The current code
+      # computes the check digit for every brand, giving 500 of 500.
+      expect(luhn_valid).must_be :<, 200
+    end
+
     it 'keeps .random as an alias of the very same method' do
       factory = CreditCardValidations::Factory
       expect(factory.method(:random)).must_equal factory.method(:random_number)
