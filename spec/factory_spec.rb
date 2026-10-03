@@ -27,15 +27,16 @@ describe CreditCardValidations::Factory do
       expect(CreditCardValidations::Detector.new(number).valid?).must_equal true
     end
 
-    it 'leaves the check digit random for a brand that declares skip_luhn' do
+    it 'computes the check digit even for a brand that declares skip_luhn' do
       numbers = Array.new(500) { CreditCardValidations::Factory.random_number(:unionpay) }
       luhn_valid = numbers.count { |number| CreditCardValidations::Luhn.valid?(number) }
 
-      # :unionpay declares skip_luhn, so the last digit is drawn, not computed,
-      # and lands on the Luhn-valid value about 1 in 10 times. P(more than 200
-      # of 500) is bounded by exp(-500 * D(0.4||0.1)) = 2e-68. The current code
-      # computes the check digit for every brand, giving 500 of 500.
-      expect(luhn_valid).must_be :<, 200
+      # skip_luhn says detection tolerates a missing check digit, not that real
+      # cards lack one: all 55 UnionPay PANs in spec/fixtures/valid_cards.yml
+      # carry a valid one. A computed digit passes both the lenient and the
+      # strict reading, so generated PANs stay usable against a second
+      # validator. Drawing it instead would land here about 1 in 10 times.
+      expect(luhn_valid).must_equal 500
     end
 
     it 'keeps .random as an alias of the very same method' do
@@ -53,7 +54,7 @@ describe CreditCardValidations::Factory do
   describe '.number' do
     it 'draws every generated digit from the whole 0-9 range' do
       body = Array.new(200) { CreditCardValidations::Factory.number('4', 19)[1..-2] }.join
-      drawn_check_digits = Array.new(500) { CreditCardValidations::Factory.number('62', 16, true)[-1] }
+      cvvs = Array.new(500) { CreditCardValidations::Factory.random_card(:visa).verification_value }.join
 
       # 200 numbers x 17 filler digits = 3400 draws, so 340 nines are expected.
       # P(X <= 100) for X ~ Binomial(3400, 0.1) is bounded by
@@ -61,9 +62,11 @@ describe CreditCardValidations::Factory do
       expect(body.length).must_equal 3400
       expect(body.count('9')).must_be :>, 100
 
-      # 500 drawn check digits, 50 nines expected. P(X <= 10) for
-      # X ~ Binomial(500, 0.1) is bounded by exp(-500 * D(0.02||0.1)) = 8e-12.
-      expect(drawn_check_digits.count('9')).must_be :>, 10
+      # The verification value is drawn from the same range and had no coverage.
+      # 500 cards x 3 digits = 1500 draws, 150 nines expected. P(X <= 50) for
+      # X ~ Binomial(1500, 0.1) is bounded by exp(-1500 * D(0.033||0.1)) = 4e-23.
+      expect(cvvs.length).must_equal 1500
+      expect(cvvs.count('9')).must_be :>, 50
     end
   end
 

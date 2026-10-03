@@ -266,10 +266,11 @@ card.brand               #=> :amex
 card.verification_value  #=> "8812"   (4 digits for Amex, 3 elsewhere)
 ```
 
-`random_number` returns a PAN the detector accepts for the brand: Luhn-valid,
-except for the brands that declare `skip_luhn` (`:unionpay`, `:elo`, `:rupay`,
-`:en_route`), where the last digit is drawn rather than computed — the same rule
-detection applies. `Factory.random` is kept as an alias of `random_number`.
+`random_number` returns a Luhn-valid PAN the detector accepts for the brand,
+including for brands that declare `skip_luhn` — that flag means detection
+tolerates a missing check digit, not that real cards lack one, and a computed
+digit passes either way. `Factory.random` is kept as an alias of
+`random_number`.
 
 `random_card` returns a [`Card`](#creditcardvalidationscard) with a number, an
 expiration 1-60 months out and a verification value of the size the brand

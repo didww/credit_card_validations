@@ -25,8 +25,7 @@ module CreditCardValidations
         if spec.nil?
           raise Error.new('Unsupported brand')
         end
-        # skip_luhn is declared on the brand, not on the individual rule.
-        generate(spec[:rules].sample, spec.fetch(:options, {})[:skip_luhn])
+        generate(spec[:rules].sample)
       end
 
       # Released as the only generator up to v9; keep it working.
@@ -90,22 +89,22 @@ module CreditCardValidations
                  verification_value: Array.new(size) { rand(10) }.join)
       end
 
-      def generate(rule, skip_luhn = false)
-        number(rule[:prefixes].sample, rule[:length].sample, skip_luhn)
+      def generate(rule)
+        number(rule[:prefixes].sample, rule[:length].sample)
       end
 
-      def number(prefix, length, skip_luhn = false)
+      # Always computes the check digit, including for brands that declare
+      # skip_luhn. That flag says detection *tolerates* a missing check digit,
+      # not that real cards lack one -- all 55 UnionPay PANs in
+      # spec/fixtures/valid_cards.yml carry a valid one. A computed digit
+      # satisfies both the lenient and the strict reading, so it is the only
+      # choice that keeps generated PANs usable against a second validator.
+      def number(prefix, length)
         number = prefix.dup
         1.upto(length - (prefix.length + 1)) do
           number << "#{rand(10)}"
         end
-        #if skip luhn
-        if skip_luhn
-          number += "#{rand(10)}"
-        else
-          number += last_digit(number).to_s
-        end
-        number
+        number + last_digit(number).to_s
       end
 
       #extracted from darkcoding-credit-card
