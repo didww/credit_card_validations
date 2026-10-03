@@ -305,6 +305,23 @@ describe 'an override of the class-level lookups' do
   end
 end
 
+describe 'the internals a brand set keeps to itself' do
+  it 'does not expose Detector::Lookups' do
+    # Shared implementation of the class and instance lookups. Naming it from
+    # outside would make an internal signature -- which takes a brands hash
+    # first -- part of the public API.
+    expect { CreditCardValidations::Detector::Lookups }.must_raise NameError
+  end
+
+  it 'does not expose a brand set registry' do
+    set = CreditCardValidations.with_brands(:visa)
+
+    # Handing out the live hash would let a caller edit the set from outside.
+    expect(set.respond_to?(:registry)).must_equal false
+    expect { set.registry }.must_raise NoMethodError
+  end
+end
+
 describe 'brand names that fall back to the titleized key' do
   let(:detector_class) { CreditCardValidations::Detector }
   let(:en_route)       { '201401234567890' }
