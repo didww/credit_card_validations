@@ -21,8 +21,10 @@ module CreditCardValidations
         brand.fetch(:options, {})[:brand_name] || brand_key.to_s.titleize
       end
 
-      def brand_key(brands, brand_name)
-        brands.detect { |_, brand| brand[:options][:brand_name] == brand_name }&.first
+      # Inverse of brand_name, so the titleize fallback and the missing
+      # :options case are handled in exactly one place.
+      def brand_key(brands, name)
+        brands.keys.detect { |key| brand_name(brands, key) == name }
       end
 
       def valid_cvv?(brands, code, brand)
