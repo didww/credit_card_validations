@@ -12,6 +12,12 @@
 #
 module CreditCardValidations
   class Factory
+    # Redraws allowed while waiting for detection to agree with the requested
+    # brand. The worst self-detection rate measured with all 25 plugins loaded
+    # is :mastercard at 92.6%, so exhausting 100 draws has probability
+    # 0.074**100 -- it only happens for a brand detection can never return.
+    MAX_DETECTION_RETRIES = 100
+
     class << self
       def random_number(brand = nil)
         brand = Detector.brands.keys.sample if brand.nil?
@@ -36,9 +42,22 @@ module CreditCardValidations
       # pick would give back a card that answers true to #valid?.
       def random_card(brand = nil)
         number = random_number(brand)
-        key = brand || Detector.new(number).brand
-        size = Detector.brands.dig(key, :options, :code, :size)
-        raise Error.new("brand #{key.inspect} has no :code option") if size.nil?
+        brand ||= Detector.new(number).brand
+        size = Detector.brands.dig(brand, :options, :code, :size)
+        raise Error.new("brand #{brand.inspect} has no :code option") if size.nil?
+
+        # Card checks the CVV against the brand *detected* from the PAN, and
+        # detection answers with the longest matching prefix -- a plugin can
+        # outrank the brand we were asked for ('54...' at 16 digits is both
+        # :mastercard and :diners_us). Redraw until detection agrees, so the
+        # size above is the one Card will actually enforce.
+        tries = 0
+        until Detector.new(number).brand == brand
+          if (tries += 1) > MAX_DETECTION_RETRIES
+            raise Error.new("gave up generating a number that detects as #{brand.inspect}")
+          end
+          number = random_number(brand)
+        end
 
         # Somewhere in the next five years, so two generated cards do not share
         # an expiry. One month is the minimum: a card is live through the last
