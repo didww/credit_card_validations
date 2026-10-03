@@ -164,3 +164,53 @@ describe 'CreditCardValidations.with_brands' do
     expect(set.detect(mastercard).brand).must_be_nil
   end
 end
+
+describe 'a brand set is a snapshot, not a view of the global registry' do
+  let(:detector_class) { CreditCardValidations::Detector }
+  let(:visa)           { '4111111111111111' }
+  let(:mastercard)     { '5274576394259961' }
+
+  # Every example here either writes the global registry or writes through the
+  # set, so rebuild the registry from brands.yaml afterwards.
+  after { CreditCardValidations.reload! }
+
+  # The set's brand hash, reached the way the rest of the API reaches it.
+  def scoped_brands(set)
+    set.detect('').brands
+  end
+
+  it 'does not share brand definitions with the global registry' do
+    scoped = scoped_brands(CreditCardValidations.with_brands(:visa))[:visa]
+    global = detector_class.brands[:visa]
+
+    expect(scoped).must_equal global
+    expect(scoped).wont_be_same_as global
+    expect(scoped[:rules]).wont_be_same_as global[:rules]
+    expect(scoped[:options]).wont_be_same_as global[:options]
+  end
+
+  it 'is not widened by a global add_rule after construction' do
+    set = CreditCardValidations.with_brands(:visa)
+
+    detector_class.add_rule(:visa, 16, ['5274'])
+
+    expect(set.detect(mastercard).brand).must_be_nil
+    expect(detector_class.new(mastercard).brand).must_equal :visa
+  end
+
+  it 'is not narrowed by a global delete_brand after construction' do
+    set = CreditCardValidations.with_brands(:visa, :mastercard)
+
+    detector_class.delete_brand(:mastercard)
+
+    expect(set.detect(mastercard).brand).must_equal :mastercard
+  end
+
+  it 'cannot corrupt the global registry by writing through its own brands' do
+    set = CreditCardValidations.with_brands(:visa)
+
+    scoped_brands(set)[:visa][:rules].clear
+
+    expect(detector_class.new(visa).brand).must_equal :visa
+  end
+end
