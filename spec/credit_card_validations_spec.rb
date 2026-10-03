@@ -337,6 +337,19 @@ describe CreditCardValidations do
     end
   end
 
+  # resolve_keys must narrow the registry to exactly the keys asked for. The
+  # rest of the suite only ever restricts to a brand with a PAN that matches
+  # nothing else, so a fallback-to-all-brands bug in resolve_keys would leave
+  # every example green while `valid?(:mir)` accepted a Visa card. These
+  # assertions use a Visa PAN precisely so that fallback shows up.
+  it 'never matches a brand that was not asked for' do
+    visa = VALID_NUMBERS[:visa].first
+    expect(detector(visa).valid?).must_equal true
+    expect(detector(visa).valid?(:mir)).must_equal false
+    expect(detector(visa).valid?(:not_a_brand_xyz)).must_equal false
+    expect(detector(visa).brand(:mir)).must_be_nil
+  end
+
   it 'should support multiple brands for single check' do
     VALID_NUMBERS.slice(:visa, :mastercard).each do |key, value|
       expect(detector(value.first).brand(:visa, :mastercard)).must_equal key
