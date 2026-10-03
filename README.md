@@ -346,6 +346,13 @@ D.delete_brand(:mastercard)
 set.detect('5274 5763 9425 9961').brand           # => :mastercard, still in the set
 ```
 
+The copy is frozen, so an in-place write through it raises `FrozenError`
+instead of corrupting a set other detectors share:
+
+```ruby
+set.detect(pan).brands[:visa][:rules].clear       # => FrozenError
+```
+
 Build the set after your plugin `require`s and after any `add_brand` calls, and
 rebuild it if you change the registry later.
 
@@ -367,9 +374,11 @@ itself:
 
 #### Keys
 
-Keys may be brand keys or brand names, including names that come from the
-`brand_name` fallback (`Detector.brand_name(:en_route)` is `"En Route"`, and
-`with_brands('En Route')` accepts it).
+Keys may be brand keys or brand names, as symbols or strings, in any case
+(`:visa`, `'visa'`, `'VISA'`). Names include the ones that come from the
+`brand_name` fallback — once the plugin is required,
+`Detector.brand_name(:en_route)` is `"En Route"` and `with_brands('En Route')`
+accepts it.
 
 An unknown key raises `CreditCardValidations::Error` rather than being
 dropped, since a dropped brand would mean a valid card is quietly rejected.
