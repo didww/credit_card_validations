@@ -289,3 +289,53 @@ describe 'CreditCardValidations.with_brands with no keys' do
       .must_raise CreditCardValidations::Error
   end
 end
+
+describe 'a brand set keeps every lookup on its own snapshot' do
+  let(:detector_class) { CreditCardValidations::Detector }
+  let(:amex)           { '348051773827666' }
+
+  after { CreditCardValidations.reload! }
+
+  # In-place writes, the kind add_rule and a hand-edited registry do. These
+  # are the writes that reach a set built by reference; an add_brand/
+  # delete_brand replaces the global entry wholesale and never could.
+  def rewrite_global_amex
+    options = detector_class.brands[:amex][:options]
+    options[:brand_name] = 'Renamed'
+    options[:segments]   = [5, 5, 5]
+    options[:code]       = {name: 'CID', size: 3}
+  end
+
+  it 'reads brand_name from the snapshot' do
+    set = CreditCardValidations.with_brands(:amex)
+    rewrite_global_amex
+
+    expect(set.detect(amex).brand_name).must_equal 'American Express'
+    expect(detector_class.brand_name(:amex)).must_equal 'Renamed'
+  end
+
+  it 'reads valid_cvv? from the snapshot' do
+    set = CreditCardValidations.with_brands(:amex)
+    rewrite_global_amex
+
+    expect(set.detect(amex).valid_cvv?('1234')).must_equal true
+    expect(set.detect(amex).valid_cvv?('123')).must_equal false
+    expect(detector_class.valid_cvv?('123', :amex)).must_equal true
+  end
+
+  it 'reads formatted from the snapshot' do
+    set = CreditCardValidations.with_brands(:amex)
+    rewrite_global_amex
+
+    expect(set.detect(amex).formatted).must_equal '3480 517738 27666'
+    expect(detector_class.new(amex).formatted).must_equal '34805 17738 27666'
+  end
+
+  it 'resolves brand names against the snapshot' do
+    set = CreditCardValidations.with_brands(:amex)
+    rewrite_global_amex
+
+    expect(set.detect(amex).valid?('American Express')).must_equal true
+    expect(detector_class.new(amex).valid?('American Express')).must_equal false
+  end
+end
