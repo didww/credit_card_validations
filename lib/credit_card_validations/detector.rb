@@ -25,20 +25,33 @@ module CreditCardValidations
       valid_number?(*keys)
     end
 
+    # The brand with the longest matched prefix, or nil if none matches.
+    #
+    # Among equal matched lengths the brand that was registered first wins --
+    # the comparison below is strictly greater, so a later brand never
+    # displaces an earlier one. That order is not arbitrary: the default
+    # brands are always in the registry before any plugin, since a plugin
+    # cannot be required before the gem itself, and add_brand appends after
+    # both. So a plugin never takes a PAN away from a default brand on a tie,
+    # and your own brand never takes one away from a shipped one.
+    #
+    # Array#sort is not stable, which left this to whatever order the sort
+    # happened to produce.
     def valid_number?(*keys)
       selected_brands = keys.blank? ? self.brands : resolve_keys(*keys)
-      if selected_brands.any?
-        matched_brands = []
-        selected_brands.each do |key, brand|
-          match_data = matches_brand?(brand)
-          matched_brands << {brand: key, matched_prefix_length: match_data.to_s.length} if match_data
-        end
+      best_brand = nil
+      best_length = 0
 
-        if matched_brands.present?
-          return matched_brands.sort{|a, b| a[:matched_prefix_length] <=> b[:matched_prefix_length]}.last[:brand]
-        end
+      selected_brands.each do |key, brand|
+        match_data = matches_brand?(brand)
+        next unless match_data
+        next unless match_data.to_s.length > best_length
+
+        best_brand = key
+        best_length = match_data.to_s.length
       end
-      nil
+
+      best_brand
     end
 
     #check if luhn valid
