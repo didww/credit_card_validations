@@ -274,23 +274,26 @@ digit passes either way. `Factory.random` is kept as an alias of
 
 `random_card` returns a [`Card`](#creditcardvalidationscard) with a number, an
 expiration 1-60 months out and a verification value of the size the brand
-declares. The size comes from the brand the PAN **detects** as, which is also
-the brand you asked for: because detection resolves to the longest matching
-prefix, a plugin can outrank the requested brand (a `54…` 16-digit PAN is both
-`:mastercard` and `:diners_us`), so the PAN is redrawn until detection agrees.
-`card.brand` therefore always answers with the requested brand.
+declares. The size comes from the brand the PAN **detects** as: because
+detection resolves to the longest matching prefix, another brand can outrank
+the requested one (a `54…` 16-digit PAN is both `:mastercard` and
+`:diners_us`), so the PAN is redrawn until detection agrees. A brand you
+register yourself can tie with a shipped one on every prefix and win every
+tie — `card.brand` then reports the brand detection returns, so the card
+stays valid.
 
 Called with no brand, `random_card` draws only among brands that declare a
 `:code`:
 
 ```ruby
-Factory.random_card.valid?  #=> true, whichever plugins are required
+CreditCardValidations::Factory.random_card.valid?  #=> true, whichever plugins are required
 ```
 
 `random_card` raises `CreditCardValidations::Error` for a brand with no
 `:code` option (most plugin brands, e.g. `:uatp`): their CVV cannot be
 validated, so there is no verification value that would make the card valid.
-It also raises if no registered brand declares a `:code` at all.
+It also raises if no registered brand declares a `:code` at all, or if every
+number it can draw for the requested brand detects as a brand without one.
 
 ## Configuration
 
