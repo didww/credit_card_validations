@@ -50,6 +50,23 @@ describe CreditCardValidations::Factory do
     end
   end
 
+  describe '.number' do
+    it 'draws every generated digit from the whole 0-9 range' do
+      body = Array.new(200) { CreditCardValidations::Factory.number('4', 19)[1..-2] }.join
+      drawn_check_digits = Array.new(500) { CreditCardValidations::Factory.number('62', 16, true)[-1] }
+
+      # 200 numbers x 17 filler digits = 3400 draws, so 340 nines are expected.
+      # P(X <= 100) for X ~ Binomial(3400, 0.1) is bounded by
+      # exp(-3400 * D(0.0294||0.1)) = 2e-55.
+      expect(body.length).must_equal 3400
+      expect(body.count('9')).must_be :>, 100
+
+      # 500 drawn check digits, 50 nines expected. P(X <= 10) for
+      # X ~ Binomial(500, 0.1) is bounded by exp(-500 * D(0.02||0.1)) = 8e-12.
+      expect(drawn_check_digits.count('9')).must_be :>, 10
+    end
+  end
+
   describe '.random_card' do
     plugin_brands = Dir[File.expand_path('../lib/credit_card_validations/plugins/*.rb', __dir__)]
                       .map { |path| File.basename(path, '.rb').to_sym }.sort
