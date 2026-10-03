@@ -128,6 +128,31 @@ describe CreditCardValidations::Factory do
       end
     end
 
+    it 'still builds a valid card when the requested brand is never detected' do
+      # add_brand is public API, and a brand sharing a prefix with a shipped one
+      # can win the tie on every draw -- here :visa becomes unreachable through
+      # detection, so no number redraw can ever satisfy the requested brand.
+      CreditCardValidations.add_brand(:visa_debit, { length: [13, 16, 19], prefixes: '4',
+                                                     options: { code: { name: 'CVV', size: 3 } } })
+      expect(CreditCardValidations::Detector.new('4111111111111111').brand).must_equal :visa_debit
+
+      # Giving up is worse than answering with the brand detection reports: the
+      # card is still valid, which is the whole point of the factory.
+      card = CreditCardValidations::Factory.random_card(:visa)
+      expect(card.brand).must_equal :visa_debit
+      expect(card.valid?).must_equal true
+    end
+
+    it 'raises when the brand that shadows the requested one declares no :code' do
+      CreditCardValidations.add_brand(:visa_shadow, { length: [13, 16, 19], prefixes: '4' })
+      expect(CreditCardValidations::Detector.new('4111111111111111').brand).must_equal :visa_shadow
+
+      # No CVV can make this card valid, so there is nothing to fall back to.
+      error = expect { CreditCardValidations::Factory.random_card(:visa) }
+                .must_raise CreditCardValidations::Error
+      expect(error.message).must_match(/detects as :visa_shadow/)
+    end
+
     it 'only picks a brand that can produce a valid card when none is given' do
       plugin_brands.each { |plugin| load "credit_card_validations/plugins/#{plugin}.rb" }
 
