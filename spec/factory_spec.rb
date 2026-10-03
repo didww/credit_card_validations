@@ -97,6 +97,29 @@ describe CreditCardValidations::Factory do
       end
     end
 
+    it 'only picks a brand that can produce a valid card when none is given' do
+      plugin_brands.each { |plugin| load "credit_card_validations/plugins/#{plugin}.rb" }
+
+      # 14 of the 33 brands then registered declare no :code, so a uniform draw
+      # over every brand raises for 42% of calls. The chance of 200 draws
+      # getting away without a single raise is 0.576**200 = 1e-48.
+      200.times do
+        card = CreditCardValidations::Factory.random_card
+        expect(card.valid?).must_equal true
+      end
+    end
+
+    it 'raises when not a single registered brand declares a :code size' do
+      CreditCardValidations::Detector.brands.keys.each do |key|
+        CreditCardValidations::Detector.delete_brand(key)
+      end
+      CreditCardValidations.add_brand(:codeless, { length: 16, prefixes: '99' })
+
+      error = expect { CreditCardValidations::Factory.random_card }
+                .must_raise CreditCardValidations::Error
+      expect(error.message).must_match(/no registered brand/)
+    end
+
     it 'raises on an unsupported brand' do
       expect { CreditCardValidations::Factory.random_card(:nope) }
         .must_raise CreditCardValidations::Error
