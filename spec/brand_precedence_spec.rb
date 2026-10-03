@@ -50,6 +50,29 @@ describe 'brand precedence' do
     end
   end
 
+  describe 'a brand that declares both a short and a long prefix' do
+    # Regexp alternation is first-match, left-to-right, not longest-match, so
+    # ^((677)|(6771)) matches "677" against a 6771... PAN. The brand then
+    # reports a 3-digit match for a prefix it declares 4 digits of, and loses
+    # a comparison it should win. :maestro, :carnet and :elo all declare such
+    # pairs -- 17 prefixes in total are unreachable as the longest match.
+    it 'matches on the longest one it declares, not the first' do
+      rule = detector_class.brands[:maestro][:rules].first
+      expect(rule[:prefixes]).must_include '677'
+      expect(rule[:prefixes]).must_include '6771'
+
+      expect('6771890123456780'.match(rule[:regexp]).to_s).must_equal '6771'
+    end
+
+    it 'does not lose a PAN to a plugin that declares the long prefix alone' do
+      load 'credit_card_validations/plugins/laser.rb'
+
+      # :laser declares 6771 and nothing shorter, so under-reporting put a
+      # default brand behind a plugin without any tie being involved.
+      expect(detector_class.new('6771890123456780').brand).must_equal :maestro
+    end
+  end
+
   describe 'a longer prefix' do
     # :elo is a plugin and claims 401178, inside Visa's 4. Order does not come
     # into it: six digits beat one, so the plugin wins. Precedence by order is
