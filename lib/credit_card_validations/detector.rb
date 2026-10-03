@@ -39,8 +39,7 @@ module CreditCardValidations
     # registry (Detector.brands) alone. See CreditCardValidations.with_brands.
     def initialize(number, brands: nil)
       @number = number.to_s.gsub(/[\s\-]/, '')
-      @scoped = !brands.nil?
-      self.brands = brands if @scoped
+      self.brands = brands unless brands.nil?
     end
 
     # credit card number validation
