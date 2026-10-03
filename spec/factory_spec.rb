@@ -181,17 +181,19 @@ describe CreditCardValidations::Factory do
         .must_raise CreditCardValidations::Error
     end
 
-    it 'varies the expiration instead of stamping every card with the same date' do
-      dates = Array.new(50) do
+    it 'spreads the expiration across the whole five-year window' do
+      this_month = Date.today.year * 12 + Date.today.month
+      offsets = Array.new(1000) do
         card = CreditCardValidations::Factory.random_card(:visa)
-        [card.month, card.year]
+        card.year * 12 + card.month - this_month
       end
 
-      # 50 draws over the 60 reachable (month, year) pairs: the expected number
-      # of distinct pairs is 60 * (1 - (59/60)**50) = 34.1, and the measured
-      # minimum over 200_000 simulated runs is 22. The bound on a false failure
-      # is C(60, 10) * (10/60)**50 = 9.3e-29.
-      expect(dates.uniq.size).must_be :>, 10
+      # Both ends, not just a count of distinct values: a window narrowed to
+      # 1..12 would still show far more than 10 distinct dates. Over 1000 draws
+      # from rand(1..60), missing either end has probability (59/60)**1000,
+      # about 5e-8.
+      expect(offsets.min).must_equal 1
+      expect(offsets.max).must_equal 60
     end
 
     it 'keeps every expiration past the current month' do
