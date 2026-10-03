@@ -9,10 +9,59 @@ module CreditCardValidations
     class_attribute :brands
     self.brands = {}
 
+    # Registry lookups that work against any brands hash. The class methods
+    # read the process-global registry, a scoped instance reads its own set,
+    # and both share these implementations.
+    module Lookups
+      module_function
+
+      def brand_name(brands, brand_key)
+        brand = brands[brand_key]
+        return nil unless brand
+        brand.fetch(:options, {})[:brand_name] || brand_key.to_s.titleize
+      end
+
+      # Inverse of brand_name, so the titleize fallback and the missing
+      # :options case are handled in exactly one place.
+      def brand_key(brands, name)
+        brands.keys.detect { |key| brand_name(brands, key) == name }
+      end
+
+      # An unknown brand -- including a plugin brand whose file was never
+      # required -- is false, not an error. A brand that *is* registered but
+      # declares no :code raises, since that is registry data the caller owns.
+      def valid_cvv?(brands, code, brand)
+        return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
+        return false unless brands.key?(brand)
+        spec = brands.dig(brand, :options, :code)
+        raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
+        code.to_s.length == spec[:size]
+      end
+    end
+
+    private_constant :Lookups
+
     attr_reader :number
 
-    def initialize(number)
+    # Pass :brands to detect against that hash only, leaving the global
+    # registry (Detector.brands) alone. See CreditCardValidations.with_brands.
+    def initialize(number, brands: nil)
       @number = number.to_s.gsub(/[\s\-]/, '')
+      self.brands = brands unless brands.nil?
+    end
+
+    # class_attribute defines the writer on Detector itself, so the override
+    # below has no super to call -- alias it away first.
+    alias_method :__assign_brands, :brands=
+    private :__assign_brands
+
+    # Takes a frozen deep copy, so an in-place write through this detector's
+    # registry cannot reach the global one -- Hash#slice is shallow, and
+    # Detector.brands.slice(:visa) hands over the global rule and option
+    # hashes themselves. An already-frozen hash is a BrandSet snapshot and is
+    # taken as it is, which keeps #detect free of per-call copying.
+    def brands=(value)
+      __assign_brands(value.frozen? ? value : BrandSet.snapshot(value))
     end
 
     # credit card number validation
@@ -47,7 +96,7 @@ module CreditCardValidations
     end
 
     def brand_name
-      self.class.brand_name(brand)
+      scoped? ? Lookups.brand_name(brands, brand) : self.class.brand_name(brand)
     end
 
     # Last four digits of the PAN, or nil if the PAN has fewer than 4 digits.
@@ -67,7 +116,7 @@ module CreditCardValidations
     # finishes typing.
     def possible_brands
       return [] if number.empty?
-      self.class.brands.each_with_object([]) do |(key, brand), acc|
+      brands.each_with_object([]) do |(key, brand), acc|
         next unless brand.fetch(:rules).any? do |rule|
           rule[:prefixes].any? do |prefix|
             n = [number.length, prefix.length].min
@@ -92,13 +141,13 @@ module CreditCardValidations
     # from the PAN or the input has the wrong shape. Raises when a detected
     # brand is missing :code in the registry.
     def valid_cvv?(code)
-      self.class.valid_cvv?(code, brand)
+      scoped? ? Lookups.valid_cvv?(brands, code, brand) : self.class.valid_cvv?(code, brand)
     end
 
     protected
 
     def groups_for(detected_brand)
-      segments = self.class.brands.dig(detected_brand, :options, :segments)
+      segments = brands.dig(detected_brand, :options, :segments)
       return segments if segments
       groups = Array.new(number.length / 4, 4)
       remainder = number.length % 4
@@ -110,7 +159,8 @@ module CreditCardValidations
       brand_keys = keys.map do |el|
         if el.is_a? String
           #try to find key by name
-          el = (self.class.brand_key(el) || el).to_sym
+          key = scoped? ? Lookups.brand_key(brands, el) : self.class.brand_key(el)
+          el = (key || el).to_sym
         end
         el.downcase
       end
@@ -131,6 +181,17 @@ module CreditCardValidations
       false
     end
 
+    private
+
+    # Every instance lookup went through self.class up to v9, so a subclass or
+    # singleton override of .brand_name/.brand_key/.valid_cvv? won. A scoped
+    # detector cannot keep that: those methods read the global registry, which
+    # is not the one it was handed. So dispatch through the class whenever this
+    # detector is on the global registry, and only then.
+    def scoped?
+      !brands.equal?(self.class.brands)
+    end
+
     class << self
 
       # :skip_luhn is an opt-out, so anything without one -- including a brand
@@ -142,15 +203,8 @@ module CreditCardValidations
       # Class-level CVV check: validates a code against an explicit brand,
       # without needing a Detector instance. Useful when only the brand is
       # known (form input bound to a brand select, separate CVV field, etc.).
-      # An unknown brand -- including a plugin brand whose file was never
-      # required -- is false, not an error. A brand that *is* registered but
-      # declares no :code raises, since that is registry data the caller owns.
       def valid_cvv?(code, brand)
-        return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
-        return false unless brands.key?(brand)
-        spec = brands.dig(brand, :options, :code)
-        raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
-        code.to_s.length == spec[:size]
+        Lookups.valid_cvv?(brands, code, brand)
       end
 
       #
@@ -170,18 +224,11 @@ module CreditCardValidations
       end
 
       def brand_name(brand_key)
-        brand = brands[brand_key]
-        if brand
-          brand.fetch(:options, {})[:brand_name] || brand_key.to_s.titleize
-        else
-          nil
-        end
+        Lookups.brand_name(brands, brand_key)
       end
 
       def brand_key(brand_name)
-        brands.detect do |_, brand|
-          brand[:options][:brand_name] == brand_name
-        end.try(:first)
+        Lookups.brand_key(brands, brand_name)
       end
 
       # CreditCardValidations.delete_brand(:en_route)
