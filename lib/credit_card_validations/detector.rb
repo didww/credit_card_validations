@@ -29,6 +29,7 @@ module CreditCardValidations
 
       def valid_cvv?(brands, code, brand)
         return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
+        return false unless brands.key?(brand)
         spec = brands.dig(brand, :options, :code)
         raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
         code.to_s.length == spec[:size]
@@ -163,7 +164,7 @@ module CreditCardValidations
     class << self
 
       def has_luhn_check_rule?(key)
-        !brands[key].fetch(:options, {}).fetch(:skip_luhn, false)
+        !brands.dig(key, :options, :skip_luhn)
       end
 
       # Class-level CVV check: validates a code against an explicit brand,

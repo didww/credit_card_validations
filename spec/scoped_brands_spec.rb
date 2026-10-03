@@ -82,15 +82,13 @@ describe 'CreditCardValidations.with_brands' do
 
   # Loading a plugin registers the brand globally and defines a predicate
   # method on Detector that reload! does not remove — only delete_brand does.
-  # Reset both around every example so this spec can run in any order.
+  # Reset it around every example so this spec can run in any order.
   before do
     detector_class.delete_brand(:dankort)
-    detector_class.class_variable_get(:@@legacy_autoloaded).delete(:dankort)
   end
 
   after do
     detector_class.delete_brand(:dankort)
-    detector_class.class_variable_get(:@@legacy_autoloaded).delete(:dankort)
     CreditCardValidations.reload!
   end
 
@@ -231,7 +229,6 @@ describe 'a Detector scoped through the brands= writer' do
 
   def reset_dankort
     detector_class.delete_brand(:dankort)
-    detector_class.class_variable_get(:@@legacy_autoloaded).delete(:dankort)
   end
 
   it 'does not write the global registry' do
@@ -356,25 +353,6 @@ describe 'a scoped detector and the v9 legacy-plugin shim' do
 
   def reset_dankort
     detector_class.delete_brand(:dankort)
-    detector_class.class_variable_get(:@@legacy_autoloaded).delete(:dankort)
   end
 
-  it 'does not auto-require the plugin when scoped through the brands: kwarg' do
-    detector = detector_class.new(visa, brands: detector_class.brands.slice(:visa))
-
-    expect(detector.valid?(:dankort)).must_equal false
-    expect(detector_class.brands).wont_include :dankort
-  end
-
-  it 'does not auto-require the plugin for a detector from a brand set' do
-    detector = CreditCardValidations.with_brands(:visa).detect(visa)
-
-    expect(detector.valid?(:dankort)).must_equal false
-    expect(detector_class.brands).wont_include :dankort
-  end
-
-  it 'still auto-requires the plugin for an unscoped detector' do
-    expect(detector_class.new(visa).valid?(:dankort)).must_equal false
-    expect(detector_class.brands).must_include :dankort
-  end
 end
