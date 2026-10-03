@@ -125,7 +125,7 @@ Detector.has_luhn_check_rule?(:mir)                      #=> true  (nothing opte
 '2202 1234 1234 1234'.valid_credit_card_brand?(:mir)     #=> false
 ```
 
-Three paths do raise, because there is nothing sensible to return:
+Four paths do raise, because there is nothing sensible to return:
 
 ```ruby
 Detector.new(pan).mir?                  # NoMethodError — the predicate is never defined
