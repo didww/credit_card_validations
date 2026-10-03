@@ -86,11 +86,11 @@ module CreditCardValidations
       def number(prefix, length, skip_luhn = false)
         number = prefix.dup
         1.upto(length - (prefix.length + 1)) do
-          number << "#{rand(9)}"
+          number << "#{rand(10)}"
         end
         #if skip luhn
         if skip_luhn
-          number += "#{rand(9)}"
+          number += "#{rand(10)}"
         else
           number += last_digit(number).to_s
         end
