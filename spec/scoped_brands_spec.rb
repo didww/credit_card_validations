@@ -376,4 +376,14 @@ describe 'a scoped detector and the v9 legacy-plugin shim' do
     expect(detector_class.new(visa).valid?(:dankort)).must_equal false
     expect(detector_class.brands).must_include :dankort
   end
+  # detect hands the snapshot to the Detector it builds, so without freezing a
+  # caller can reach it through `set.detect(x).brands` and edit the set from the
+  # inside. The global registry is already protected; this is the set itself.
+  it 'cannot be corrupted through a detector it built' do
+    set = CreditCardValidations.with_brands(:visa, :amex)
+
+    expect { set.detect('').brands[:visa][:rules].clear }.must_raise FrozenError
+
+    expect(set.detect('4111111111111111').brand).must_equal :visa
+  end
 end
