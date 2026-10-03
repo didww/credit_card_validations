@@ -45,6 +45,20 @@ module CreditCardValidations
       self.brands = brands unless brands.nil?
     end
 
+    # Takes a frozen deep copy, so an in-place write through this detector's
+    # registry cannot reach the global one -- Hash#slice is shallow, and
+    # Detector.brands.slice(:visa) hands over the global rule and option
+    # hashes themselves. An already-frozen hash is a BrandSet snapshot and is
+    # taken as it is, which keeps #detect free of per-call copying.
+    # class_attribute defines the writer on Detector itself, so there is no
+    # super to call -- alias it away first.
+    alias_method :__assign_brands, :brands=
+    private :__assign_brands
+
+    def brands=(value)
+      __assign_brands(value.frozen? ? value : BrandSet.snapshot(value))
+    end
+
     # credit card number validation
     def valid?(*brands)
       !!valid_number?(*brands)
