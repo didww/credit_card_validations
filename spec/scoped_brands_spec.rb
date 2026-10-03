@@ -240,6 +240,45 @@ describe 'a Detector scoped through the brands= writer' do
   end
 end
 
+describe 'an override of the class-level lookups' do
+  let(:detector_class) { CreditCardValidations::Detector }
+  let(:visa)           { '4111111111111111' }
+
+  # Up to v9 Detector#brand_name and #valid_cvv? dispatched through
+  # self.class, so an app subclassing Detector to rename a brand or to widen
+  # CVV validation had its override honoured. A detector on the global
+  # registry must keep behaving that way.
+  let(:subclass) do
+    Class.new(detector_class) do
+      def self.brand_name(_brand_key) = 'Renamed'
+      def self.valid_cvv?(_code, _brand) = :from_the_override
+    end
+  end
+
+  it 'still wins for a detector on the global registry' do
+    detector = subclass.new(visa)
+
+    expect(detector.brand_name).must_equal 'Renamed'
+    expect(detector.valid_cvv?('123')).must_equal :from_the_override
+  end
+
+  it 'also wins when defined on one detector only' do
+    detector = detector_class.new(visa)
+    detector.define_singleton_method(:brand_name) { 'Per instance' }
+
+    expect(detector.brand_name).must_equal 'Per instance'
+  end
+
+  it 'is bypassed by a scoped detector, whose registry the class cannot see' do
+    detector = subclass.new(visa, brands: detector_class.brands.slice(:visa))
+
+    # Honouring it would mean calling a one-argument override that can only
+    # read the global registry -- the wrong answers for a scoped set.
+    expect(detector.brand_name).must_equal 'Visa'
+    expect(detector.valid_cvv?('123')).must_equal true
+  end
+end
+
 describe 'brand names that fall back to the titleized key' do
   let(:detector_class) { CreditCardValidations::Detector }
   let(:en_route)       { '201401234567890' }
