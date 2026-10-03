@@ -77,7 +77,7 @@ module CreditCardValidations
     end
 
     def brand_name
-      Lookups.brand_name(brands, brand)
+      scoped? ? Lookups.brand_name(brands, brand) : self.class.brand_name(brand)
     end
 
     # Last four digits of the PAN, or nil if the PAN has fewer than 4 digits.
@@ -122,7 +122,7 @@ module CreditCardValidations
     # from the PAN or the input has the wrong shape. Raises when a detected
     # brand is missing :code in the registry.
     def valid_cvv?(code)
-      Lookups.valid_cvv?(brands, code, brand)
+      scoped? ? Lookups.valid_cvv?(brands, code, brand) : self.class.valid_cvv?(code, brand)
     end
 
     protected
@@ -140,7 +140,8 @@ module CreditCardValidations
       brand_keys = keys.map do |el|
         if el.is_a? String
           #try to find key by name
-          el = (Lookups.brand_key(brands, el) || el).to_sym
+          key = scoped? ? Lookups.brand_key(brands, el) : self.class.brand_key(el)
+          el = (key || el).to_sym
         end
         el.downcase
       end
@@ -159,6 +160,17 @@ module CreditCardValidations
         end
       end
       false
+    end
+
+    private
+
+    # Every instance lookup went through self.class up to v9, so a subclass or
+    # singleton override of .brand_name/.brand_key/.valid_cvv? won. A scoped
+    # detector cannot keep that: those methods read the global registry, which
+    # is not the one it was handed. So dispatch through the class whenever this
+    # detector is on the global registry, and only then.
+    def scoped?
+      !brands.equal?(self.class.brands)
     end
 
     class << self

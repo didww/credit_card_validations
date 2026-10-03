@@ -251,6 +251,7 @@ describe 'an override of the class-level lookups' do
   let(:subclass) do
     Class.new(detector_class) do
       def self.brand_name(_brand_key) = 'Renamed'
+      def self.brand_key(_brand_name) = :visa
       def self.valid_cvv?(_code, _brand) = :from_the_override
     end
   end
@@ -260,6 +261,9 @@ describe 'an override of the class-level lookups' do
 
     expect(detector.brand_name).must_equal 'Renamed'
     expect(detector.valid_cvv?('123')).must_equal :from_the_override
+    # valid? with a String resolves it through .brand_key, so the override
+    # decides which brand a name means.
+    expect(detector.valid?('Whatever The App Calls It')).must_equal true
   end
 
   it 'also wins when defined on one detector only' do
@@ -276,6 +280,7 @@ describe 'an override of the class-level lookups' do
     # read the global registry -- the wrong answers for a scoped set.
     expect(detector.brand_name).must_equal 'Visa'
     expect(detector.valid_cvv?('123')).must_equal true
+    expect(detector.valid?('Whatever The App Calls It')).must_equal false
   end
 end
 
