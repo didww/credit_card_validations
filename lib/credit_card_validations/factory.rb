@@ -75,11 +75,12 @@ module CreditCardValidations
           number = random_number(brand)
         end
 
-        # A brand registered through add_brand can tie with this one on every
-        # prefix and win every tie, putting the requested brand out of
+        # Normally `detected` is `brand` -- that is what the loop waits for.
+        # But a brand registered through add_brand can tie with this one on
+        # every prefix and win every tie, putting the requested brand out of
         # detection's reach. Answer with what detection does report rather than
         # giving up: a valid card with an honest #brand beats no card at all.
-        size = cvv_size(detected == brand ? brand : detected)
+        size = cvv_size(detected)
         if size.nil?
           raise Error.new("every number generated for #{brand.inspect} detects as " \
                           "#{detected.inspect}, which has no :code option")
