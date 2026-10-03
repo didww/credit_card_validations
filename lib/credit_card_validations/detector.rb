@@ -140,8 +140,12 @@ module CreditCardValidations
       # Class-level CVV check: validates a code against an explicit brand,
       # without needing a Detector instance. Useful when only the brand is
       # known (form input bound to a brand select, separate CVV field, etc.).
+      # An unknown brand -- including a plugin brand whose file was never
+      # required -- is false, not an error. A brand that *is* registered but
+      # declares no :code raises, since that is registry data the caller owns.
       def valid_cvv?(code, brand)
         return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
+        return false unless brands.key?(brand)
         spec = brands.dig(brand, :options, :code)
         raise Error, "brand #{brand.inspect} has no :code option" if spec.nil?
         code.to_s.length == spec[:size]
