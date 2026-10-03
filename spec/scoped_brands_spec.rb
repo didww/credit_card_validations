@@ -214,3 +214,30 @@ describe 'a brand set is a snapshot, not a view of the global registry' do
     expect(detector_class.new(visa).brand).must_equal :visa
   end
 end
+
+describe 'a Detector scoped through the brands= writer' do
+  let(:detector_class) { CreditCardValidations::Detector }
+  let(:visa)           { '4111111111111111' }
+
+  # Auto-loading :dankort registers it globally and defines #dankort?, which
+  # reload! does not undo. Reset both sides around every example.
+  before { reset_dankort }
+
+  after do
+    reset_dankort
+    CreditCardValidations.reload!
+  end
+
+  def reset_dankort
+    detector_class.delete_brand(:dankort)
+    detector_class.class_variable_get(:@@legacy_autoloaded).delete(:dankort)
+  end
+
+  it 'does not write the global registry' do
+    detector = detector_class.new(visa)
+    detector.brands = detector_class.brands.slice(:visa)
+
+    expect(detector.valid?(:dankort)).must_equal false
+    expect(detector_class.brands).wont_include :dankort
+  end
+end
