@@ -79,6 +79,24 @@ describe CreditCardValidations::Factory do
       expect(card.valid?).must_equal true
     end
 
+    it 'returns the requested brand even when a plugin shadows one of its prefixes' do
+      %w[diners_us elo uatp girocard].each do |plugin|
+        load "credit_card_validations/plugins/#{plugin}.rb"
+      end
+
+      # :mastercard draws from 28 prefixes; 2 of them ('54', '55') are also the
+      # whole of :diners_us, which matches the same 16-digit length. The tie on
+      # matched prefix length goes to the plugin, so the PAN detects as
+      # :diners_us -- a brand with no :code -- and Card#valid? raises while
+      # checking a CVV sized from the brand that was *asked* for.
+      # Chance of 300 draws never touching '54'/'55': (26/28)**300 = 2.2e-10.
+      300.times do
+        card = CreditCardValidations::Factory.random_card(:mastercard)
+        expect(card.brand).must_equal :mastercard
+        expect(card.valid?).must_equal true
+      end
+    end
+
     it 'raises on an unsupported brand' do
       expect { CreditCardValidations::Factory.random_card(:nope) }
         .must_raise CreditCardValidations::Error
