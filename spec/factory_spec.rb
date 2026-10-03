@@ -132,8 +132,8 @@ describe CreditCardValidations::Factory do
       # add_brand is public API, and a brand sharing a prefix with a shipped one
       # can win the tie on every draw -- here :visa becomes unreachable through
       # detection, so no number redraw can ever satisfy the requested brand.
-      CreditCardValidations.add_brand(:visa_debit, { length: [13, 16, 19], prefixes: '4',
-                                                     options: { code: { name: 'CVV', size: 3 } } })
+      CreditCardValidations.add_brand(:visa_debit, { length: [13, 16, 19], prefixes: '4' },
+                                      { code: { name: 'CVV', size: 3 } })
       expect(CreditCardValidations::Detector.new('4111111111111111').brand).must_equal :visa_debit
 
       # Giving up is worse than answering with the brand detection reports: the

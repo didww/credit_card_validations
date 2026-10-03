@@ -15,7 +15,8 @@ module CreditCardValidations
     # Redraws allowed while waiting for detection to agree with the requested
     # brand. The worst self-detection rate measured with all 25 plugins loaded
     # is :mastercard at 92.6%, so exhausting 100 draws has probability
-    # 0.074**100 -- it only happens for a brand detection can never return.
+    # 0.074**100 -- it only happens for a brand detection can never return, and
+    # random_card then answers with the brand it does return.
     MAX_DETECTION_RETRIES = 100
 
     class << self
@@ -38,9 +39,10 @@ module CreditCardValidations
       #   card.valid?             # => true
       #   card.verification_value # => "8812"
       #
-      # The CVV is sized from the brand the PAN *detects* as, which is also the
-      # brand that was asked for: the PAN is redrawn until the two agree, so
-      # card.brand always answers with the requested brand.
+      # The CVV is sized from the brand the PAN *detects* as, and the PAN is
+      # redrawn until that is the brand asked for. Only a brand registered
+      # through add_brand can shadow the request on every draw; the card is
+      # then sized for and reported as the brand detection does return.
       #
       # With no argument, draws a brand that declares a :code. The rest cannot
       # produce a card that answers true to #valid?, so including them would
@@ -55,25 +57,32 @@ module CreditCardValidations
           # Only brands that declare a CVV size can produce a card that answers
           # true to #valid?, so a blind sample over every brand would raise for
           # 42% of calls once all plugins are required.
-          brand = Detector.brands.select { |_, b| b.dig(:options, :code, :size) }.keys.sample
+          brand = Detector.brands.keys.select { |key| cvv_size(key) }.sample
           raise Error.new('no registered brand declares a :code size') if brand.nil?
         end
 
-        number = random_number(brand)
-        size = Detector.brands.dig(brand, :options, :code, :size)
-        raise Error.new("brand #{brand.inspect} has no :code option") if size.nil?
+        raise Error.new("brand #{brand.inspect} has no :code option") if cvv_size(brand).nil?
 
         # Card checks the CVV against the brand *detected* from the PAN, and
-        # detection answers with the longest matching prefix -- a plugin can
-        # outrank the brand we were asked for ('54...' at 16 digits is both
-        # :mastercard and :diners_us). Redraw until detection agrees, so the
-        # size above is the one Card will actually enforce.
+        # detection answers with the longest matching prefix -- another brand can
+        # outrank the one we were asked for ('54...' at 16 digits is both
+        # :mastercard and :diners_us). Redraw until detection agrees, so the CVV
+        # is sized by the brand Card will actually enforce.
+        number = random_number(brand)
         tries = 0
-        until Detector.new(number).brand == brand
-          if (tries += 1) > MAX_DETECTION_RETRIES
-            raise Error.new("gave up generating a number that detects as #{brand.inspect}")
-          end
+        while (detected = Detector.new(number).brand) != brand
+          break if (tries += 1) > MAX_DETECTION_RETRIES
           number = random_number(brand)
+        end
+
+        # A brand registered through add_brand can tie with this one on every
+        # prefix and win every tie, putting the requested brand out of
+        # detection's reach. Answer with what detection does report rather than
+        # giving up: a valid card with an honest #brand beats no card at all.
+        size = cvv_size(detected == brand ? brand : detected)
+        if size.nil?
+          raise Error.new("every number generated for #{brand.inspect} detects as " \
+                          "#{detected.inspect}, which has no :code option")
         end
 
         # Somewhere in the next five years, so a batch of generated cards does
@@ -87,6 +96,10 @@ module CreditCardValidations
                  month: expires_on.month,
                  year: expires_on.year,
                  verification_value: Array.new(size) { rand(10) }.join)
+      end
+
+      def cvv_size(brand)
+        Detector.brands.dig(brand, :options, :code, :size)
       end
 
       def generate(rule)
