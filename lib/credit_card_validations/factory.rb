@@ -39,6 +39,15 @@ module CreditCardValidations
       #   card.valid?             # => true
       #   card.verification_value # => "8812"
       #
+      # The CVV is sized from the brand the PAN *detects* as, which is also the
+      # brand that was asked for: the PAN is redrawn until the two agree, so
+      # card.brand always answers with the requested brand.
+      #
+      # With no argument, draws a brand that declares a :code. The rest cannot
+      # produce a card that answers true to #valid?, so including them would
+      # make the no-arg call raise for 42% of invocations once every plugin is
+      # required.
+      #
       # Raises for a brand without :options[:code] (most plugin brands):
       # Detector.valid_cvv? raises on those, so no verification value we could
       # pick would give back a card that answers true to #valid?.
@@ -68,10 +77,12 @@ module CreditCardValidations
           number = random_number(brand)
         end
 
-        # Somewhere in the next five years, so two generated cards do not share
-        # an expiry. One month is the minimum: a card is live through the last
-        # day of its stated month, and starting at zero would put some cards in
-        # the current month, which reads as "about to expire" in fixtures.
+        # Somewhere in the next five years, so a batch of generated cards does
+        # not all carry the same expiry. 60 buckets collide constantly -- this
+        # varies the date, it does not make it unique. One month is the minimum:
+        # a card is live through the last day of its stated month, and starting
+        # at zero would put some cards in the current month, which reads as
+        # "about to expire" in fixtures.
         expires_on = Date.today.next_month(rand(1..60))
         Card.new(number: number,
                  month: expires_on.month,

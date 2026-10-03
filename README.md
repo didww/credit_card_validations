@@ -266,14 +266,30 @@ card.brand               #=> :amex
 card.verification_value  #=> "8812"   (4 digits for Amex, 3 elsewhere)
 ```
 
-`random_number` returns a Luhn-valid PAN; `random_card` returns a
-[`Card`](#creditcardvalidationscard) with a number, an expiration 1-60 months out and
-a verification value of the size the brand declares. `Factory.random` is kept as
-an alias of `random_number`.
+`random_number` returns a PAN the detector accepts for the brand: Luhn-valid,
+except for the brands that declare `skip_luhn` (`:unionpay`, `:elo`, `:rupay`,
+`:en_route`), where the last digit is drawn rather than computed — the same rule
+detection applies. `Factory.random` is kept as an alias of `random_number`.
+
+`random_card` returns a [`Card`](#creditcardvalidationscard) with a number, an
+expiration 1-60 months out and a verification value of the size the brand
+declares. The size comes from the brand the PAN **detects** as, which is also
+the brand you asked for: because detection resolves to the longest matching
+prefix, a plugin can outrank the requested brand (a `54…` 16-digit PAN is both
+`:mastercard` and `:diners_us`), so the PAN is redrawn until detection agrees.
+`card.brand` therefore always answers with the requested brand.
+
+Called with no brand, `random_card` draws only among brands that declare a
+`:code`:
+
+```ruby
+Factory.random_card.valid?  #=> true, whichever plugins are required
+```
 
 `random_card` raises `CreditCardValidations::Error` for a brand with no
 `:code` option (most plugin brands, e.g. `:uatp`): their CVV cannot be
 validated, so there is no verification value that would make the card valid.
+It also raises if no registered brand declares a `:code` at all.
 
 ## Configuration
 
