@@ -39,15 +39,17 @@ module CreditCardValidations
     Detector.add_brand(key, rules, options)
   end
 
-  # Build an isolated brand set — detection scoped to the given brands, with
-  # the global registry left alone. Keys may be brand keys or brand names.
+  # Build an isolated brand set — detection scoped to a deep copy of the given
+  # brands, taken out of the global registry now and unaffected by later
+  # changes to it. Keys may be brand keys or brand names.
   #
   #   set = CreditCardValidations.with_brands(:visa, :mastercard)
   #   set.detect('4111 1111 1111 1111').brand #=> :visa
   #
   # Raises Error for a key that is not registered: a typo, or a plugin brand
-  # whose plugin was never required. Dropping it silently would reject a
-  # perfectly valid card in production.
+  # whose plugin was never required. Also raises when given no keys at all.
+  # Dropping either silently would reject a perfectly valid card in
+  # production.
   def self.with_brands(*keys)
     BrandSet.new(keys.flatten)
   end

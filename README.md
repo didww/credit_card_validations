@@ -307,8 +307,9 @@ D.brands.keys.reject { |k| k == :visa }.each { |k| D.delete_brand(k) } # merchan
 D.new('5274 5763 9425 9961').valid?(:mastercard)                       # => false, merchant B is now broken
 ```
 
-`with_brands` returns an isolated set instead. It never reads or writes the
-global registry, so sets for different merchants coexist in one process:
+`with_brands` returns an isolated set instead. It copies the brands you ask
+for out of the global registry once, at construction, and from then on detects
+against that copy, so sets for different merchants coexist in one process:
 
 ```ruby
 merchant_a = CreditCardValidations.with_brands(:visa, :mastercard)
@@ -327,9 +328,53 @@ CreditCardValidations::Detector.brands.keys
 API works on it — `valid?`, `brand_name`, `possible_brands`, `formatted`,
 `valid_cvv?` and so on all see only the set's brands.
 
-Keys may be brand keys or brand names. An unknown key raises
-`CreditCardValidations::Error` rather than being dropped, since a dropped
-brand would mean a valid card is quietly rejected:
+#### A set is a snapshot
+
+The copy is deep, so the set and the global registry share no state in either
+direction. A later `add_brand`, `delete_brand` or `add_rule` does not reach a
+set that already exists, and nothing reached through the set can write back:
+
+```ruby
+D = CreditCardValidations::Detector
+set = CreditCardValidations.with_brands(:visa, :mastercard)
+
+D.add_rule(:visa, 16, ['5274'])                   # global: visa now claims a 5274 BIN
+set.detect('5274 5763 9425 9961').brand           # => :mastercard, the set kept its own rules
+D.new('5274 5763 9425 9961').brand                # => :visa
+
+D.delete_brand(:mastercard)
+set.detect('5274 5763 9425 9961').brand           # => :mastercard, still in the set
+```
+
+Build the set after your plugin `require`s and after any `add_brand` calls, and
+rebuild it if you change the registry later.
+
+#### What stays global
+
+Only detection is scoped. Two things are not, and both live on `Detector`
+itself:
+
+* the class-level lookups — `Detector.brands`, `Detector.brand_name`,
+  `Detector.brand_key`, `Detector.valid_cvv?`, `Detector.has_luhn_check_rule?`
+  — always read the global registry, never a set;
+* the per-brand predicate methods (`visa?`, `amex?`, …) are *defined* globally
+  by `add_brand`. Their answer is scoped, since `amex?` is just
+  `valid?(:amex)`, but which predicates exist is not. So a detector from a
+  visa-only set still responds to `amex?` (with `false`), and a global
+  `delete_brand(:mastercard)` undefines `mastercard?` for every detector,
+  including ones from a set that still contains Mastercard — use
+  `valid?(:mastercard)` there.
+
+#### Keys
+
+Keys may be brand keys or brand names, including names that come from the
+`brand_name` fallback (`Detector.brand_name(:en_route)` is `"En Route"`, and
+`with_brands('En Route')` accepts it).
+
+An unknown key raises `CreditCardValidations::Error` rather than being
+dropped, since a dropped brand would mean a valid card is quietly rejected.
+An empty list raises for the same reason — an empty config array must not
+produce a set that declines everything:
 
 ```ruby
 CreditCardValidations.with_brands(:visa, :mastercrad)
@@ -339,6 +384,9 @@ CreditCardValidations.with_brands(:visa, :dankort)
 # => CreditCardValidations::Error (plugin not required yet)
 require 'credit_card_validations/plugins/dankort'
 CreditCardValidations.with_brands(:visa, :dankort).brands  # => [:visa, :dankort]
+
+CreditCardValidations.with_brands(*[])
+# => CreditCardValidations::Error: with_brands needs at least one brand
 ```
 
 For a per-record brand list inside ActiveModel, the `:brands` option on
