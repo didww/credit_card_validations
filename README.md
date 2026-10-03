@@ -303,14 +303,45 @@ CreditCardValidations::Detector.new(number).valid_luhn?
 CreditCardValidations::Luhn.valid?(number)
 ```
 
-### Generating Luhn-valid test numbers
+### Generating test numbers and test cards
 
 ```ruby
-CreditCardValidations::Factory.random(:amex)
-# => "348051773827666"
-CreditCardValidations::Factory.random(:maestro)
-# => "6010430241237266856"
+CreditCardValidations::Factory.random_number(:visa)  #=> "4012888888881881"
+
+card = CreditCardValidations::Factory.random_card(:amex)
+card.valid?              #=> true
+card.brand               #=> :amex
+card.verification_value  #=> "8812"   (4 digits for Amex, 3 elsewhere)
 ```
+
+`random_number` returns a Luhn-valid PAN the detector accepts for the brand,
+including for brands that declare `skip_luhn` — that flag means detection
+tolerates a missing check digit, not that real cards lack one, and a computed
+digit passes either way. `Factory.random` is kept as an alias of
+`random_number`.
+
+`random_card` returns a [`Card`](#creditcardvalidationscard) with a number, an
+expiration 1-60 months out and a verification value of the size the brand
+declares. The size comes from the brand the PAN **detects** as: because
+detection resolves to the longest matching prefix, another brand can outrank
+the requested one (a `54…` 16-digit PAN is both `:mastercard` and
+`:diners_us`), so the PAN is redrawn until detection agrees. A brand you
+register yourself can tie with a shipped one on every prefix and win every
+tie — `card.brand` then reports the brand detection returns, so the card
+stays valid.
+
+Called with no brand, `random_card` draws only among brands that declare a
+`:code`:
+
+```ruby
+CreditCardValidations::Factory.random_card.valid?  #=> true, whichever plugins are required
+```
+
+`random_card` raises `CreditCardValidations::Error` for a brand with no
+`:code` option (most plugin brands, e.g. `:uatp`): their CVV cannot be
+validated, so there is no verification value that would make the card valid.
+It also raises if no registered brand declares a `:code` at all, or if every
+number it can draw for the requested brand detects as a brand without one.
 
 ## Configuration
 
