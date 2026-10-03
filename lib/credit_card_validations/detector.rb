@@ -39,6 +39,8 @@ module CreditCardValidations
       end
     end
 
+    private_constant :Lookups
+
     attr_reader :number
 
     # Pass :brands to detect against that hash only, leaving the global
