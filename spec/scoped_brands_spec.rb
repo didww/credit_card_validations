@@ -402,22 +402,3 @@ describe 'a brand set keeps every lookup on its own snapshot' do
     expect(detector_class.new(amex).valid?('American Express')).must_equal false
   end
 end
-
-describe 'a scoped detector and the v9 legacy-plugin shim' do
-  let(:detector_class) { CreditCardValidations::Detector }
-  let(:visa)           { '4111111111111111' }
-
-  # The shim fires at most once per brand and leaves a predicate method
-  # behind that reload! does not undo, so reset both sides every time.
-  before { reset_dankort }
-
-  after do
-    reset_dankort
-    CreditCardValidations.reload!
-  end
-
-  def reset_dankort
-    detector_class.delete_brand(:dankort)
-  end
-
-end

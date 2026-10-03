@@ -27,6 +27,9 @@ module CreditCardValidations
         brands.keys.detect { |key| brand_name(brands, key) == name }
       end
 
+      # An unknown brand -- including a plugin brand whose file was never
+      # required -- is false, not an error. A brand that *is* registered but
+      # declares no :code raises, since that is registry data the caller owns.
       def valid_cvv?(brands, code, brand)
         return false if code.nil? || brand.nil? || !code.to_s.match?(/\A\d+\z/)
         return false unless brands.key?(brand)
@@ -45,16 +48,16 @@ module CreditCardValidations
       self.brands = brands unless brands.nil?
     end
 
+    # class_attribute defines the writer on Detector itself, so the override
+    # below has no super to call -- alias it away first.
+    alias_method :__assign_brands, :brands=
+    private :__assign_brands
+
     # Takes a frozen deep copy, so an in-place write through this detector's
     # registry cannot reach the global one -- Hash#slice is shallow, and
     # Detector.brands.slice(:visa) hands over the global rule and option
     # hashes themselves. An already-frozen hash is a BrandSet snapshot and is
     # taken as it is, which keeps #detect free of per-call copying.
-    # class_attribute defines the writer on Detector itself, so there is no
-    # super to call -- alias it away first.
-    alias_method :__assign_brands, :brands=
-    private :__assign_brands
-
     def brands=(value)
       __assign_brands(value.frozen? ? value : BrandSet.snapshot(value))
     end
@@ -189,6 +192,8 @@ module CreditCardValidations
 
     class << self
 
+      # :skip_luhn is an opt-out, so anything without one -- including a brand
+      # the registry does not know -- is Luhn-checked.
       def has_luhn_check_rule?(key)
         !brands.dig(key, :options, :skip_luhn)
       end
@@ -206,7 +211,6 @@ module CreditCardValidations
       #   CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
       #
       def add_brand(key, rules, options = {})
-
         brands[key] = {rules: [], options: options || {}}
 
         Array.wrap(rules).each do |rule|
