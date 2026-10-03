@@ -7,6 +7,8 @@ module CreditCardValidations
   class BrandSet
 
     def initialize(keys)
+      raise Error, 'with_brands needs at least one brand' if keys.empty?
+
       keys = keys.map { |key| normalize(key) }
       @registry = Detector.brands.slice(*keys).deep_dup
       missing = keys - @registry.keys
