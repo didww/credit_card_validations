@@ -41,8 +41,15 @@ module CreditCardValidations
       # Detector.valid_cvv? raises on those, so no verification value we could
       # pick would give back a card that answers true to #valid?.
       def random_card(brand = nil)
+        if brand.nil?
+          # Only brands that declare a CVV size can produce a card that answers
+          # true to #valid?, so a blind sample over every brand would raise for
+          # 42% of calls once all plugins are required.
+          brand = Detector.brands.select { |_, b| b.dig(:options, :code, :size) }.keys.sample
+          raise Error.new('no registered brand declares a :code size') if brand.nil?
+        end
+
         number = random_number(brand)
-        brand ||= Detector.new(number).brand
         size = Detector.brands.dig(brand, :options, :code, :size)
         raise Error.new("brand #{brand.inspect} has no :code option") if size.nil?
 
