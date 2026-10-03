@@ -289,6 +289,15 @@ describe CreditCardValidations do
       expect(d.valid_cvv?('1234')).must_equal false
     end
 
+    # An unregistered brand is not a configuration error -- it is just a brand
+    # this installation does not know. Callers get false, same as an
+    # undetectable PAN. Only a *registered* brand missing :code raises.
+    it 'returns false for a brand that is not registered' do
+      expect(CreditCardValidations::Detector.brands.key?(:mir)).must_equal false
+      expect(CreditCardValidations::Detector.valid_cvv?('123', :mir)).must_equal false
+      expect(CreditCardValidations::Detector.valid_cvv?('123', :not_a_brand_xyz)).must_equal false
+    end
+
     it 'raises when detected brand has no :code option configured' do
       CreditCardValidations::Detector.add_brand(:misconfigured, length: 16, prefixes: '8001')
       sample = CreditCardValidations::Factory.random(:misconfigured)
