@@ -275,3 +275,17 @@ describe 'brand names that fall back to the titleized key' do
     expect(detector.valid?('En Route')).must_equal false
   end
 end
+
+describe 'CreditCardValidations.with_brands with no keys' do
+  it 'raises instead of building a set that accepts nothing' do
+    error = expect(-> { CreditCardValidations.with_brands })
+            .must_raise CreditCardValidations::Error
+
+    expect(error.message).must_match(/at least one brand/)
+  end
+
+  it 'raises for an empty array too' do
+    expect(-> { CreditCardValidations.with_brands([]) })
+      .must_raise CreditCardValidations::Error
+  end
+end
