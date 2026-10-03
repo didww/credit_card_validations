@@ -204,13 +204,38 @@ describe 'a brand set is a snapshot, not a view of the global registry' do
     expect(set.detect(mastercard).brand).must_equal :mastercard
   end
 
-  it 'cannot be written through at all, so neither it nor the global registry can be corrupted' do
-    set = CreditCardValidations.with_brands(:visa)
+  it 'refuses an in-place write at every level, not just the one' do
+    scoped = scoped_brands(CreditCardValidations.with_brands(:visa))
 
-    expect { scoped_brands(set)[:visa][:rules].clear }.must_raise FrozenError
+    # One assertion per level: a deep_freeze that stops one short of the rule
+    # hashes still satisfies a single probe into :rules.
+    expect(scoped).must_be :frozen?
+    expect(scoped[:visa]).must_be :frozen?
+    expect(scoped[:visa][:rules]).must_be :frozen?
+    expect(scoped[:visa][:rules].first).must_be :frozen?
+    expect(scoped[:visa][:options]).must_be :frozen?
+  end
 
-    expect(detector_class.new(visa).brand).must_equal :visa
-    expect(set.detect(visa).brand).must_equal :visa
+  it 'refuses a brand being added to or removed from it' do
+    scoped = scoped_brands(CreditCardValidations.with_brands(:visa))
+
+    # Freezing only what the hash contains would leave the hash itself open,
+    # and #detect hands the same object to every detector it builds -- so one
+    # caller could widen the set for every sibling.
+    expect { scoped[:mastercard] = detector_class.brands[:mastercard] }.must_raise FrozenError
+    expect { scoped.delete(:visa) }.must_raise FrozenError
+  end
+
+  it 'leaves the global brand definitions writable' do
+    CreditCardValidations.with_brands(:visa)
+
+    # The copy is what gets frozen. Freezing the globals instead would break
+    # add_rule and every other in-place registry write -- with a FrozenError
+    # thrown from somewhere unrelated.
+    expect(detector_class.brands[:visa]).wont_be :frozen?
+    detector_class.add_rule(:visa, 16, ['4999'])
+
+    expect(detector_class.new('4999999999999996').brand).must_equal :visa
   end
 end
 
@@ -319,6 +344,26 @@ describe 'the internals a brand set keeps to itself' do
     # Handing out the live hash would let a caller edit the set from outside.
     expect(set.respond_to?(:registry)).must_equal false
     expect { set.registry }.must_raise NoMethodError
+  end
+
+  it 'gives out a fresh key list every time' do
+    set = CreditCardValidations.with_brands(:visa, :mastercard)
+
+    set.brands.clear
+
+    expect(set.brands).must_equal [:visa, :mastercard]
+  end
+end
+
+describe 'the keys with_brands accepts' do
+  let(:visa) { '4111111111111111' }
+
+  it 'takes a key in any case, as a symbol or a string' do
+    # Detector#resolve_keys downcases, so valid?(:VISA) works; with_brands has
+    # to agree or the same key means two different things in one API.
+    [:VISA, 'VISA', :Visa, 'visa'].each do |key|
+      expect(CreditCardValidations.with_brands(key).detect(visa).brand).must_equal :visa
+    end
   end
 end
 

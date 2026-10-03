@@ -62,6 +62,21 @@ describe 'Brands that live only in plugins' do
     expect(detector.brand).must_equal :mir
   end
 
+  # Pins the mechanism the reset hooks in this file and in scoped_brands_spec
+  # exist for. Without it the "delete_brand first, then reload!" ordering is a
+  # claim in a comment that nothing checks.
+  it 'keep their predicate method after reload!, and lose it only to delete_brand' do
+    load 'credit_card_validations/plugins/mir.rb'
+    detector = detector_class.new('2202 1234 1234 1234')
+
+    CreditCardValidations.reload!
+    expect(detector_class.brands.key?(:mir)).must_equal false
+    expect(detector.respond_to?(:mir?)).must_equal true
+
+    detector_class.delete_brand(:mir)
+    expect(detector.respond_to?(:mir?)).must_equal false
+  end
+
   # One assertion per example: minitest stops an example at its first failed
   # assertion, and each of these three can rot independently.
   describe 'no longer expose the shim' do
