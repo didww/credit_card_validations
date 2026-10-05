@@ -13,7 +13,7 @@ describe 'CreditCardValidations.add_brand' do
     CreditCardValidations.add_brand(:my_own, { length: 16, prefixes: '9' },
                                     { code: { name: 'CVV', size: 3 } })
 
-    expect(detector_class.brands).must_include :my_own
+    expect(detector_class.brands.keys).must_include :my_own
     expect(detector_class.new('9111111111111110').brand).must_equal :my_own
   end
 
@@ -61,6 +61,41 @@ describe 'CreditCardValidations.add_brand' do
     CreditCardValidations.reload!
 
     expect(detector_class.new(visa).valid?(:visa)).must_equal true
+  end
+
+  # A brand list often arrives as strings, from a config file or an
+  # environment variable. delete_brand already converts them; add_brand and
+  # add_rule did not, so the same key worked in one door and not the others --
+  # and add_brand quietly built a second, unreachable entry beside :visa.
+  describe 'a string key' do
+    it 'is refused by add_brand just like the symbol' do
+      error = expect(-> { CreditCardValidations.add_brand('visa', { length: 16, prefixes: '9' }) })
+              .must_raise CreditCardValidations::Error
+
+      expect(error.message).must_match(/:visa is already registered/)
+      expect(detector_class.brands.keys).must_equal detector_class.brands.keys.grep(Symbol)
+    end
+
+    it 'registers under a symbol, so the other doors can reach it' do
+      CreditCardValidations.add_brand('my_own', { length: 16, prefixes: '9' })
+
+      expect(detector_class.brands.keys).must_include :my_own
+      expect(detector_class.brands.keys).wont_include 'my_own'
+      expect(detector_class.new('9111111111111110').brand).must_equal :my_own
+    end
+
+    it 'works for add_rule' do
+      detector_class.add_rule('visa', 16, ['9'])
+
+      expect(detector_class.new('9111111111111110').valid?(:visa)).must_equal true
+      expect(detector_class.brands[:visa][:rules].size).must_equal 2
+    end
+
+    it 'works for delete_brand' do
+      detector_class.delete_brand('visa')
+
+      expect(detector_class.brands.keys).wont_include :visa
+    end
   end
 
   it 'does not define the predicate method when it refuses' do
