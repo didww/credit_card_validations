@@ -333,6 +333,9 @@ To widen a registered brand, add a rule:
 CreditCardValidations::Detector.add_rule(:visa, 16, ['9'])
 ```
 
+Keys are converted to symbols, so `add_brand`, `add_rule` and `delete_brand`
+all take `:visa` or `"visa"` alike.
+
 To replace one, remove it first:
 
 ```ruby
