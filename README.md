@@ -357,14 +357,42 @@ CreditCardValidations::Detector.new(number).valid_luhn?
 CreditCardValidations::Luhn.valid?(number)
 ```
 
-### Generating Luhn-valid test numbers
+### Generating test numbers and test cards
 
 ```ruby
-CreditCardValidations::Factory.random(:amex)
-# => "348051773827666"
-CreditCardValidations::Factory.random(:maestro)
-# => "6010430241237266856"
+CreditCardValidations::Factory.random_number(:visa)  #=> "4012888888881881"
+
+card = CreditCardValidations::Factory.random_card(:amex)
+card.valid?              #=> true
+card.brand               #=> :amex
+card.verification_value  #=> "8812"   (4 for Amex, 3 for the other bundled brands)
 ```
+
+`random_number` returns a Luhn-valid PAN the detector accepts for the brand,
+including for brands that declare `skip_luhn` — that flag means detection
+tolerates a missing check digit, not that real cards lack one, and a computed
+digit passes either way. `Factory.random` is kept as an alias of
+`random_number`.
+
+**Breaking:** the low-level `Factory.number(prefix, length, skip_luhn)` lost
+its third argument and is now `number(prefix, length)`. The argument only
+selected the behaviour described above, so there is nothing for it to mean.
+
+`random_card` returns a [`Card`](#creditcardvalidationscard) with a number, an
+expiration 1-60 months out and a verification value. The number comes from the
+requested brand's rules; the CVV is sized from the brand the PAN **detects**
+as, since that is the one `Card` validates against. Where ranges overlap those
+are not the same brand, and `card.brand` reports the detected one.
+
+Called with no brand, `random_card` draws only among brands that declare a
+`:code`:
+
+```ruby
+CreditCardValidations::Factory.random_card.valid?  #=> true
+```
+
+`random_card` needs the brand to declare a `:code` size, and raises
+`CreditCardValidations::Error` otherwise.
 
 ## Configuration
 
