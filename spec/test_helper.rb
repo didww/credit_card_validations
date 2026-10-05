@@ -24,6 +24,10 @@ PLUGIN_BRANDS = %i[
 
 def load_legacy_plugin(brand)
   return unless PLUGIN_BRANDS.include?(brand)
+  # `load` re-runs the file, and add_brand refuses a brand that is already
+  # registered. An app uses `require`, which is idempotent; this is the same
+  # guarantee for specs that ask for a plugin brand more than once.
+  return if CreditCardValidations::Detector.brands.key?(brand)
   load "credit_card_validations/plugins/#{brand}.rb"
 end
 

@@ -321,6 +321,25 @@ CreditCardValidations.add_brand(:voyager, { length: 15, prefixes: '86' })
 CreditCardValidations::Detector.new('869926275400212').voyager?  # => true
 ```
 
+`add_brand` adds; it does not redefine. A brand that is already registered
+raises `CreditCardValidations::Error`, because the call replaces the whole
+entry — the rules, and with them the brand's name, CVV size, segments and
+`skip_luhn` opt-out — so a call that only meant to change the rules used to
+leave a brand that no longer detected its own cards.
+
+To widen a registered brand, add a rule:
+
+```ruby
+CreditCardValidations::Detector.add_rule(:visa, 16, ['9'])
+```
+
+To replace one, remove it first:
+
+```ruby
+CreditCardValidations::Detector.delete_brand(:visa)
+CreditCardValidations.add_brand(:visa, { length: 16, prefixes: '9' })
+```
+
 ### Removing a brand at runtime
 
 ```ruby
