@@ -77,7 +77,7 @@ Everything else is detected only when its plugin is explicitly required. Plugins
 
 |    Name   |    Key     | Status |
 ---------------------   | ------------| ------|
-[Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance) | `:diners_us` | Merged into Discover for US routing in 2008 |
+[Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance) | `:diners_us` | Issued on MasterCard BINs since 2004 |
 [EnRoute](https://en.wikipedia.org/wiki/EnRoute_(credit_card)) | `:en_route` | Withdrawn 1989 |
 [Laser](https://en.wikipedia.org/wiki/Laser_%28debit_card%29) | `:laser` | Withdrawn 2014 |
 [Solo](https://en.wikipedia.org/wiki/Solo_(debit_card)) | `:solo` | Withdrawn 2011 |
@@ -91,52 +91,6 @@ require 'credit_card_validations/plugins/mir'
 require 'credit_card_validations/plugins/elo'
 require 'credit_card_validations/plugins/hipercard'
 # ... whichever brands the app actually accepts
-```
-
-## Which brand wins
-
-Brand ranges overlap — regional networks are often issued on a global
-network's BINs. `Detector#brand` answers with **the longest prefix that
-matches**:
-
-```ruby
-require 'credit_card_validations/plugins/elo'
-
-Detector.new('4011 7890 1234 5671').brand  #=> :elo, six digits beat Visa's one
-Detector.new('4111 1111 1111 1111').brand  #=> :visa
-```
-
-When two brands match the same number of digits, the one **registered first**
-wins. That order is fixed, not incidental:
-
-1. the eight default brands, loaded from the bundled brand list;
-2. plugin brands, in the order you `require` them — a plugin cannot be
-   required before the gem itself, so it is always after the defaults;
-3. brands you add with `add_brand`.
-
-So a plugin never takes a PAN away from a default brand on a tie, and your own
-brand never takes one away from a shipped brand. This matters for ranges that
-carry no distinguishing digits at all: `:diners_us` claims the whole of
-`54`/`55`, which is MasterCard's — those cards *are* MasterCards, issued under
-a licensed Diners Club brand and processed over the MasterCard network, so
-MasterCard is the answer:
-
-```ruby
-require 'credit_card_validations/plugins/diners_us'
-
-Detector.new('5474 8748 5673 5893').brand  #=> :mastercard
-```
-
-To get the other brand, say so explicitly — either ask about it:
-
-```ruby
-Detector.new('5474 8748 5673 5893').valid?(:diners_us)  #=> true
-```
-
-or put your own brand ahead of the default by removing it first:
-
-```ruby
-Detector.delete_brand(:mastercard)
 ```
 
 ## Migrating from v9.x → v10.0 (unreleased)
@@ -366,6 +320,9 @@ everywhere. Use `valid?(:mastercard)` where that matters.
 CreditCardValidations.add_brand(:voyager, { length: 15, prefixes: '86' })
 CreditCardValidations::Detector.new('869926275400212').voyager?  # => true
 ```
+
+A prefix is the literal digits it spells — list a range out (`%w[51 52 53]`),
+rather than writing `5[1-3]`, which would only ever match that text.
 
 `add_brand` adds; it does not redefine. A brand that is already registered
 raises `CreditCardValidations::Error`, because the call replaces the whole
