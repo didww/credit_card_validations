@@ -136,7 +136,7 @@ describe CreditCardValidations do
 
   it 'should check luhn' do
     VALID_NUMBERS.each do |brand, card_numbers|
-      load_legacy_plugin(brand)
+      load_plugin(brand)
       if has_luhn_check_rule?(brand)
         card_numbers.each do |number|
           expect(luhn_valid?(detector(number).number)).must_equal true
@@ -147,7 +147,7 @@ describe CreditCardValidations do
 
   it 'should check valid brand' do
     VALID_NUMBERS.each do |brand, card_numbers|
-      load_legacy_plugin(brand)
+      load_plugin(brand)
       card_numbers.each do |card_number|
         expect(detector(card_number).send("#{brand}?")).must_equal true
         expect(detector(card_number).brand).must_equal brand
@@ -156,7 +156,7 @@ describe CreditCardValidations do
   end
 
   it 'should check if card invalid' do
-    VALID_NUMBERS.keys.each { |brand| load_legacy_plugin(brand) }
+    VALID_NUMBERS.keys.each { |brand| load_plugin(brand) }
     INVALID_NUMBERS.each do |card_number|
       expect(detector(card_number).valid?).must_equal false
       expect(detector(card_number).brand).must_be_nil
@@ -362,7 +362,7 @@ describe CreditCardValidations do
 
   it 'should check if valid brand without arguments' do
     VALID_NUMBERS.each do |key, value|
-      load_legacy_plugin(key)
+      load_plugin(key)
       value.each do |card_number|
         expect(detector(card_number).valid?(key)).must_equal true
         expect(assert detector(card_number).valid?).must_equal true

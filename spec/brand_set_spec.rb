@@ -145,7 +145,7 @@ describe CreditCardValidations::BrandSet do
     end
 
     it 'accepts a plugin brand once its plugin is required' do
-      load 'credit_card_validations/plugins/dankort.rb'
+      load_plugin(:dankort)
 
       set = CreditCardValidations.with_brands(:visa, :dankort)
 

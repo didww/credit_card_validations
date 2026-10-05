@@ -16,17 +16,17 @@ require 'credit_card_validations'
 # still cover them, so specs load the plugin on demand. They are deliberately
 # NOT pre-loaded here, so the test environment mirrors what an application gets
 # out of the box: core brands only.
-PLUGIN_BRANDS = %i[
-  cabal carnet cartes_bancaires dankort dinacard diners_us elo en_route
-  girocard hiper hipercard humocard laser mada mir naranja rupay solo switch
-  troy uatp uzcard verve voyager vpay
-].freeze
+PLUGIN_BRANDS = Dir[File.expand_path('../lib/credit_card_validations/plugins/*.rb', __dir__)]
+                  .map { |path| File.basename(path, '.rb').to_sym }.sort.freeze
 
-def load_legacy_plugin(brand)
+# Registers a plugin brand unless it is already registered. add_brand refuses
+# a brand that is, and `load` re-runs the file, so specs that share a brand
+# would fail on whichever ran second. An application uses `require`, which is
+# idempotent; this is the same guarantee. A key with no plugin file -- a
+# default brand -- is a no-op, since callers pass whole fixture key lists.
+def load_plugin(brand)
+  brand = brand.to_sym
   return unless PLUGIN_BRANDS.include?(brand)
-  # `load` re-runs the file, and add_brand refuses a brand that is already
-  # registered. An app uses `require`, which is idempotent; this is the same
-  # guarantee for specs that ask for a plugin brand more than once.
   return if CreditCardValidations::Detector.brands.key?(brand)
   load "credit_card_validations/plugins/#{brand}.rb"
 end

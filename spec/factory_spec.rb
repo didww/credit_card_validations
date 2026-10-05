@@ -61,8 +61,6 @@ describe CreditCardValidations::Factory do
   end
 
   describe '.random_card' do
-    plugin_brands = Dir[File.expand_path('../lib/credit_card_validations/plugins/*.rb', __dir__)]
-                      .map { |path| File.basename(path, '.rb').to_sym }.sort
 
     # Loading a plugin defines a predicate on Detector that reload! alone does
     # not undo — only delete_brand does. Wipe every brand, then reload.
@@ -73,9 +71,9 @@ describe CreditCardValidations::Factory do
       CreditCardValidations.reload!
     end
 
-    (CreditCardValidations::Detector.brands.keys.sort + plugin_brands).each do |brand|
+    (CreditCardValidations::Detector.brands.keys.sort + PLUGIN_BRANDS).each do |brand|
       it "builds a valid card for #{brand}" do
-        load "credit_card_validations/plugins/#{brand}.rb" if plugin_brands.include?(brand)
+        load_plugin(brand)
         size = CreditCardValidations::Detector.brands.dig(brand, :options, :code, :size)
 
         if size.nil?
@@ -130,7 +128,7 @@ describe CreditCardValidations::Factory do
     it 'raises when the drawn number detects as a brand with no :code' do
       # Only reachable where ranges overlap, and then rarely, so the number is
       # stubbed rather than drawn.
-      load 'credit_card_validations/plugins/uatp.rb'
+      load_plugin(:uatp)
       CreditCardValidations::Factory.stubs(:random_number).returns('100000000000006')
 
       error = expect { CreditCardValidations::Factory.random_card(:jcb) }
@@ -156,7 +154,7 @@ describe CreditCardValidations::Factory do
                   .must_raise CreditCardValidations::Error
       expect(unknown.message).must_equal 'Unsupported brand'
 
-      load 'credit_card_validations/plugins/uatp.rb'
+      load_plugin(:uatp)
       codeless = expect { CreditCardValidations::Factory.random_card(:uatp) }
                    .must_raise CreditCardValidations::Error
       expect(codeless.message).must_match(/:uatp has no :code option/)
