@@ -159,6 +159,23 @@ module CreditCardValidations
       #   CreditCardValidations.add_brand(:en_route, {length: 15, prefixes: ['2014', '2149']}, {skip_luhn: true}) #skip luhn
       #
       def add_brand(key, rules, options = {})
+        # The registry is keyed by symbol, and delete_brand converts. Without
+        # the same conversion here a string key passed the check below and
+        # wrote a second entry that resolve_keys could not detect with and
+        # delete_brand could not remove.
+        key = key.to_sym
+
+        # Adds a brand; it does not redefine one. The write below replaces the
+        # whole entry, so redefining dropped everything the call did not
+        # mention -- the brand's name, CVV size, segments and skip_luhn
+        # opt-out -- and the brand stopped detecting its own cards, silently.
+        # Use add_rule to widen a registered brand, or delete_brand first to
+        # replace it on purpose.
+        if brands.key?(key)
+          raise Error.new("brand #{key.inspect} is already registered; " \
+                          'use add_rule to widen it, or delete_brand first to replace it')
+        end
+
         brands[key] = {rules: [], options: options || {}}
 
         Array.wrap(rules).each do |rule|
@@ -193,6 +210,7 @@ module CreditCardValidations
 
       #create rule for detecting brand
       def add_rule(key, length, prefixes)
+        key = key.to_sym
         unless brands.has_key?(key)
           raise Error.new("brand #{key} is undefined, please use #add_brand method")
         end
