@@ -18,6 +18,7 @@ module CreditCardValidations
   autoload :Mmi, 'credit_card_validations/mmi'
   autoload :Expiration, 'credit_card_validations/expiration'
   autoload :Card, 'credit_card_validations/card'
+  autoload :BrandSet, 'credit_card_validations/brand_set'
 
   attr_accessor :configuration
 
@@ -36,6 +37,15 @@ module CreditCardValidations
 
   def self.add_brand(key, rules, options = {})
     Detector.add_brand(key, rules, options)
+  end
+
+  # Detect against a fixed list of brands, named once instead of repeated at
+  # every call site. See BrandSet.
+  #
+  #   set = CreditCardValidations.with_brands(:visa, :mastercard)
+  #   set.detect('4111 1111 1111 1111').brand  #=> :visa
+  def self.with_brands(*keys)
+    BrandSet.new(keys.flatten)
   end
 
   def self.source

@@ -282,6 +282,38 @@ detector.possible_brands                # => [:visa]   (during live input)
 detector.valid_cvv?('123')              # => true
 ```
 
+### Detecting against a fixed brand list
+
+`#valid?` and `#brand` take a brand list per call. `with_brands` holds that
+list instead, and applies it to the methods that take no brand list of their
+own — `possible_brands`, `brand_name`, `formatted`, `valid_cvv?`:
+
+```ruby
+set = CreditCardValidations.with_brands(:visa, :mastercard)
+
+set.brands                                 # => [:visa, :mastercard]
+set.detect('4111111111111111').brand       # => :visa
+set.detect('348051773827666').brand        # => nil
+set.detect('348051773827666').valid?       # => false
+set.detect('34').possible_brands           # => []
+```
+
+`detect` returns a `Detector`, so the whole instance API works on it.
+
+Keys are brand keys, as symbols or strings, in any case. An unknown key raises
+`CreditCardValidations::Error` rather than being dropped, since a dropped brand
+would mean a valid card is quietly rejected; an empty list raises for the same
+reason.
+
+A set narrows which brands are considered, not what they are — definitions
+are read from `Detector.brands` at every lookup, so `add_brand`, `add_rule`,
+`delete_brand` and a replaced brand source all apply to an existing set.
+
+Which predicate methods exist stays global: `add_brand` defines them on
+`Detector`, so a detector from a visa-only set still responds to
+`mastercard?` (with `false`), and `delete_brand(:mastercard)` undefines it
+everywhere. Use `valid?(:mastercard)` where that matters.
+
 ### Adding a custom brand at runtime
 
 ```ruby
