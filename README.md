@@ -93,6 +93,52 @@ require 'credit_card_validations/plugins/hipercard'
 # ... whichever brands the app actually accepts
 ```
 
+## Which brand wins
+
+Brand ranges overlap — regional networks are often issued on a global
+network's BINs. `Detector#brand` answers with **the longest prefix that
+matches**:
+
+```ruby
+require 'credit_card_validations/plugins/elo'
+
+Detector.new('4011 7890 1234 5671').brand  #=> :elo, six digits beat Visa's one
+Detector.new('4111 1111 1111 1111').brand  #=> :visa
+```
+
+When two brands match the same number of digits, the one **registered first**
+wins. That order is fixed, not incidental:
+
+1. the eight default brands, loaded from the bundled brand list;
+2. plugin brands, in the order you `require` them — a plugin cannot be
+   required before the gem itself, so it is always after the defaults;
+3. brands you add with `add_brand`.
+
+So a plugin never takes a PAN away from a default brand on a tie, and your own
+brand never takes one away from a shipped brand. This matters for ranges that
+carry no distinguishing digits at all: `:diners_us` claims the whole of
+`54`/`55`, which is MasterCard's — those cards *are* MasterCards, issued under
+a licensed Diners Club brand and processed over the MasterCard network, so
+MasterCard is the answer:
+
+```ruby
+require 'credit_card_validations/plugins/diners_us'
+
+Detector.new('5474 8748 5673 5893').brand  #=> :mastercard
+```
+
+To get the other brand, say so explicitly — either ask about it:
+
+```ruby
+Detector.new('5474 8748 5673 5893').valid?(:diners_us)  #=> true
+```
+
+or put your own brand ahead of the default by removing it first:
+
+```ruby
+Detector.delete_brand(:mastercard)
+```
+
 ## Migrating from v9.x → v10.0 (unreleased)
 
 On `master`, ahead of the v10.0 release, the auto-require shim is gone. In v9.0 the seven brands below moved out of the
