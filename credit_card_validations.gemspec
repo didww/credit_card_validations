@@ -20,12 +20,13 @@ Gem::Specification.new do |gem|
     'source_code_uri'   => 'https://github.com/didww/credit_card_validations'
   }
 
-  gem.files = Dir.glob('lib/**/*') + [
+  # Tracked files only. A glob would ship whatever happens to sit in lib/ at
+  # build time, and the release is built by hand from a working tree.
+  gem.files = `git ls-files -z lib`.split("\x0") + [
     'LICENSE.txt',
     'README.md'
   ]
 
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ['lib']
 
 
