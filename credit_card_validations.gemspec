@@ -29,8 +29,10 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
 
 
-  gem.add_dependency 'activemodel', '>= 7.1'
-  gem.add_dependency 'activesupport', '>= 7.1'
+  # Rails 7.1 reached end of life in October 2025 and 7.2 in August 2026; CI
+  # has not tested either since. 8.0 is the oldest version actually covered.
+  gem.add_dependency 'activemodel', '>= 8.0'
+  gem.add_dependency 'activesupport', '>= 8.0'
 
 
   gem.add_development_dependency 'minitest'
