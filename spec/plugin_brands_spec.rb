@@ -54,7 +54,7 @@ describe 'Brands that live only in plugins' do
   end
 
   it 'work normally once the plugin is required' do
-    load 'credit_card_validations/plugins/mir.rb'
+    load_plugin(:mir)
 
     detector = detector_class.new('2202 1234 1234 1234')
     expect(detector_class.brands.key?(:mir)).must_equal true
