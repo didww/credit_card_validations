@@ -77,7 +77,7 @@ Everything else is detected only when its plugin is explicitly required. Plugins
 
 |    Name   |    Key     | Status |
 ---------------------   | ------------| ------|
-[Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance) | `:diners_us` | Merged into Discover for US routing in 2008 |
+[Diners Club US](http://en.wikipedia.org/wiki/Diners_Club_International#MasterCard_alliance) | `:diners_us` | Issued on MasterCard BINs since 2004 |
 [EnRoute](https://en.wikipedia.org/wiki/EnRoute_(credit_card)) | `:en_route` | Withdrawn 1989 |
 [Laser](https://en.wikipedia.org/wiki/Laser_%28debit_card%29) | `:laser` | Withdrawn 2014 |
 [Solo](https://en.wikipedia.org/wiki/Solo_(debit_card)) | `:solo` | Withdrawn 2011 |
@@ -320,6 +320,9 @@ everywhere. Use `valid?(:mastercard)` where that matters.
 CreditCardValidations.add_brand(:voyager, { length: 15, prefixes: '86' })
 CreditCardValidations::Detector.new('869926275400212').voyager?  # => true
 ```
+
+A prefix is the literal digits it spells — list a range out (`%w[51 52 53]`),
+rather than writing `5[1-3]`, which would only ever match that text.
 
 `add_brand` adds; it does not redefine. A brand that is already registered
 raises `CreditCardValidations::Error`, because the call replaces the whole

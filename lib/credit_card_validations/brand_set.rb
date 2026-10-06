@@ -38,7 +38,10 @@ module CreditCardValidations
       scoped_keys = @brands
       @detector_class = Class.new(Detector)
       @detector_class.define_singleton_method(:brands) do
-        Detector.brands.slice(*scoped_keys)
+        # Registry order, not the order the set was built with: Hash#slice
+        # answers in argument order, Array#& in the receiver's.
+        registry = Detector.brands
+        registry.slice(*(registry.keys & scoped_keys))
       end
     end
 

@@ -25,20 +25,32 @@ module CreditCardValidations
       valid_number?(*keys)
     end
 
+    # The brand with the longest matched prefix, or nil if none matches.
+    #
+    # Among equal matched lengths the brand that was registered first wins --
+    # the comparison below is strictly greater, so a later brand never
+    # displaces an earlier one. That order is not arbitrary: the default
+    # brands are always in the registry before any plugin, since a plugin
+    # cannot be required before the gem itself, and add_brand appends after
+    # both. So a plugin never takes a PAN away from a default brand on a tie,
+    # and your own brand never takes one away from a shipped one.
     def valid_number?(*keys)
       selected_brands = keys.blank? ? self.brands : resolve_keys(*keys)
-      if selected_brands.any?
-        matched_brands = []
-        selected_brands.each do |key, brand|
-          match_data = matches_brand?(brand)
-          matched_brands << {brand: key, matched_prefix_length: match_data.to_s.length} if match_data
-        end
+      best_brand = nil
+      # Below zero, not zero: a brand registered with an empty prefix matches
+      # with length zero, and that still has to beat "nothing matched".
+      best_length = -1
 
-        if matched_brands.present?
-          return matched_brands.sort{|a, b| a[:matched_prefix_length] <=> b[:matched_prefix_length]}.last[:brand]
-        end
+      selected_brands.each do |key, brand|
+        match_data = matches_brand?(brand)
+        next unless match_data
+        next unless match_data.to_s.length > best_length
+
+        best_brand = key
+        best_length = match_data.to_s.length
       end
-      nil
+
+      best_brand
     end
 
     #check if luhn valid
@@ -114,21 +126,32 @@ module CreditCardValidations
         end
         el.downcase
       end
-      self.brands.slice(*brand_keys)
+      # Hash#slice returns its keys in the order of its arguments, which would
+      # hand valid_number? the caller's order and let that decide a tie. Array#&
+      # answers in the receiver's order, so intersecting the registry's own keys
+      # first puts them back in registry order -- and keeps the lookup O(keys)
+      # rather than scanning the whole registry.
+      registry = self.brands
+      registry.slice(*(registry.keys & brand_keys))
     end
 
+    # The longest match among the brand's rules, or false. add_brand takes a
+    # list of rules and more than one can accept the same length, so returning
+    # the first match let an earlier short prefix hide a later long one -- and
+    # the brand then lost a comparison it should have won.
     def matches_brand?(brand)
-      rules = brand.fetch(:rules)
       options = brand.fetch(:options, {})
+      return false unless options[:skip_luhn] || valid_luhn?
 
-      rules.each do |rule|
-        if (options[:skip_luhn] || valid_luhn?) &&
-            rule[:length].include?(number.length) &&
-            match_data = number.match(rule[:regexp])
-          return match_data
-        end
+      longest = false
+      brand.fetch(:rules).each do |rule|
+        next unless rule[:length].include?(number.length)
+        next unless (match_data = number.match(rule[:regexp]))
+        next if longest && match_data.to_s.length <= longest.to_s.length
+
+        longest = match_data
       end
-      false
+      longest
     end
 
     class << self
@@ -231,9 +254,26 @@ module CreditCardValidations
         undef_method "#{key}?".to_sym if method_defined? "#{key}?".to_sym
       end
 
-      #create regexp by array of prefixes
+      # Regexp by array of prefixes, longest first.
+      #
+      # Alternation is first-match, left-to-right, not longest-match: in
+      # ^((677)|(6771)) a 6771... PAN matches "677", so the brand reports a
+      # shorter prefix than the one it declares and loses comparisons it
+      # should win. Ordering by length makes the match the longest prefix the
+      # brand actually declares, which is what valid_number? compares.
+      #
+      # The index keeps the order total, so the same prefix list always
+      # compiles to the same regexp -- sort_by alone is not stable.
       def compile_regexp(prefixes)
-        Regexp.new("^((#{prefixes.join(")|(")}))")
+        ordered = prefixes.each_with_index.sort_by { |prefix, i| [-prefix.to_s.length, i] }.map(&:first)
+        # Escaped, so a prefix is the literal digits it looks like. Without it
+        # a prefix could carry regexp syntax, its matched length would stop
+        # equalling its own length, and the ordering above -- which exists to
+        # report the longest match -- would rank by the wrong number.
+        # possible_brands compares prefixes as plain strings, so this also
+        # brings the two closer together.
+        pattern = ordered.map { |prefix| Regexp.escape(prefix.to_s) }.join(')|(')
+        Regexp.new("^((#{pattern}))")
       end
 
     end
