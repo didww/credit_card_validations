@@ -176,11 +176,16 @@ module CreditCardValidations
                           'use add_rule to widen it, or delete_brand first to replace it')
         end
 
-        brands[key] = {rules: [], options: options || {}}
-
+        entry = {rules: [], options: options || {}}
         Array.wrap(rules).each do |rule|
-          add_rule(key, rule[:length], rule[:prefixes])
+          length, prefixes = Array(rule[:length]), Array(rule[:prefixes])
+          entry[:rules] << {length: length, regexp: compile_regexp(prefixes), prefixes: prefixes}
         end
+
+        # One reference assignment, after the entry is complete: a reader
+        # iterating the old hash never sees a half-built brand and never
+        # trips Hash's "can't add a new key during iteration" guard.
+        self.brands = brands.merge(key => entry)
 
         define_brand_method(key)
 
@@ -205,7 +210,7 @@ module CreditCardValidations
       def delete_brand(key)
         key = key.to_sym
         undef_brand_method(key)
-        brands.reject! { |k, _| k == key }
+        self.brands = brands.except(key)
       end
 
       #create rule for detecting brand
@@ -215,7 +220,9 @@ module CreditCardValidations
           raise Error.new("brand #{key} is undefined, please use #add_brand method")
         end
         length, prefixes = Array(length), Array(prefixes)
-        brands[key][:rules] << {length: length, regexp: compile_regexp(prefixes), prefixes: prefixes}
+        rule = {length: length, regexp: compile_regexp(prefixes), prefixes: prefixes}
+        entry = brands[key].merge(rules: brands[key][:rules] + [rule])
+        self.brands = brands.merge(key => entry)
       end
 
       protected
