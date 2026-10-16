@@ -29,6 +29,7 @@ module CreditCardValidations
     def number=(value)
       @number = value
       @detector = nil
+      value
     end
 
     validates :number, credit_card_number: true

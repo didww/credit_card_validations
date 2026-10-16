@@ -22,7 +22,8 @@ describe CreditCardValidations::Card do
                     year: future.year, verification_value: '123')
     expect(card.brand).must_equal :visa
 
-    card.number = '378282246310005'
+    assigned_number = '378282246310005'
+    expect(card.public_send(:number=, assigned_number)).must_equal assigned_number
     card.verification_value = '1234'
 
     expect(card.valid?).must_equal true
