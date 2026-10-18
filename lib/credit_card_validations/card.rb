@@ -23,7 +23,14 @@ module CreditCardValidations
   class Card
     include ActiveModel::Model
 
-    attr_accessor :number, :month, :year, :verification_value, :name
+    attr_reader :number
+    attr_accessor :month, :year, :verification_value, :name
+
+    def number=(value)
+      @number = value
+      @detector = nil
+      value
+    end
 
     validates :number, credit_card_number: true
     validates :verification_value, credit_card_cvv: { brand_from: :number }

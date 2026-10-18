@@ -17,6 +17,35 @@ describe CreditCardValidations::Card do
     expect(card.last_digits).must_equal visa.tr(' -', '')[-4, 4]
   end
 
+  it 'refreshes derived accessors after number reassignment' do
+    card = Card.new(number: '4111111111111111', month: future.month,
+                    year: future.year, verification_value: '123')
+    expect(card.brand).must_equal :visa
+
+    assigned_number = '378282246310005'
+    expect(card.public_send(:number=, assigned_number)).must_equal assigned_number
+    card.verification_value = '1234'
+
+    expect(card.valid?).must_equal true
+    expect(card.brand).must_equal :amex
+    expect(card.brand_name).must_equal 'American Express'
+    expect(card.last_digits).must_equal '0005'
+    expect(card.display_number).must_equal '***********0005'
+    expect(card.formatted_number).must_equal '3782 822463 10005'
+    expect(card.detector.number).must_equal card.number
+  end
+
+  it 'clears the previous brand after number reassignment to invalid input' do
+    card = Card.new(number: '4111111111111111')
+    expect(card.brand).must_equal :visa
+
+    card.number = 'not-a-payment'
+
+    expect(card.brand).must_be_nil
+    expect(card.brand_name).must_be_nil
+    expect(card.detector.number).must_equal 'notapayment'
+  end
+
   it 'detects amex and requires a 4-digit CID' do
     card = Card.new(number: amex, month: future.month, year: future.year, verification_value: '123')
     expect(card.brand).must_equal :amex
